@@ -23,9 +23,9 @@ module "common_vpc" {
     cidrsubnet(var.vpc_cidr, 8, 5)
   ]
   database_subnets = [
-    cidrsubnet(var.vpc_cidr, 2, 0),
-    cidrsubnet(var.vpc_cidr, 2, 1),
-    cidrsubnet(var.vpc_cidr, 2, 2)
+    cidrsubnet(var.vpc_cidr, 8, 6),
+    cidrsubnet(var.vpc_cidr, 8, 7),
+    cidrsubnet(var.vpc_cidr, 8, 8)
   ]
   database_subnet_assign_ipv6_address_on_creation = false
   map_public_ip_on_launch                         = false

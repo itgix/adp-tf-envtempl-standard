@@ -8,5 +8,5 @@ aws_default_tags = {
 }
 
 # Networking
-vpc_cidr            = "10.50.20.0/24"
+vpc_cidr            = "10.50.0.0/16"
 allowed_cidr_blocks = ["10.50.0.0/16"]
