@@ -10,6 +10,11 @@ module "common_vpc" {
   cidr                 = var.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   enable_dns_hostnames = true
+  enable_dns_support   = true
+  enable_ipv6 = false
+  enable_nat_gateway = true
+  single_nat_gateway = false
+  one_nat_gateway_per_az = true
 
   ## Subnets
   private_subnets = [
@@ -29,4 +34,25 @@ module "common_vpc" {
   ]
   database_subnet_assign_ipv6_address_on_creation = false
   map_public_ip_on_launch                         = false
+
+  public_subnet_tags = {
+    "kubernetes.io/role/elb"                      = 1
+    "kubernetes.io/cluster/${local.eks_name}" = "shared"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb"             = 1
+    "kubernetes.io/cluster/${local.eks_name}" = "shared"
+  }
+
+  tags = var.aws_default_tags
+
+}
+
+resource "aws_vpc_endpoint" "s3_gateway" {
+  vpc_id           = try(module.common_vpc.vpc_id, "")
+  service_name     = "com.amazonaws.${var.aws_region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids  = module.common_vpc.private_route_table_ids
+  tags = merge(var.aws_default_tags, { Name = "${local.vpc_s3_endpoint_name}" })
 }
