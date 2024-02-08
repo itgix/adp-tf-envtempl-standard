@@ -13,9 +13,9 @@ terraform {
   }
 
   backend "s3" {
-    region         = "eu-central-1"
-    key            = "terraform.tfstate"
-    bucket         = "itgix-dev-ec1-terraform-state-backend"
+    region = "eu-central-1"
+    key    = "terraform.tfstate"
+    bucket = "itgix-dev-ec1-terraform-state-backend"
   }
 }
 
