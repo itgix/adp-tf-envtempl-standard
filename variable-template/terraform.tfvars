@@ -24,42 +24,42 @@ addons_versions = {
 
 eks_aws_auth_users = [
     {
-      userarn  = "arn:aws:iam::722377226063:user/ytodorov"
+      userarn  = "arn:aws:iam::722377226063:user/users/ytodorov"
       username = "ytodorov"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/bdimitrov"
+      userarn  = "arn:aws:iam::722377226063:user/users/users/bdimitrov"
       username = "bdimitrov"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/aalexiev"
+      userarn  = "arn:aws:iam::722377226063:user/users/aalexiev"
       username = "aalexiev"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/vdimitrov"
+      userarn  = "arn:aws:iam::722377226063:user/users/vdimitrov"
       username = "vdimitrov"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/dmilanov"
+      userarn  = "arn:aws:iam::722377226063:user/users/dmilanov"
       username = "dmilanov"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/nkazakov"
+      userarn  = "arn:aws:iam::722377226063:user/users/nkazakov"
       username = "nkazakov"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/htonev"
+      userarn  = "arn:aws:iam::722377226063:user/users/htonev"
       username = "htonev"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/mvukadinoff"
+      userarn  = "arn:aws:iam::722377226063:user/users/mvukadinoff"
       username = "mvukadinoff"
       groups   = ["system:masters"]
     }
