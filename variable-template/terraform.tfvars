@@ -29,7 +29,7 @@ eks_aws_auth_users = [
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::722377226063:user/users/users/bdimitrov"
+      userarn  = "arn:aws:iam::722377226063:user/users/bdimitrov"
       username = "bdimitrov"
       groups   = ["system:masters"]
     },
