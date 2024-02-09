@@ -15,7 +15,6 @@ variable "aws_region" {
 variable "aws_default_tags" {
   type        = map(string)
   description = "Default tags to use in AWS resources"
-
 }
 
 variable "environment" {
@@ -53,14 +52,16 @@ variable "provision_eks" {
   default = true
 }
 
-variable "eks_cluster_name" {
-  type        = string
-  description = "Desired cluster name"
-}
-
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
+  default     = "1.29"
+}
+
+variable "cluster_endpoint_public_access_cidrs" {
+  description = "CIDRs with access to the EKS cluster. Restricted to Actico and ITGix"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }
 
 variable "cluster_log_retention_in_days" {
@@ -74,7 +75,14 @@ variable "addons_versions" {
     kube_proxy = string
     vpc_cni    = string
     coredns    = string
+    ebs_csi    = string
   })
+}
+
+variable "eks_aws_auth_users" {
+  description = "List of user maps to add to the aws-auth configmap"
+  type        = list(any)
+  default     = []
 }
 
 ################################################################################
