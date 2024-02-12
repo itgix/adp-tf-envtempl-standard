@@ -4,7 +4,7 @@ data "aws_availability_zones" "available" {
 
 module "common_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.18"
+  version = "~> 5.5.1"
 
   name                   = local.vpc_name
   cidr                   = var.vpc_cidr
@@ -18,19 +18,19 @@ module "common_vpc" {
 
   ## Subnets
   private_subnets = [
-    cidrsubnet(var.vpc_cidr, 8, 0),
-    cidrsubnet(var.vpc_cidr, 8, 1),
-    cidrsubnet(var.vpc_cidr, 8, 2)
+    cidrsubnet(var.vpc_cidr, 10, 0),
+    cidrsubnet(var.vpc_cidr, 10, 4),
+    cidrsubnet(var.vpc_cidr, 10, 8)
   ]
   public_subnets = [
-    cidrsubnet(var.vpc_cidr, 8, 3),
-    cidrsubnet(var.vpc_cidr, 8, 4),
-    cidrsubnet(var.vpc_cidr, 8, 5)
+    cidrsubnet(var.vpc_cidr, 10, 12),
+    cidrsubnet(var.vpc_cidr, 10, 16),
+    cidrsubnet(var.vpc_cidr, 10, 20)
   ]
   database_subnets = [
-    cidrsubnet(var.vpc_cidr, 8, 6),
-    cidrsubnet(var.vpc_cidr, 8, 7),
-    cidrsubnet(var.vpc_cidr, 8, 8)
+    cidrsubnet(var.vpc_cidr, 8, 24),
+    cidrsubnet(var.vpc_cidr, 8, 25),
+    cidrsubnet(var.vpc_cidr, 8, 26)
   ]
   database_subnet_assign_ipv6_address_on_creation = false
   map_public_ip_on_launch                         = false
@@ -44,6 +44,8 @@ module "common_vpc" {
     "kubernetes.io/role/internal-elb"         = 1
     "kubernetes.io/cluster/${local.eks_name}" = "shared"
   }
+
+  create_database_subnet_route_table = true
 
   tags = var.aws_default_tags
 

@@ -1,11 +1,16 @@
 terraform {
   required_version = "~> 1.1"
-  backend "s3" {}
+  backend "s3" {
+    region = "eu-central-1"
+    key    = "terraform.tfstate"
+    bucket = "itgix-dev-ec1-terraform-state-backend"
+  }
+
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.20"
+      version = ">= 4.20"
     }
     random = {
       source  = "hashicorp/random"
