@@ -10,7 +10,9 @@ module "eks" {
   environment = var.environment
 
   eks_cluster_version = var.eks_cluster_version
-  eks_cluster_name    = var.eks_cluster_name
+  eks_cluster_name    = local.eks_name
+
+  cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   cluster_log_retention_in_days = var.cluster_log_retention_in_days
   addons_versions               = var.addons_versions
@@ -30,4 +32,8 @@ module "eks" {
   eks_ng_max_size      = var.eks_ng_max_size
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
+
+  eks_aws_auth_users = var.eks_aws_auth_users
+
+  eks_tags = var.aws_default_tags
 }
