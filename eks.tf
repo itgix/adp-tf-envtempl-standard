@@ -26,7 +26,6 @@ module "eks" {
   eks_instance_types           = var.eks_instance_types
   eks_volume_type              = var.eks_volume_type
   eks_volume_iops              = var.eks_volume_iops
-  eks_node_additional_policies = var.eks_node_additional_policies
 
   eks_ng_min_size      = var.eks_ng_min_size
   eks_ng_max_size      = var.eks_ng_max_size
