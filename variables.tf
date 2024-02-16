@@ -119,12 +119,6 @@ variable "eks_volume_iops" {
   default     = 3000
 }
 
-variable "eks_node_additional_policies" {
-  description = "Additional policies to attach to the EKS worker nodes IAM role"
-  type        = map(string)
-  default     = {}
-}
-
 variable "eks_ng_min_size" {
   description = "Minimum number of the worker nodes in the node group"
   type        = number
