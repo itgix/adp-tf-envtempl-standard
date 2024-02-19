@@ -15,5 +15,5 @@ output "eks_cluster_certificate_authority_data" {
 #}
 
 output "eks_irsa_external_dns_arn" {
-  value = module.iam_assumable_role_external_dns.arn"
+  value = module.eks[0].eks_irsa_external_dns_arn
 }
