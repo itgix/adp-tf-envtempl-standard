@@ -85,6 +85,12 @@ variable "eks_aws_auth_users" {
   default     = []
 }
 
+variable "eks_kms_key_users" {
+  description = "A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users)"
+  type        = list(string)
+  default     = []
+}
+
 ################################################################################
 # Node group defaults
 ################################################################################

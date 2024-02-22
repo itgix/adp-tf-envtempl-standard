@@ -35,4 +35,6 @@ module "eks" {
   eks_aws_auth_users = var.eks_aws_auth_users
 
   eks_tags = var.aws_default_tags
+
+  kms_key_users = var.eks_kms_key_users
 }

@@ -64,3 +64,7 @@ eks_aws_auth_users = [
       groups   = ["system:masters"]
     }
   ]
+
+eks_kms_key_users = [
+  "arn:aws:iam::722377226063:*"
+  ]
