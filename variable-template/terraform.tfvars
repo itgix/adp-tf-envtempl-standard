@@ -14,6 +14,7 @@ allowed_cidr_blocks = ["10.50.0.0/16"]
 # EKS
 provision_eks       = true
 eks_cluster_version = "1.29"
+eks_instance_types  = ["m5a.large" ]
 
 addons_versions = {
   coredns    = "v1.11.1-eksbuild.4"
