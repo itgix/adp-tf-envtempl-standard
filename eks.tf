@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-kubernetes-service.git?ref=development"
+  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-kubernetes-service.git?ref=landingzones"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -32,6 +32,7 @@ module "eks" {
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
 
+  eks_auth_roles     = var.eks_aws_auth_roles
   eks_aws_auth_users = var.eks_aws_auth_users
 
   eks_tags = var.aws_default_tags
