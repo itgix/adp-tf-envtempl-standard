@@ -70,3 +70,6 @@ eks_kms_key_users = [
   "arn:aws:iam::722377226063:user/users/mvukadinoff",
   "arn:aws:iam::722377226063:user/users/vdimitrov"
   ]
+
+# RDS
+create_rds = true
