@@ -8,8 +8,12 @@ aws_default_tags = {
 }
 
 # Networking
-vpc_cidr            = "10.50.0.0/16"
-allowed_cidr_blocks = ["10.50.0.0/16"]
+provision_vpc       = false
+vpc_cidr            = "10.1.0.0/16"
+allowed_cidr_blocks = ["10.1.0.0/16"]
+vpc_id              = "vpc-00eee93eccbb7452f"
+vpc_private_subnet_ids = ["subnet-044cb4e0e119a4f6d", "subnet-0a284d7b2f9a75419", "subnet-0ac621dfdfb66741a"]
+vpc_public_subnet_ids = ["subnet-07da0108356fbd63c", "subnet-0549f609b51096fa4", "subnet-0c0e4a26397799d29"]
 
 # EKS
 provision_eks       = true

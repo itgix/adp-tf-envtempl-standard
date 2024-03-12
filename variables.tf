@@ -31,10 +31,31 @@ variable "project_name" {
 #########################################################################
 ##                   Networking Variables                              ##
 #########################################################################
+variable "provision_vpc" {
+  type    = bool
+  default = true
+}
 
 variable "vpc_cidr" {
   type        = string
   description = "CIDR of VPC to be used by Resale common resources"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "External VPC ID"
+}
+
+variable "vpc_private_subnet_ids" {
+  description = "External VPC private subnet IDs"
+  type        = list(string)
+  default     = [""]
+}
+
+variable "vpc_public_subnet_ids" {
+  description = "External VPC public subnet IDs"
+  type        = list(string)
+  default     = [""]
 }
 
 variable "allowed_cidr_blocks" {
@@ -81,6 +102,12 @@ variable "addons_versions" {
 
 variable "eks_aws_auth_users" {
   description = "List of user maps to add to the aws-auth configmap"
+  type        = list(any)
+  default     = []
+}
+
+variable "eks_aws_auth_roles" {
+  description = "List of role maps to add to the aws-auth configmap"
   type        = list(any)
   default     = []
 }
