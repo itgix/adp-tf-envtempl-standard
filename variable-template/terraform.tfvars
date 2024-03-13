@@ -73,3 +73,7 @@ eks_kms_key_users = [
 
 # RDS
 create_rds = true
+rds_extra_credentials = {
+  username = "demouser"
+  database = "demodb"
+}
