@@ -43,7 +43,7 @@ output "rds_cluster_arn" {
   value       = var.create_rds ? module.rds_maindb[0].rds_cluster_arn : null
 }
 
-output "rds_master_credentials_kms_key_arn" {
-  description = "RDS Master Credentials kms key arn"
-  value       = var.create_rds ? module.rds_maindb[0].rds_master_credentials_kms_key_arn : null
+output "rds_credentials_kms_key_arn" {
+  description = "RDS Credentials kms key arn"
+  value       = var.create_rds ? module.rds_maindb[0].rds_credentials_kms_key_arn : null
 }
