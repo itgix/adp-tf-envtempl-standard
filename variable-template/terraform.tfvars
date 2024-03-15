@@ -77,3 +77,7 @@ rds_extra_credentials = {
   username = "demouser"
   database = "demodb"
 }
+rds_scaling_config = {
+  min_capacity = 0.5
+  max_capacity = 2.0
+}
