@@ -1,4 +1,4 @@
-encrypt        = true                //encrypts data
-bucket         = "itgix-dev-ew1-terraform-state-backend" //name of s3 bucket
-region         = "eu-west-1"        //region
-key            = "itgix-dev-ew1-terraform.tfstate" //name of tfstate file
+encrypt = true
+bucket  = "igxadp-stg-eu-west-1-idp-state"
+region  = "eu-west-1"
+key     = "igxadp-stg-eu-west-1-terraform.tfstate"
