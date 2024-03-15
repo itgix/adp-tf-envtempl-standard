@@ -7,7 +7,7 @@ module "rds_maindb" {
 
   environment = var.environment
 
-  aws_region     = var.aws_region
+  aws_region     = var.region
   aws_account_id = var.aws_account_id
   project_name   = var.project_name
 

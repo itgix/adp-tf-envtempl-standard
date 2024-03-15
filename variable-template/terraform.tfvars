@@ -1,5 +1,5 @@
 environment    = "dev"
-aws_region     = "eu-west-1"
+region     = "eu-west-1"
 project_name   = "itgix"
 aws_account_id = "722377226063"
 aws_default_tags = {
