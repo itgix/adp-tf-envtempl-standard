@@ -205,6 +205,19 @@ variable "rds_logs_exports" {
   description = "List of log types to export to cloudwatch. Aurora MySQL: audit, error, general, slowquery. Aurora PostgreSQL: postgresql"
   default     = ["postgresql"]
 }
+
+variable "rds_extra_credentials" {
+  description = "Database extra credentials"
+  type = object({
+    username = string
+    password = optional(string)
+    database = string
+  })
+  default = {
+    username = "demouser"
+    database = "demodb"
+  }
+}
 #variable "bucket_to_export_name" {
 #  type        = string
 #  description = "Variable to set the name of the bucket in the policy to export data from the database to S3"

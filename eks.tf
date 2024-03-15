@@ -37,4 +37,5 @@ module "eks" {
   eks_tags = var.aws_default_tags
 
   kms_key_users = var.eks_kms_key_users
+  secrets_kms_key_arns = local.secrets_kms_key_arns
 }

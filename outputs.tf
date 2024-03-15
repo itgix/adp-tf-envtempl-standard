@@ -29,8 +29,23 @@ output "rds_cluster_endpoint" {
 }
 
 output "rds_master_credentials_secret_arn" {
-  description = "RDS Master Credentials Secret"
+  description = "RDS Master Credentials Secret ARN"
   value       = var.create_rds ? module.rds_maindb[0].rds_master_credentials_secret_arn : null
+}
+
+output "rds_master_credentials_secret_name" {
+  description = "RDS Master Credentials Secret Name"
+  value       = var.create_rds ? module.rds_maindb[0].rds_master_credentials_secret_name : null
+}
+
+output "rds_extra_credentials_secret_arn" {
+  description = "RDS Extra Credentials Secret ARN"
+  value       = var.create_rds ? module.rds_maindb[0].rds_extra_credentials_secret_arn : null
+}
+
+output "rds_extra_credentials_secret_name" {
+  description = "RDS Extra Credentials Secret Name"
+  value       = var.create_rds ? module.rds_maindb[0].rds_extra_credentials_secret_name : null
 }
 
 output "rds_cluster_identifier" {
@@ -43,7 +58,7 @@ output "rds_cluster_arn" {
   value       = var.create_rds ? module.rds_maindb[0].rds_cluster_arn : null
 }
 
-output "rds_master_credentials_kms_key_arn" {
-  description = "RDS Master Credentials kms key arn"
-  value       = var.create_rds ? module.rds_maindb[0].rds_master_credentials_kms_key_arn : null
+output "rds_credentials_kms_key_arn" {
+  description = "RDS Credentials kms key arn"
+  value       = var.create_rds ? module.rds_maindb[0].rds_credentials_kms_key_arn : null
 }
