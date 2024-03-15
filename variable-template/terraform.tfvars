@@ -78,6 +78,6 @@ rds_extra_credentials = {
   database = "demodb"
 }
 rds_scaling_config = {
-  min_capacity = 1
+  min_capacity = 1.0
   max_capacity = 2.0
 }
