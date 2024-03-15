@@ -1,5 +1,5 @@
 environment    = "stg"
-region     = "eu-west-1"
+region         = "eu-west-1"
 project_name   = "igxadp"
 aws_account_id = "722377226063"
 aws_default_tags = {
@@ -22,7 +22,6 @@ addons_versions = {
   "vpc_cni"    = "v1.16.0-eksbuild.1"
   "ebs_csi"    = "v1.27.0-eksbuild.1"
 }
-
 eks_aws_auth_users = [
   {
     "userarn"  = "arn:aws:iam::722377226063:user/users/ytodorov"
