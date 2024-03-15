@@ -10,10 +10,6 @@ output "eks_cluster_endpoint" {
   value = module.eks[0].eks_cluster_endpoint
 }
 
-output "eks_cluster_certificate_authority_data" {
-  value = module.eks[0].eks_cluster_certificate_authority_data
-}
-
 #output "eks_cluster_version" {
 #  value = module.eks[0].eks_cluster_version
 #}
