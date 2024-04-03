@@ -24,5 +24,5 @@ output "eks_irsa_external_dns_arn" {
 
  output "node_security_group_id" {
    description = "ID of the node shared security group"
-   value       = module.eks.node_security_group_id
+   value       = module.eks[0].node_security_group_id
  }
