@@ -1,19 +1,19 @@
-environment    = "dev"
+environment    = "stg"
 aws_region     = "eu-central-1"
 project_name   = "itgix"
-aws_account_id = "767398095708"
+aws_account_id = "905418051897"
 aws_default_tags = {
-  "platform:environment" = "Development"
+  "platform:environment" = "Staging"
   "platform:customer"    = "Itgix"
 }
 
 # Networking
 provision_vpc       = false
-vpc_cidr            = "10.1.0.0/16"
-allowed_cidr_blocks = ["10.1.0.0/16"]
+vpc_cidr            = "10.4.0.0/16"
+allowed_cidr_blocks = ["10.4.0.0/16"]
 vpc_id              = "vpc-00eee93eccbb7452f"
-vpc_private_subnet_ids = ["subnet-044cb4e0e119a4f6d", "subnet-0a284d7b2f9a75419", "subnet-0ac621dfdfb66741a"]
-vpc_public_subnet_ids = ["subnet-07da0108356fbd63c", "subnet-0549f609b51096fa4", "subnet-0c0e4a26397799d29"]
+vpc_private_subnet_ids = ["subnet-0dcdf4f430cebc4a3", "subnet-06af8430a99072929", "subnet-00372fe0d437405eb"]
+vpc_public_subnet_ids = ["subnet-05e5de86067456b93", "subnet-01e2bd0e7ec85d35e", "subnet-08cbfdf578fa0be5f"]
 
 # EKS
 provision_eks       = true
@@ -29,12 +29,12 @@ addons_versions = {
 
 eks_aws_auth_roles = [
     {
-      rolearn  = "arn:aws:iam::767398095708:role/eks-ec1-dev-itgix-role"
+      rolearn  = "arn:aws:iam::905418051897:role/eks-ec1-dev-itgix-role"
       username = "system:node:{{EC2PrivateDNSName}}"
       groups   = ["system:masters"]
     },
     {
-      rolearn  = "arn:aws:iam::767398095708:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_98652b0fb3de153c"
+      rolearn  = "arn:aws:iam::905418051897:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_4c46618bf79ed514"
       username = "eks-admin"
       groups   = ["system:masters"]
     }
