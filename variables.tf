@@ -44,6 +44,7 @@ variable "vpc_cidr" {
 variable "vpc_id" {
   type        = string
   description = "External VPC ID"
+  default     = ""
 }
 
 variable "vpc_private_subnet_ids" {
