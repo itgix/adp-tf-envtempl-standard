@@ -11,7 +11,7 @@ aws_default_tags = {
 provision_vpc       = false
 vpc_cidr            = "10.4.0.0/16"
 allowed_cidr_blocks = ["10.4.0.0/16"]
-vpc_id              = "vpc-00eee93eccbb7452f"
+vpc_id              = "vpc-0fec6f6fa8c09628c"
 vpc_private_subnet_ids = ["subnet-0dcdf4f430cebc4a3", "subnet-06af8430a99072929", "subnet-00372fe0d437405eb"]
 vpc_public_subnet_ids = ["subnet-05e5de86067456b93", "subnet-01e2bd0e7ec85d35e", "subnet-08cbfdf578fa0be5f"]
 
