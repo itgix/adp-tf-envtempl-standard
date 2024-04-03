@@ -1,4 +1,4 @@
 encrypt = true
-bucket  = "itgix-stg-ec1-terraform-state-backend"
+bucket  = "itgix-stg-eu-central-1-idp-state"
 region  = "eu-central-1"
-key     = "itgix-stg-ec1-terraform.tfstate"
+key     = "itgix-stg-eu-central-1-terraform.tfstate"

@@ -2,8 +2,8 @@ terraform {
   required_version = "~> 1.1"
   backend "s3" {
     region = "eu-central-1"
-    key    = "terraform.tfstate"
-    bucket = "itgix-stg-ec1-terraform-state-backend"
+    key    = "itgix-stg-eu-central-1-terraform.tfstate"
+    bucket = "itgix-stg-eu-central-1-idp-state"
   }
 
 
