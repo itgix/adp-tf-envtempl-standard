@@ -24,10 +24,14 @@ locals {
   }
 
 
-  vpc_name = "vpc-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.project_name}-common"
+  vpc_name = "vpc-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-common"
 
-  vpc_s3_endpoint_name = "s3-gateway-vpc-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.project_name}-common"
+  vpc_s3_endpoint_name = "s3-gateway-vpc-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-common"
 
-  eks_name = "eks-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.project_name}"
+  eks_name = "eks-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
+
+  secrets_kms_key_arns = [
+    module.rds_maindb[0].rds_credentials_kms_key_arn
+  ]
 
 }

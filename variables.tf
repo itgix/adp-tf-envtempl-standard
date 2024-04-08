@@ -7,7 +7,7 @@ variable "aws_account_id" {
   description = "AWS account to deploy resources"
 }
 
-variable "aws_region" {
+variable "region" {
   type        = string
   description = "AWS region to deploy to"
 }
@@ -85,6 +85,12 @@ variable "eks_aws_auth_users" {
   default     = []
 }
 
+variable "eks_kms_key_users" {
+  description = "A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users)"
+  type        = list(string)
+  default     = []
+}
+
 ################################################################################
 # Node group defaults
 ################################################################################
@@ -119,12 +125,6 @@ variable "eks_volume_iops" {
   default     = 3000
 }
 
-variable "eks_node_additional_policies" {
-  description = "Additional policies to attach to the EKS worker nodes IAM role"
-  type        = map(string)
-  default     = {}
-}
-
 variable "eks_ng_min_size" {
   description = "Minimum number of the worker nodes in the node group"
   type        = number
@@ -148,3 +148,84 @@ variable "eks_ng_capacity_type" {
   type        = string
   default     = "SPOT"
 }
+
+#########################################################################
+##                   RDS Variables                                     ##
+#########################################################################
+variable "create_rds" {
+  type        = bool
+  description = "If a new RDS and Proxy needs to be created"
+  default     = false
+}
+variable "rds_config" {
+  description = "Configuration for RDS resources"
+  type = object({
+    engine         = string
+    engine_version = string
+    engine_mode    = string
+    cluster_family = string
+    cluster_size   = number
+    db_port        = number
+    db_name        = string
+  })
+  default = ({
+    engine         = "aurora-postgresql"
+    engine_version = "14.5"
+    engine_mode    = "provisioned"
+    cluster_family = "aurora-postgresql14"
+    cluster_size   = 1
+    db_port        = 5432
+    db_name        = ""
+  })
+}
+variable "rds_scaling_config" {
+  description = "The minimum and maximum number of Aurora capacity units (ACUs) for a DB instance"
+  type = object({
+    min_capacity = number
+    max_capacity = number
+  })
+  default = ({
+    min_capacity = 0.5
+    max_capacity = 2.0
+    }
+  )
+}
+variable "rds_default_username" {
+  type        = string
+  description = "DB username"
+  default     = "postgres"
+}
+variable "rds_iam_auth_enabled" {
+  type        = bool
+  description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled"
+  default     = false
+}
+variable "rds_logs_exports" {
+  type        = list(string)
+  description = "List of log types to export to cloudwatch. Aurora MySQL: audit, error, general, slowquery. Aurora PostgreSQL: postgresql"
+  default     = ["postgresql"]
+}
+
+variable "rds_extra_credentials" {
+  description = "Database extra credentials"
+  type = object({
+    username = string
+    password = optional(string)
+    database = string
+  })
+  default = {
+    username = "demouser"
+    database = "demodb"
+  }
+}
+#variable "bucket_to_export_name" {
+#  type        = string
+#  description = "Variable to set the name of the bucket in the policy to export data from the database to S3"
+#  default     = ""
+#}
+#
+#variable "enable_rds_s3_exports" {
+#  type        = bool
+#  description = "If a the s3 exports needs to be enabled"
+#  default     = false
+#}

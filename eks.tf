@@ -6,7 +6,7 @@ module "eks" {
     aws = aws
   }
 
-  aws_region  = var.aws_region
+  aws_region  = var.region
   environment = var.environment
 
   eks_cluster_version = var.eks_cluster_version
@@ -26,7 +26,6 @@ module "eks" {
   eks_instance_types           = var.eks_instance_types
   eks_volume_type              = var.eks_volume_type
   eks_volume_iops              = var.eks_volume_iops
-  eks_node_additional_policies = var.eks_node_additional_policies
 
   eks_ng_min_size      = var.eks_ng_min_size
   eks_ng_max_size      = var.eks_ng_max_size
@@ -36,4 +35,7 @@ module "eks" {
   eks_aws_auth_users = var.eks_aws_auth_users
 
   eks_tags = var.aws_default_tags
+
+  kms_key_users = var.eks_kms_key_users
+  secrets_kms_key_arns = local.secrets_kms_key_arns
 }
