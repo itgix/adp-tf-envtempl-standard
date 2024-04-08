@@ -72,8 +72,6 @@ eks_aws_auth_users = [
     groups   = ["system:masters"]
   }
 ]
-
-
 eks_kms_key_users = [
   "arn:aws:iam::722377226063:user/users/mvukadinoff",
   "arn:aws:iam::722377226063:user/users/vdimitrov"
@@ -83,4 +81,9 @@ rds_extra_credentials = {
   "username" = "demouser"
   "database" = "demodb"
 }
+rds_scaling_config = {
+  min_capacity = 1
+  max_capacity = 2
+}
+
 
