@@ -1,19 +1,15 @@
 environment    = "stg"
-aws_region     = "eu-central-1"
-project_name   = "itgix"
-aws_account_id = "905418051897"
-aws_default_tags = {
-  "platform:environment" = "Staging"
-  "platform:customer"    = "Itgix"
-}
+region         = "eu-west-1"
+project_name   = "igxadp"
+customer_name  = "itgix"
+aws_account_id = "722377226063"
 
 # Networking
-provision_vpc       = false
-vpc_cidr            = "10.4.0.0/16"
-allowed_cidr_blocks = ["10.4.0.0/16"]
-vpc_id              = "vpc-0fec6f6fa8c09628c"
-vpc_private_subnet_ids = ["subnet-0dcdf4f430cebc4a3", "subnet-06af8430a99072929", "subnet-00372fe0d437405eb"]
-vpc_public_subnet_ids = ["subnet-05e5de86067456b93", "subnet-01e2bd0e7ec85d35e", "subnet-08cbfdf578fa0be5f"]
+provision_vpc       = true
+vpc_cidr            = "10.51.0.0/16"
+vpc_id              = ""
+vpc_private_subnet_ids = ["", "", ""]
+vpc_public_subnet_ids = ["", "", ""]
 
 # EKS
 provision_eks       = true
@@ -28,62 +24,62 @@ addons_versions = {
 }
 
 eks_aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::905418051897:role/eks-ec1-dev-itgix-role"
-      username = "system:node:{{EC2PrivateDNSName}}"
-      groups   = ["system:masters"]
-    },
-    {
-      rolearn  = "arn:aws:iam::905418051897:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_4c46618bf79ed514"
-      username = "eks-admin"
-      groups   = ["system:masters"]
-    }
-  ]
+  {
+    rolearn  = "eks-ec1-dev-itgix-role"
+    username = "system:node:{{EC2PrivateDNSName}}"
+    groups   = ["system:masters"]
+  }
+  #### Example for SSO ####
+  # {
+  #   rolearn  = "aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_4c46618bf79ed514"
+  #   username = "eks-admin"
+  #   groups   = ["system:masters"]
+  # }
+]
 
-# eks_aws_auth_users = [
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/ytodorov"
-#       username = "ytodorov"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/bdimitrov"
-#       username = "bdimitrov"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/aalexiev"
-#       username = "aalexiev"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/vdimitrov"
-#       username = "vdimitrov"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/dmilanov"
-#       username = "dmilanov"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/nkazakov"
-#       username = "nkazakov"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/htonev"
-#       username = "htonev"
-#       groups   = ["system:masters"]
-#     },
-#     {
-#       userarn  = "arn:aws:iam::722377226063:user/users/mvukadinoff"
-#       username = "mvukadinoff"
-#       groups   = ["system:masters"]
-#     }
-#   ]
+eks_aws_auth_users = [
+  {
+    username = "ytodorov"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "bdimitrov"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "aalexiev"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "vdimitrov"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "dmilanov"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "nkazakov"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "htonev"
+    groups   = ["system:masters"]
+  },
+  {
+    username = "mvukadinoff"
+    groups   = ["system:masters"]
+  }
+]
 
-# eks_kms_key_users = [
-#   "arn:aws:iam::722377226063:user/users/mvukadinoff",
-#   "arn:aws:iam::722377226063:user/users/vdimitrov"
-#   ]
+
+eks_kms_key_users = [
+  "arn:aws:iam::722377226063:user/users/mvukadinoff",
+  "arn:aws:iam::722377226063:user/users/vdimitrov"
+]
+create_rds = true
+rds_extra_credentials = {
+  "username" = "demouser"
+  "database" = "demodb"
+}
+

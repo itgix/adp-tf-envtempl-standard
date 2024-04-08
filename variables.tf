@@ -7,14 +7,9 @@ variable "aws_account_id" {
   description = "AWS account to deploy resources"
 }
 
-variable "aws_region" {
+variable "region" {
   type        = string
   description = "AWS region to deploy to"
-}
-
-variable "aws_default_tags" {
-  type        = map(string)
-  description = "Default tags to use in AWS resources"
 }
 
 variable "environment" {
@@ -27,6 +22,10 @@ variable "project_name" {
   description = "Name of the project / client / product to be used in naming convention"
 }
 
+variable "customer_name" {
+  type        = string
+  description = "Name of the customer to be used in naming convention"
+}
 
 #########################################################################
 ##                   Networking Variables                              ##
@@ -39,6 +38,7 @@ variable "provision_vpc" {
 variable "vpc_cidr" {
   type        = string
   description = "CIDR of VPC to be used by Resale common resources"
+  default     = ""
 }
 
 variable "vpc_id" {
@@ -57,11 +57,6 @@ variable "vpc_public_subnet_ids" {
   description = "External VPC public subnet IDs"
   type        = list(string)
   default     = [""]
-}
-
-variable "allowed_cidr_blocks" {
-  type        = list(any)
-  description = "List of CIDRs allowed by the security group"
 }
 
 #########################################################################
@@ -101,16 +96,21 @@ variable "addons_versions" {
   })
 }
 
-variable "eks_aws_auth_users" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
+variable "eks_aws_auth_roles" {
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
 }
 
-variable "eks_aws_auth_roles" {
-  description = "List of role maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
+variable "eks_aws_auth_users" {
+  type = list(object({
+    username = string
+    groups   = list(string)
+  }))
+  default = []
 }
 
 variable "eks_kms_key_users" {
@@ -176,3 +176,85 @@ variable "eks_ng_capacity_type" {
   type        = string
   default     = "SPOT"
 }
+
+#########################################################################
+##                   RDS Variables                                     ##
+#########################################################################
+variable "create_rds" {
+  type        = bool
+  description = "If a new RDS and Proxy needs to be created"
+  default     = false
+}
+variable "rds_config" {
+  description = "Configuration for RDS resources"
+  type = object({
+    engine         = string
+    engine_version = string
+    engine_mode    = string
+    cluster_family = string
+    cluster_size   = number
+    db_port        = number
+    db_name        = string
+  })
+  default = ({
+    engine         = "aurora-postgresql"
+    engine_version = "14.5"
+    engine_mode    = "provisioned"
+    cluster_family = "aurora-postgresql14"
+    cluster_size   = 1
+    db_port        = 5432
+    db_name        = ""
+  })
+}
+variable "rds_scaling_config" {
+  description = "The minimum and maximum number of Aurora capacity units (ACUs) for a DB instance"
+  type = object({
+    min_capacity = number
+    max_capacity = number
+  })
+  default = ({
+    min_capacity = 0.5
+    max_capacity = 2.0
+    }
+  )
+}
+variable "rds_default_username" {
+  type        = string
+  description = "DB username"
+  default     = "postgres"
+}
+variable "rds_iam_auth_enabled" {
+  type        = bool
+  description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled"
+  default     = false
+}
+variable "rds_logs_exports" {
+  type        = list(string)
+  description = "List of log types to export to cloudwatch. Aurora MySQL: audit, error, general, slowquery. Aurora PostgreSQL: postgresql"
+  default     = ["postgresql"]
+}
+
+variable "rds_extra_credentials" {
+  description = "Database extra credentials"
+  type = object({
+    username = string
+    password = optional(string)
+    database = string
+  })
+  default = {
+    username = "demouser"
+    database = "demodb"
+  }
+}
+#variable "bucket_to_export_name" {
+#  type        = string
+#  description = "Variable to set the name of the bucket in the policy to export data from the database to S3"
+#  default     = ""
+#}
+#
+#variable "enable_rds_s3_exports" {
+#  type        = bool
+#  description = "If a the s3 exports needs to be enabled"
+#  default     = false
+#}
+
