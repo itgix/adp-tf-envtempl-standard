@@ -23,6 +23,11 @@ locals {
     "us-west-2"      = "uw2"
   }
 
+  aws_default_tags = {
+    "platform:environment" = "${var.environment}"
+    "platform:customer"    = "${var.customer_name}"
+  }
+
 
   vpc_name = "vpc-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-common"
 
@@ -35,3 +40,4 @@ locals {
   ]
 
 }
+

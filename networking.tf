@@ -5,6 +5,7 @@ data "aws_availability_zones" "available" {
 module "common_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.5.1"
+  count   = var.provision_vpc ? 1 : 0
 
   name                   = local.vpc_name
   cidr                   = var.vpc_cidr
@@ -47,14 +48,16 @@ module "common_vpc" {
 
   create_database_subnet_route_table = true
 
-  tags = var.aws_default_tags
+  tags = local.aws_default_tags
 
 }
 
 resource "aws_vpc_endpoint" "s3_gateway" {
-  vpc_id            = try(module.common_vpc.vpc_id, "")
+  count = var.provision_vpc ? 1 : 0
+
+  vpc_id            = try(module.common_vpc[0].vpc_id, "")
   service_name      = "com.amazonaws.${var.region}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids   = module.common_vpc.private_route_table_ids
-  tags              = merge(var.aws_default_tags, { Name = "${local.vpc_s3_endpoint_name}" })
+  route_table_ids   = module.common_vpc[0].private_route_table_ids
+  tags              = merge(local.aws_default_tags, { Name = "${local.vpc_s3_endpoint_name}" })
 }

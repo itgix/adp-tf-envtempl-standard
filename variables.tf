@@ -12,11 +12,6 @@ variable "region" {
   description = "AWS region to deploy to"
 }
 
-variable "aws_default_tags" {
-  type        = map(string)
-  description = "Default tags to use in AWS resources"
-}
-
 variable "environment" {
   type        = string
   description = "Environment in which the infrastructure is going to be deployed"
@@ -27,19 +22,41 @@ variable "project_name" {
   description = "Name of the project / client / product to be used in naming convention"
 }
 
+variable "customer_name" {
+  type        = string
+  description = "Name of the customer to be used in naming convention"
+}
 
 #########################################################################
 ##                   Networking Variables                              ##
 #########################################################################
+variable "provision_vpc" {
+  type    = bool
+  default = true
+}
 
 variable "vpc_cidr" {
   type        = string
   description = "CIDR of VPC to be used by Resale common resources"
+  default     = ""
 }
 
-variable "allowed_cidr_blocks" {
-  type        = list(any)
-  description = "List of CIDRs allowed by the security group"
+variable "vpc_id" {
+  type        = string
+  description = "External VPC ID"
+  default     = ""
+}
+
+variable "vpc_private_subnet_ids" {
+  description = "External VPC private subnet IDs"
+  type        = list(string)
+  default     = [""]
+}
+
+variable "vpc_public_subnet_ids" {
+  description = "External VPC public subnet IDs"
+  type        = list(string)
+  default     = [""]
 }
 
 #########################################################################
@@ -79,10 +96,21 @@ variable "addons_versions" {
   })
 }
 
+variable "eks_aws_auth_roles" {
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
 variable "eks_aws_auth_users" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    username = string
+    groups   = list(string)
+  }))
+  default = []
 }
 
 variable "eks_kms_key_users" {
@@ -229,3 +257,4 @@ variable "rds_extra_credentials" {
 #  description = "If a the s3 exports needs to be enabled"
 #  default     = false
 #}
+
