@@ -86,4 +86,87 @@ rds_scaling_config = {
   max_capacity = 2
 }
 
+# SQS
+sqs_username = ""
+sqs_iam_role_name = ""
+provision_sqs = true
+sqs_queues = {
+  card-service_config = {
+    sns_topic_name            = "config_topic"
+    dlq_enable                = false
+  }
+  adyen-connector_config = {
+    sns_topic_name            = "config_topic"
+    dlq_enable                = false
+  }
+  checkout-connector_config = {
+    sns_topic_name            = "config_topic"
+    dlq_enable                = false
+  }
+  amex-connector_config = {
+    sns_topic_name            = "config_topic"
+    dlq_enable                = false
+  }
+  card-service_assets = {
+    sns_topic_name            = "assets"
+    dlq_enable                = false
+  }
+  card-service_payment-events = {
+    sns_topic_name            = "payment-events"
+    dlq_enable                = false
+  }
+  payment-service_payments = {
+    sns_topic_name            = "payments"
+    dlq_enable                = false
+  }
+  reporting-service_settlements = {
+    sns_topic_name            = "settlements"
+    dlq_enable                = false
+  }
+  reporting-service_payment-events = {
+    sns_topic_name            = "payment-events"
+    dlq_enable                = false
+  }
+  paypal-service_assets = {
+    sns_topic_name            = "assets"
+    dlq_enable                = false
+  }
+  reporting-service_assets = {
+    sns_topic_name            = "assets"
+    dlq_enable                = false
+  }
+  notification-service_payments = {
+    sns_topic_name            = "payments"
+    dlq_enable                = false
+  }
+  notification-service_assets = {
+    sns_topic_name            = "assets"
+    dlq_enable                = false
+  }
+  notification-service_payment-events = {
+    sns_topic_name            = "payment-events"
+    dlq_enable                = false
+  }
+  notification-service_settlements = {
+    sns_topic_name            = "settlements"
+    dlq_enable                = false
+  }
+}
+sns_topics = {
+ config_topic = {
+    enable_fifo = false
+  }
+  assets = {
+    enable_fifo = false
+  }
+  payments = {
+    enable_fifo = false
+  }
+  payment-events = {
+    enable_fifo = false
+  }
+  settlements = {
+    enable_fifo = false
+  }
+}
 
