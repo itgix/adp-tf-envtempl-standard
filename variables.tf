@@ -258,3 +258,29 @@ variable "rds_extra_credentials" {
 #  default     = false
 #}
 
+#########################################################################
+##                   SQS Variables                                     ##
+#########################################################################
+
+variable "sqs_username" {
+  type = string
+  default = ""
+  description = "If not empty, created IAM User for usage with SQS for a more granular access"
+}
+variable "sqs_iam_role_name" {
+  type = string
+  default = ""
+  description = "If not empty, created IAM Role for usage with SQS for a more granular access"
+}
+variable "sqs_queues" {
+  type = map
+}
+variable "sns_topics" {
+  type = map
+}
+variable "provision_sqs" {
+  type = string
+  default = false 
+  description = "Enables creation of SQS/SNS resources"
+}
+
