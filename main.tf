@@ -20,6 +20,12 @@ provider "aws" {
   region = var.region
 }
 
+# needed for WAF module
+provider "aws" {
+  alias  = "virginia"
+  region = "us-east-1"
+}
+
 provider "kubernetes" {
   host                   = module.eks[0].eks_cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks[0].eks_cluster_certificate_authority_data)
