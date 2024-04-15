@@ -22,11 +22,6 @@ variable "project_name" {
   description = "Name of the project / client / product to be used in naming convention"
 }
 
-variable "customer_name" {
-  type        = string
-  description = "Name of the customer to be used in naming convention"
-}
-
 #########################################################################
 ##                   Networking Variables                              ##
 #########################################################################
@@ -283,4 +278,25 @@ variable "provision_sqs" {
   default = false 
   description = "Enables creation of SQS/SNS resources"
 }
+
+#########################################################################
+##                   WAF Variables                                     ##
+#########################################################################
+variable "application_waf_enabled" {
+  type        = bool
+  description = "Specifies whether WAF should be provisioned"
+  default     = false
+}
+variable "cloudfront_waf_enabled" {
+  type        = bool
+  description = "Specifies whether cloudfront for the WAF should be provisioned"
+  default     = false
+}
+variable "waf_webacl_cloudwatch_enabled" {}
+variable "waf_sampled_requests_enabled" {}
+variable "waf_logging_enabled" {}
+variable "waf_country_codes_match" {}
+variable "waf_log_retention_days" {}
+variable "aws_managed_waf_rule_groups" {}
+
 

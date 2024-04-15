@@ -25,7 +25,7 @@ locals {
 
   aws_default_tags = {
     "platform:environment" = "${var.environment}"
-    "platform:customer"    = "${var.customer_name}"
+    "platform:customer"    = "${var.project_name}"
   }
 
 

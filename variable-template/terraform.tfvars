@@ -1,7 +1,6 @@
 environment    = "stg"
 region         = "eu-west-1"
 project_name   = "igxadp"
-customer_name  = "itgix"
 aws_account_id = "722377226063"
 
 # Networking
@@ -169,4 +168,41 @@ sns_topics = {
     enable_fifo = false
   }
 }
+
+
+### WAF vars
+
+# WAF
+application_waf_enabled       = false
+cloudfront_waf_enabled        = false
+waf_sampled_requests_enabled  = true
+waf_webacl_cloudwatch_enabled = true
+waf_logging_enabled           = true
+waf_log_retention_days        = 365
+# list of countries to be blocked by WAF
+waf_country_codes_match = ["CU", "IR", "SY", "KP", "RU"] # list of countries to be blocked by WAF added by country code
+aws_managed_waf_rule_groups = [
+  // Baseline rule groups
+  {
+    name     = "AWSManagedRulesAdminProtectionRuleSet"
+    priority = 1
+  },
+  {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 2
+  },
+  {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 3
+  },
+  // Use-case specific rule groups
+  {
+    name     = "AWSManagedRulesLinuxRuleSet"
+    priority = 4
+  },
+  {
+    name     = "AWSManagedRulesSQLiRuleSet"
+    priority = 5
+  }
+]
 
