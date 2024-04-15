@@ -58,3 +58,9 @@ output "rds_credentials_kms_key_arn" {
   description = "RDS Credentials kms key arn"
   value       = var.create_rds ? module.rds_maindb[0].rds_credentials_kms_key_arn : null
 }
+
+# WAF
+output "waf_webacl_arn" {
+  description = "RDS Credentials kms key arn"
+  value       = var.application_waf_enabled ? module.wafv2_application.webacl_arn : null
+}
