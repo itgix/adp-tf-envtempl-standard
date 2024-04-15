@@ -292,11 +292,52 @@ variable "cloudfront_waf_enabled" {
   description = "Specifies whether cloudfront for the WAF should be provisioned"
   default     = false
 }
+variable "waf_default_action" {
+  type        = string
+  default     = "allow"
+  description = "allow or block - default action of WAF when a request hasn't matched any rules"
+}
+variable "waf_geo_location_block_enforce" {
+  type        = string
+  default     = "block"
+  description = "allow or block - action to take on geo location list of countries"
+}
 variable "waf_webacl_cloudwatch_enabled" {}
 variable "waf_sampled_requests_enabled" {}
 variable "waf_logging_enabled" {}
 variable "waf_country_codes_match" {}
 variable "waf_log_retention_days" {}
-variable "aws_managed_waf_rule_groups" {}
+variable "aws_managed_waf_rule_groups" {
+  type = list(any)
+  default = [
+    // Baseline rule groups
+    {
+      name     = "AWSManagedRulesAdminProtectionRuleSet"
+      priority = 1
+      action   = "none"
+    },
+    {
+      name     = "AWSManagedRulesCommonRuleSet"
+      priority = 2
+      action   = "none"
+    },
+    {
+      name     = "AWSManagedRulesKnownBadInputsRuleSet"
+      priority = 3
+      action   = "none"
+    },
+    // Use-case specific rule groups
+    {
+      name     = "AWSManagedRulesLinuxRuleSet"
+      priority = 4
+      action   = "none"
+    },
+    {
+      name     = "AWSManagedRulesSQLiRuleSet"
+      priority = 5
+      action   = "none"
+    }
 
+  ]
+}
 
