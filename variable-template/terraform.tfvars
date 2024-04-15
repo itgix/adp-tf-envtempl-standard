@@ -84,6 +84,15 @@ rds_scaling_config = {
   min_capacity = 1
   max_capacity = 2
 }
+rds_config = {
+    engine         = "aurora-postgresql"
+    engine_version = "14.5"
+    engine_mode    = "provisioned"
+    cluster_family = "aurora-postgresql14"
+    cluster_size   = 1
+    db_port        = 5432
+    db_name        = ""
+}
 
 # SQS
 sqs_username = ""
