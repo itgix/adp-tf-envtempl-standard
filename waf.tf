@@ -4,7 +4,7 @@ module "wafv2_application" {
   project                     = var.project_name
   env                         = var.environment
   aws_region                  = var.region
-  pid                         = var.pid
+  pid                         = var.project_name
   web_acl_scope               = "REGIONAL"
   waf_attachment_type         = "application" # appended to WebACL and Log Group name
   web_acl_cloudwatch_enabled  = var.waf_webacl_cloudwatch_enabled
@@ -26,7 +26,7 @@ module "wafv2_cloudfront" {
   project                     = var.project_name
   env                         = var.environment
   aws_region                  = var.region
-  pid                         = var.pid
+  pid                         = var.project_name
   web_acl_scope               = "CLOUDFRONT"
   waf_attachment_type         = "cloudfront" # appended to WebACL and Log Group name
   web_acl_cloudwatch_enabled  = var.waf_webacl_cloudwatch_enabled
