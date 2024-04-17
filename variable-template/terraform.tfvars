@@ -36,7 +36,7 @@ eks_aws_auth_roles = [
   #   groups   = ["system:masters"]
   # }
 ]
-
+eks_aws_users_path = "/"
 eks_aws_auth_users = [
   {
     username = "ytodorov"

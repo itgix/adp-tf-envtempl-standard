@@ -35,6 +35,7 @@ module "eks" {
 
   eks_aws_auth_roles = var.eks_aws_auth_roles
   eks_aws_auth_users = var.eks_aws_auth_users
+  eks_aws_users_path = var.eks_aws_users_path
 
   eks_tags = local.aws_default_tags
 
