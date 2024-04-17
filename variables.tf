@@ -114,6 +114,12 @@ variable "eks_kms_key_users" {
   default     = []
 }
 
+variable "eks_aws_users_path" {
+  type        = string
+  description = "The organizational path of the user used for building the arn , by default it's just / "
+  default     = "/"
+}
+
 ################################################################################
 # Node group defaults
 ################################################################################
