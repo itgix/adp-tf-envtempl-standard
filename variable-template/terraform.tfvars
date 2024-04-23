@@ -220,3 +220,15 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
+#ECR
+provision_ecr = false
+ecr_repository_type = "private"
+ecr_repository_name = ""
+ecr_repository_image_tag_mutability = "IMMUTABLE"
+ecr_repository_encryption_type = "AES256"
+ecr_repository_image_scan_on_push = true
+ecr_repository_read_access_arns = []
+ecr_repository_read_write_access_arns = []
+ecr_manage_registry_scanning_configuration = true
+ecr_registry_scan_type = "BASIC"
+ecr_registry_scan_rules = []
