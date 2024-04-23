@@ -1,11 +1,11 @@
-module "rds_maindb" {
+module "ecr" {
   source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-container-registry.git?ref=development"
   ecr_create_repository = var.provision_ecr 
 
   aws_region  = var.region
   environment = var.environment
   project_name   = var.project_name
-  
+
   ecr_repository_name = var.ecr_repository_name
   ecr_repository_type = var.ecr_repository_type
   ecr_repository_read_write_access_arns = var.ecr_repository_read_write_access_arns
