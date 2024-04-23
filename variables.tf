@@ -428,10 +428,4 @@ variable "ecr_create_lifecycle_policy" {
   default     = true
 }
 
-variable "ecr_create_repository_policy" {
-  description = "Determines whether a repository policy will be created"
-  type        = bool
-  default     = true
-}
-
 

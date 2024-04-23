@@ -233,4 +233,4 @@ ecr_manage_registry_scanning_configuration = true
 ecr_registry_scan_type = "BASIC"
 ecr_registry_scan_rules = []
 ecr_create_lifecycle_policy = false
-ecr_create_repository_policy = false
+
