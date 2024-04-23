@@ -422,4 +422,10 @@ variable "ecr_registry_scan_rules" {
   default     = []
 }
 
+variable "ecr_create_lifecycle_policy" {
+  description = "Determines whether a lifecycle policy will be created"
+  type        = bool
+  default     = true
+}
+
 

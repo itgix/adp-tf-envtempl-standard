@@ -19,6 +19,8 @@ module "ecr" {
   ecr_registry_scan_type = var.ecr_registry_scan_type
   ecr_registry_scan_rules = var.ecr_registry_scan_rules
 
+  ecr_create_lifecycle_policy = var.ecr_create_lifecycle_policy
+
   resources_tags = local.aws_default_tags
 
 }
