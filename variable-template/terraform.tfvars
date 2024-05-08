@@ -22,6 +22,9 @@ addons_versions = {
   "vpc_cni"    = "v1.16.0-eksbuild.1"
   "ebs_csi"    = "v1.27.0-eksbuild.1"
 }
+eks_ng_min_size     = 2
+eks_ng_desired_size = 2
+eks_ng_max_size     = 4
 
 eks_aws_auth_roles = [
   {
