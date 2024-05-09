@@ -1,7 +1,6 @@
 module "local_module_name" {
 
-  source  = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-elasticache-redis"
-  version = "main"
+  source  = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-elasticache-redis.git?ref=development"
 
   count = var.create_elasticache_redis ? 1 : 0
 
