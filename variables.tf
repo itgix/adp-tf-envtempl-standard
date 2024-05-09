@@ -428,4 +428,66 @@ variable "ecr_create_lifecycle_policy" {
   default     = true
 }
 
+#########################################################################
+##                   Elasticache Redis cluster                         ##
+#########################################################################
+variable "create_elasticache_redis" {
+  type        = bool
+  description = "If a new Elasticache Redis instance needs to be created"
+}
 
+variable "redis_cluster_size" {
+  type        = number
+  description = "Number of nodes in cluster. Ignored when redis_cluster_mode_enabled == true"
+}
+
+variable "redis_cluster_mode_enabled" {
+  type        = bool
+  description = "Flag to enable/disable cluster mode"
+}
+
+variable "redis_instance_type" {
+  type        = string
+  description = "Elastic cache instance type"
+}
+
+variable "redis_engine_version" {
+  type        = string
+  description = "Redis engine version"
+}
+
+variable "redis_family" {
+  type        = string
+  description = "Redis family"
+}
+
+variable "redis_allowed_cidr_blocks" {
+  type        = list(any)
+  description = "List of CIDRs allowed on Redis security group rules"
+}
+
+variable "redis_allowed_security_group_ids" {
+  type        = list(string)
+  description = <<-EOT
+    A list of IDs of Security Groups to allow access to the security group created by this module on Redis port.
+  EOT
+}
+
+variable "redis_multi_az_enabled" {
+  type        = bool
+  description = "Flag to enable/disable Multiple AZs"
+  default     = true
+}
+
+## Elasticache Redis - Logging variables
+
+variable "redis_cloudwatch_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
+}
+
+variable "redis_automatic_failover_enabled" {
+  type        = bool
+  description = "Automatic failover (Not available for T1/T2 instances)"
+  default     = true
+}

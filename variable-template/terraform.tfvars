@@ -237,3 +237,16 @@ ecr_registry_scan_type = "BASIC"
 ecr_registry_scan_rules = []
 ecr_create_lifecycle_policy = false
 
+# Elasticache Redis
+create_elasticache_redis = false
+
+redis_cluster_size               = 1
+redis_cluster_mode_enabled       = false
+redis_instance_type              = "cache.t3.medium"
+redis_engine_version             = "7.0"
+redis_family                     = "redis7"
+redis_allowed_security_group_ids = []
+redis_allowed_cidr_blocks        = ["10.0.0.0/16"]
+redis_cloudwatch_logs_enabled    = true
+redis_multi_az_enabled           = false
+redis_automatic_failover_enabled = false
