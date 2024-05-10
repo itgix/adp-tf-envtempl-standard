@@ -96,6 +96,6 @@ output "redis_reader_endpoint_address" {
 
 output "redis_primary_endpoint_address" {
   description = "Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode"
-  value       = module.elasticache[0].endpoint
+  value       = module.elasticache[0].redis_primary_endpoint_address
 }
 
