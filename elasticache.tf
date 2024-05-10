@@ -9,7 +9,7 @@ module "elasticache" {
   product_name               = var.project_name
 
   vpc_id                     = var.vpc_id
-  subnet_ids                 = var.vpc_private_subnet_ids
+  subnet_ids                 = slice(module.common_vpc[0].database_subnets, 0, 2)
   cluster_size               = var.redis_cluster_size
   instance_type              = var.redis_instance_type
   automatic_failover_enabled = var.redis_automatic_failover_enabled

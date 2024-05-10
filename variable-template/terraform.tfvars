@@ -96,6 +96,7 @@ rds_config = {
     db_port        = 5432
     db_name        = ""
 }
+rds_iam_auth_enabled = false
 
 # SQS
 sqs_username = ""
