@@ -8,7 +8,7 @@ module "elasticache" {
   environment                = var.environment
   product_name               = var.project_name
 
-  vpc_id                     = var.vpc_id
+  vpc_id                     = module.common_vpc[0].vpc_id
   subnet_ids                 = slice(module.common_vpc[0].database_subnets, 0, 2)
   cluster_size               = var.redis_cluster_size
   instance_type              = var.redis_instance_type

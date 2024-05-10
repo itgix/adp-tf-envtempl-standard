@@ -251,3 +251,7 @@ redis_allowed_cidr_blocks        = ["10.0.0.0/16"]
 redis_cloudwatch_logs_enabled    = true
 redis_multi_az_enabled           = false
 redis_automatic_failover_enabled = false
+
+# ACM
+dns_hosted_zone = "Z2INQZ6AA9H9SI"
+dns_main_domain = "itgix.eu"
