@@ -86,3 +86,16 @@ output "ecr_repository_url" {
   description = "The URL of the repository (in the form `aws_account_id.dkr.ecr.region.amazonaws.com/repositoryName`)"
   value       = module.ecr.repository_url
 }
+
+# Elasticache Redis
+
+output "redis_reader_endpoint_address" {
+  description = "The address of the endpoint for the reader node in the replication group, if the cluster mode is disabled."
+  value       = module.elasticache.redis_reader_endpoint_address
+}
+
+output "redis_primary_endpoint_address" {
+  description = "Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode"
+  value       = module.elasticache.endpoint
+}
+
