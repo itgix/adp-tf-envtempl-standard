@@ -491,3 +491,22 @@ variable "redis_automatic_failover_enabled" {
   description = "Automatic failover (Not available for T1/T2 instances)"
   default     = true
 }
+
+#########################################################################
+##             AWS Certificate manager valid certificate               ##
+#########################################################################
+variable "acm_certificate_enable" {
+  type        = bool
+  description = "Generate a validated acm cert"
+  default     = false
+}
+variable "dns_hosted_zone" {
+  type        = string
+  description = "Managed R53 Zone ID"
+  default     = "Z2INQZ6AA9H9SI"
+}
+variable "dns_main_domain" {
+  type        = string
+  description = "Domain Managed under the R53 Zone"
+  default     = "itgix.eu"
+}
