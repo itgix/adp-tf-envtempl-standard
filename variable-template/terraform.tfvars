@@ -2,6 +2,7 @@ environment    = "stg"
 region         = "eu-west-1"
 project_name   = "igxadp"
 aws_account_id = "722377226063"
+rds_iam_irsa   = true
 
 # Networking
 provision_vpc       = true
