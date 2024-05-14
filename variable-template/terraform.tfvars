@@ -254,5 +254,7 @@ redis_multi_az_enabled           = false
 redis_automatic_failover_enabled = false
 
 # ACM
+acm_certificate_enable = false
+
 dns_hosted_zone = "Z2INQZ6AA9H9SI"
 dns_main_domain = "itgix.eu"
