@@ -98,4 +98,7 @@ output "redis_primary_endpoint_address" {
   description = "Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode"
   value       = module.elasticache[0].redis_primary_endpoint_address
 }
-
+output "irsa_rds_role_arn" {
+  description = "ARN of the IAM Role for access to rds database"
+  value       = module.rds_iam_auth[0].iam_role_arn
+}
