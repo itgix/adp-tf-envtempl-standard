@@ -22,6 +22,12 @@ variable "project_name" {
   description = "Name of the project / client / product to be used in naming convention"
 }
 
+variable "rds_iam_irsa" {
+  type = bool
+  description = "Enable creation of RDS IAM Policy"
+  default = false
+}
+
 #########################################################################
 ##                   Networking Variables                              ##
 #########################################################################
