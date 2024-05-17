@@ -27,6 +27,8 @@ eks_ng_min_size     = 2
 eks_ng_desired_size = 2
 eks_ng_max_size     = 4
 
+eks_ng_capacity_type = "SPOT"
+
 eks_aws_auth_roles = [
   {
     rolearn  = "eks-ec1-dev-itgix-role"

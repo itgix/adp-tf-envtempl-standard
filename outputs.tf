@@ -91,14 +91,14 @@ output "ecr_repository_url" {
 
 output "redis_reader_endpoint_address" {
   description = "The address of the endpoint for the reader node in the replication group, if the cluster mode is disabled."
-  value       = module.elasticache[0].redis_reader_endpoint_address
+  value       = var.create_elasticache_redis ? module.elasticache[0].redis_reader_endpoint_address : null
 }
 
 output "redis_primary_endpoint_address" {
   description = "Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode"
-  value       = module.elasticache[0].redis_primary_endpoint_address
+  value       = var.create_elasticache_redis ? module.elasticache[0].redis_primary_endpoint_address : null
 }
 output "irsa_rds_role_arn" {
   description = "ARN of the IAM Role for access to rds database"
-  value       = module.rds_iam_auth[0].iam_role_arn
+  value       = var.create_elasticache_redis ?  module.rds_iam_auth[0].iam_role_arn : null
 }
