@@ -1,10 +1,10 @@
- module "sqs_dev" {
-  source        = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/sqs-sns.git?ref=development"
-  count         = var.provision_sqs ? 1 : 0
+module "sqs_dev" {
+  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/sqs-sns.git?ref=development"
+  count  = var.provision_sqs ? 1 : 0
 
   sqs_username      = var.sqs_username
   sqs_iam_role_name = var.sqs_iam_role_name
-  environment = var.environment
+  environment       = var.environment
 
   sqs_queues = var.sqs_queues
 
@@ -15,7 +15,7 @@
   #  }
   #]
   #sqs_queues        = "${var.sqs_queues}_${var.environment}"
-  sns_topics        = var.sns_topics
+  sns_topics = var.sns_topics
 
-  global_tags   = local.aws_default_tags
+  global_tags = local.aws_default_tags
 }

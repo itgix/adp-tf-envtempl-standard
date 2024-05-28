@@ -2,7 +2,7 @@
 #IRSA for RDS IAM Auth   #
 ##########################
 module "rds_iam_auth" {
- 
+
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   count   = var.rds_iam_irsa ? 1 : 0
   version = "5.34.0"

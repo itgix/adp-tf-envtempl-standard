@@ -23,9 +23,9 @@ variable "project_name" {
 }
 
 variable "rds_iam_irsa" {
-  type = bool
+  type        = bool
   description = "Enable creation of RDS IAM Policy"
-  default = false
+  default     = false
 }
 
 #########################################################################
@@ -270,24 +270,24 @@ variable "rds_extra_credentials" {
 #########################################################################
 
 variable "sqs_username" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "If not empty, created IAM User for usage with SQS for a more granular access"
 }
 variable "sqs_iam_role_name" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "If not empty, created IAM Role for usage with SQS for a more granular access"
 }
 variable "sqs_queues" {
-  type = map
+  type = map(any)
 }
 variable "sns_topics" {
-  type = map
+  type = map(any)
 }
 variable "provision_sqs" {
-  type = string
-  default = false 
+  type        = string
+  default     = false
   description = "Enables creation of SQS/SNS resources"
 }
 
@@ -516,3 +516,20 @@ variable "dns_main_domain" {
   description = "Domain Managed under the R53 Zone"
   default     = "itgix.eu"
 }
+
+################################################################################
+# Karpenter
+################################################################################
+
+
+variable "enable_karpenter" {
+  type    = bool
+  default = false
+}
+
+variable "ec2_spot_service_role" {
+  type        = bool
+  default     = false
+  description = "Configure EC2 spot service role provisioning."
+}
+
