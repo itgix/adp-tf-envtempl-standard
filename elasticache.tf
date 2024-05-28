@@ -1,12 +1,12 @@
 module "elasticache" {
 
-  source  = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-elasticache-redis.git?ref=main"
+  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-elasticache-redis.git?ref=main"
 
   count = var.create_elasticache_redis ? 1 : 0
 
-  aws_region                 = var.region
-  environment                = var.environment
-  product_name               = var.project_name
+  aws_region   = var.region
+  environment  = var.environment
+  product_name = var.project_name
 
   vpc_id                     = module.common_vpc[0].vpc_id
   subnet_ids                 = slice(module.common_vpc[0].database_subnets, 0, 2)

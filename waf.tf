@@ -1,12 +1,12 @@
 module "wafv2_application" {
-  source                      = "git::git@gitlab.itgix.com:rnd/itgix-aws-landing-zones.git//modules/wafv2"
-  waf_enabled                 = var.application_waf_enabled
-  project                     = var.project_name
-  env                         = var.environment
-  aws_region                  = var.region
-  pid                         = var.project_name
-  web_acl_scope               = "REGIONAL"
-  waf_attachment_type         = "application" # appended to WebACL and Log Group name
+  source                         = "git::git@gitlab.itgix.com:rnd/itgix-aws-landing-zones.git//modules/wafv2"
+  waf_enabled                    = var.application_waf_enabled
+  project                        = var.project_name
+  env                            = var.environment
+  aws_region                     = var.region
+  pid                            = var.project_name
+  web_acl_scope                  = "REGIONAL"
+  waf_attachment_type            = "application"                      # appended to WebACL and Log Group name
   waf_default_action             = var.waf_default_action             # allow or block - default action if a request doesn't match any rule
   waf_geo_location_block_enforce = var.waf_geo_location_block_enforce # allow or block
   web_acl_cloudwatch_enabled     = var.waf_webacl_cloudwatch_enabled
