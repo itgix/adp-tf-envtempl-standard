@@ -102,3 +102,15 @@ output "irsa_rds_role_arn" {
   description = "ARN of the IAM Role for access to rds database"
   value       = var.create_elasticache_redis ?  module.rds_iam_auth[0].iam_role_arn : null
 }
+
+output "karpenter_queue_name" {
+    description = "Interruption queue name for karpenter"
+    value = "module.karpenter.queue_name"
+}
+
+
+output "karpenter_sa_role" {
+    description = "IRSA role for karpenter SA"
+    value = "module.karpenter.irsa_arn"
+}
+

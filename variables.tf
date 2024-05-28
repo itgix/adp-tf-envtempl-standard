@@ -516,3 +516,14 @@ variable "dns_main_domain" {
   description = "Domain Managed under the R53 Zone"
   default     = "itgix.eu"
 }
+
+################################################################################
+# Karpenter
+################################################################################
+
+variable "ec2_spot_service_role" {
+  type        = bool
+  default     = false
+  description = "Configure EC2 spot service role provisioning."
+}
+
