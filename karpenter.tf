@@ -7,10 +7,10 @@ resource "aws_iam_service_linked_role" "spot" {
 module "karpenter" {
   source                    = "terraform-aws-modules/eks/aws//modules/karpenter"
   version                   = "19.21.0"
-  cluster_name              = module.eks[0].cluster_name
+  cluster_name              = module.eks[0].eks_cluster_id
   queue_name                = local.karpenter_queue_name
   queue_managed_sse_enabled = true
-  iam_role_arn              = module.eks[0].eks_managed_node_groups["eks_workers"].iam_role_arn
+  iam_role_arn              = module.eks[0].node_iam_role
   create_iam_role           = false
 
   enable_karpenter_instance_profile_creation = true
