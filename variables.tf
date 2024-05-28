@@ -524,7 +524,7 @@ variable "dns_main_domain" {
 
 variable "enable_karpenter" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "ec2_spot_service_role" {
