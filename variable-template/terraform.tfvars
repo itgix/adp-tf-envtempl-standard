@@ -261,3 +261,7 @@ acm_certificate_enable = false
 
 dns_hosted_zone = "Z2INQZ6AA9H9SI"
 dns_main_domain = "itgix.eu"
+
+# Karpenter
+enable_karpenter = false
+ec2_spot_service_role = false
