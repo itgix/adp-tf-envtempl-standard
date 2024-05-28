@@ -5,6 +5,7 @@ resource "aws_iam_service_linked_role" "spot" {
 
 ## Karpenter
 module "karpenter" {
+  count                     = var.enable_karpenter ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws//modules/karpenter"
   version                   = "19.21.0"
   cluster_name              = module.eks[0].eks_cluster_id

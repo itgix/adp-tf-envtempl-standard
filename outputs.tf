@@ -105,12 +105,12 @@ output "irsa_rds_role_arn" {
 
 output "karpenter_queue_name" {
   description = "Interruption queue name for karpenter"
-  value       = module.karpenter.queue_name
+  value       = module.karpenter[0].queue_name
 }
 
 
 output "karpenter_sa_role" {
   description = "IRSA role for karpenter SA"
-  value       = module.karpenter.irsa_arn
+  value       = module.karpenter[0].irsa_arn
 }
 
