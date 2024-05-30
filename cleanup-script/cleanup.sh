@@ -33,7 +33,7 @@ kubectl get ing -A -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}'
 
 echo 'Delete all ingress resources. WAIT for finalizers'
 
-kubectl delete ing -A --wait=true
+kubectl delete ing --all --all-namespaces --wait=true
 
 echo "Terraform commands:
       terraform init -backend-config=<backend-var-file> -reconfigure
