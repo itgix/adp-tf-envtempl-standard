@@ -37,6 +37,6 @@ kubectl delete ing --all --all-namespaces --wait=true
 
 echo "Terraform commands:
       terraform init -backend-config=<backend-var-file> -reconfigure
-      terraform plan -destroy -var-file=<config-var-file>
+      terraform plan -destroy -var-file=<config-var-file> -out destroy_plan
       "
 exit 0
