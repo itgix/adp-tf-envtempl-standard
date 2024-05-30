@@ -1,9 +1,0 @@
-alb-controller, and external-dns controller provision AWS resources introducing dependencies, which prevent terraform destroy to complete.
-This script will disable ArgoCD applications self-healing, starting with app-of-apps, and then remove all Ingress resources with waiting for finalizers enabled.
-Deleting Ingress resources will cause said controllers to remove AWS resources they manage.
-
-Explicit app-of-apps supported:
-infra-services
-app-auto-deploy
-
-Application resources belonging to argocd namespace supported only.
