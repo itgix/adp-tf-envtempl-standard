@@ -17,13 +17,17 @@ echo 'Disable self-healing on all argocd applications, starting with app of apps
 
 for aoa in "${app_of_apps[@]}"; do
   if [ "$(getSelfHeal $aoa $argocd_ns)" == "true" ]; then
-    kubectl patch app $aoa --type='json' -p='[{"op": "replace", "path": "/spec/syncPolicy/automated/selfHeal", "value": false}]' -n $argocd_ns
+    kubectl patch app $aoa --type='json' \
+    -p='[{"op": "replace", "path": "/spec/syncPolicy/automated/selfHeal", "value": false}]' \
+    -n $argocd_ns
   fi
 done
 
 for app in $(kubectl get app -n $argocd_ns -o jsonpath='{.items[*].metadata.name}'); do
   if [ "$(getSelfHeal $app $argocd_ns)" == "true" ]; then
-    kubectl patch app $app --type='json' -p='[{"op": "replace", "path": "/spec/syncPolicy/automated/selfHeal", "value": false}]' -n $argocd_ns
+    kubectl patch app $app --type='json' \
+    -p='[{"op": "replace", "path": "/spec/syncPolicy/automated/selfHeal", "value": false}]' \
+    -n $argocd_ns
   fi
 done
 
