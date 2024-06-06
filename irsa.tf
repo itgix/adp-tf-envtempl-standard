@@ -6,11 +6,15 @@ module "rds_iam_auth" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   count   = var.rds_iam_irsa ? 1 : 0
   version = "5.34.0"
-
+  
+  assume_role_condition_test     = "StringLike"
   create_role = true
   role_name   = "rds-iam-auth-${local.eks_name}"
   role_policy_arns = {
     rds_iam_auth_policy = aws_iam_policy.rds_iam_auth.arn
+    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_kmspw = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
   }
   oidc_providers = {
     main = {

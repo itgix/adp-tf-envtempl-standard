@@ -18,6 +18,11 @@ output "eks_irsa_external_dns_arn" {
   value = module.eks[0].eks_irsa_external_dns_arn
 }
 
+output "rds_iam_auth_irsa_arn" {
+  value = module.rds_iam_auth[0].iam_role_arn
+}
+
+
 ## RDS
 output "rds_cluster_endpoint" {
   description = "RDS Cluster endpoint"
