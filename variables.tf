@@ -60,6 +60,12 @@ variable "vpc_public_subnet_ids" {
   default     = [""]
 }
 
+variable "vpc_private_route_table_ids" {
+  description = "External VPC private route table IDs"
+  type        = list(string)
+  default     = [""]
+}
+
 #########################################################################
 ##                   EKS Variables                              ##
 #########################################################################
