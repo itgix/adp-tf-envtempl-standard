@@ -12,7 +12,7 @@ module "rds_maindb" {
   project_name   = var.project_name
 
   rds_vpc_id          = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
-  rds_subnets         = var.provision_vpc ? module.common_vpc[0].private_subnets : var.vpc_private_subnet_ids
+  rds_subnets         = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
   rds_security_groups = [module.eks[0].node_security_group_id]
 
   rds_config = ({
