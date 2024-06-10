@@ -11,8 +11,8 @@ module "rds_maindb" {
   aws_account_id = var.aws_account_id
   project_name   = var.project_name
 
-  rds_vpc_id          = module.common_vpc[0].vpc_id
-  rds_subnets         = module.common_vpc[0].database_subnets
+  rds_vpc_id          = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
+  rds_subnets         = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_private_subnet_ids
   rds_security_groups = [module.eks[0].node_security_group_id]
 
   rds_config = ({
