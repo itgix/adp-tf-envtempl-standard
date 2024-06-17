@@ -107,7 +107,7 @@ output "irsa_rds_role_arn" {
   description = "ARN of the IAM Role for access to rds database"
   value       = var.create_elasticache_redis ? module.rds_iam_auth[0].iam_role_arn : null
 }
-output "redis_credentials_kms_key_arn" {
+output "redis_secrets_kms_key_arn" {
   description = "Redis Credentials kms key arn"
   value       = var.create_elasticache_redis ? module.elasticache[0].aws_kms_key.redis_secrets_kms_key.arn : null
 }
