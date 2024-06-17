@@ -109,7 +109,7 @@ output "irsa_rds_role_arn" {
 }
 output "redis_secrets_kms_key_arn" {
   description = "Redis Credentials kms key arn"
-  value       = var.create_elasticache_redis ? module.elasticache[0].redis_secrets_kms_key.arn : null
+  value       = var.create_elasticache_redis ? module.elasticache[0].redis_secrets_kms_key : null
 }
 
 output "karpenter_queue_name" {
