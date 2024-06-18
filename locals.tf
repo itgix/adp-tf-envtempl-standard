@@ -36,7 +36,8 @@ locals {
   eks_name = "eks-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
 
   secrets_kms_key_arns = [
-    module.rds_maindb[0].rds_credentials_kms_key_arn
+    module.rds_maindb[0].rds_credentials_kms_key_arn,
+    module.elasticache[0].redis_secret_kms_key_arn
   ]
 
   karpenter_queue_name           = "queue-${var.region}-${var.environment}-karpenter"
