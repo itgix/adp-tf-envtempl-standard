@@ -22,6 +22,18 @@ output "rds_iam_auth_irsa_arn" {
   value = module.rds_iam_auth[0].iam_role_arn
 }
 
+output "az1" {
+  value = module.eks[0].az1
+}
+
+output "az2" {
+  value = module.eks[0].az2
+}
+
+output "az3" {
+  value = module.eks[0].az3
+}
+
 
 ## RDS
 output "rds_cluster_endpoint" {
