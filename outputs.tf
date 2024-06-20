@@ -22,6 +22,33 @@ output "rds_iam_auth_irsa_arn" {
   value = module.rds_iam_auth[0].iam_role_arn
 }
 
+output "node_iam_role" {
+  value = module.eks[0].node_iam_role
+}
+
+output "az1" {
+  value = module.eks[0].az1
+}
+
+output "az2" {
+  value = module.eks[0].az2
+}
+
+output "az3" {
+  value = module.eks[0].az3
+}
+
+output "subnet1" {
+  value = module.eks[0].subnet1_id
+}
+
+output "subnet2" {
+  value = module.eks[0].subnet2_id
+}
+
+output "subnet3" {
+  value = module.eks[0].subnet3_id
+}
 
 ## RDS
 output "rds_cluster_endpoint" {
