@@ -26,6 +26,10 @@ output "node_iam_role" {
   value = module.eks[0].node_iam_role
 }
 
+output "node_security_group" {
+  value = module.eks[0].node_security_group_id
+}
+
 output "az1" {
   value = module.eks[0].az1
 }
