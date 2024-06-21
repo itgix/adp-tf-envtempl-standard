@@ -22,8 +22,8 @@ output "rds_iam_auth_irsa_arn" {
   value = module.rds_iam_auth[0].iam_role_arn
 }
 
-output "node_iam_role" {
-  value = module.eks[0].node_iam_role
+output "node_iam_role_name" {
+  value = module.eks[0].node_iam_role_name
 }
 
 output "node_security_group" {
