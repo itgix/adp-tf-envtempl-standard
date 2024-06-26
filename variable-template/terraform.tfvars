@@ -101,6 +101,7 @@ rds_config = {
 }
 rds_iam_auth_enabled = false
 rds_logs_exports = ["postgresql"]
+rds_default_username = "postgres"
 
 # SQS
 sqs_username = ""
