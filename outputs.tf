@@ -31,27 +31,27 @@ output "node_security_group" {
 }
 
 output "az1" {
-  value = module.eks[0].az1
+  value = data.aws_availability_zones.available.names[0]
 }
 
 output "az2" {
-  value = module.eks[0].az2
+  value = data.aws_availability_zones.available.names[1]
 }
 
 output "az3" {
-  value = module.eks[0].az3
+  value = data.aws_availability_zones.available.names[2]
 }
 
 output "subnet1" {
-  value = module.eks[0].subnet1_id
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[0] : var.vpc_private_subnet_ids[0]
 }
 
 output "subnet2" {
-  value = module.eks[0].subnet2_id
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[1] : var.vpc_private_subnet_ids[1]
 }
 
 output "subnet3" {
-  value = module.eks[0].subnet3_id
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[2] : var.vpc_private_subnet_ids[2]
 }
 
 ## RDS
