@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-rds-cluster.git?ref=development"
+  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-rds-cluster.git?ref=v1.0.0"
 
   environment = var.environment
 
