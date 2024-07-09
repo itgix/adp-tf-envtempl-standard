@@ -2,7 +2,7 @@ output "eks_cluster_arn" {
   value = module.eks[0].eks_cluster_arn
 }
 
-output  "eks_cluster_name" {
+output "eks_cluster_name" {
   value = module.eks[0].eks_cluster_id
 }
 
@@ -16,6 +16,42 @@ output "eks_cluster_endpoint" {
 
 output "eks_irsa_external_dns_arn" {
   value = module.eks[0].eks_irsa_external_dns_arn
+}
+
+output "rds_iam_auth_irsa_arn" {
+  value = module.rds_iam_auth[0].iam_role_arn
+}
+
+output "node_iam_role_name" {
+  value = module.eks[0].node_iam_role_name
+}
+
+output "node_security_group" {
+  value = module.eks[0].node_security_group_id
+}
+
+output "az1" {
+  value = data.aws_availability_zones.available.names[0]
+}
+
+output "az2" {
+  value = data.aws_availability_zones.available.names[1]
+}
+
+output "az3" {
+  value = data.aws_availability_zones.available.names[2]
+}
+
+output "subnet1" {
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[0] : var.vpc_private_subnet_ids[0]
+}
+
+output "subnet2" {
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[1] : var.vpc_private_subnet_ids[1]
+}
+
+output "subnet3" {
+  value = var.provision_vpc ? module.common_vpc[0].private_subnets[2] : var.vpc_private_subnet_ids[2]
 }
 
 ## RDS
@@ -58,3 +94,59 @@ output "rds_credentials_kms_key_arn" {
   description = "RDS Credentials kms key arn"
   value       = var.create_rds ? module.rds_maindb[0].rds_credentials_kms_key_arn : null
 }
+
+# WAF
+output "waf_webacl_arn" {
+  description = "RDS Credentials kms key arn"
+  value       = var.application_waf_enabled ? module.wafv2_application.webacl_arn : null
+}
+
+# ECR
+
+output "ecr_repository_name" {
+  description = "Name of the repository"
+  value       = module.ecr.repository_name
+}
+
+output "ecr_repository_arn" {
+  description = "Full ARN of the repository"
+  value       = module.ecr.repository_arn
+}
+
+output "ecr_repository_registry_id" {
+  description = "The registry ID where the repository was created"
+  value       = module.ecr.repository_registry_id
+}
+
+output "ecr_repository_url" {
+  description = "The URL of the repository (in the form `aws_account_id.dkr.ecr.region.amazonaws.com/repositoryName`)"
+  value       = module.ecr.repository_url
+}
+
+# Elasticache Redis
+
+output "redis_reader_endpoint_address" {
+  description = "The address of the endpoint for the reader node in the replication group, if the cluster mode is disabled."
+  value       = var.create_elasticache_redis ? module.elasticache[0].redis_reader_endpoint_address : null
+}
+
+output "redis_primary_endpoint_address" {
+  description = "Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode"
+  value       = var.create_elasticache_redis ? module.elasticache[0].redis_primary_endpoint_address : null
+}
+output "irsa_rds_role_arn" {
+  description = "ARN of the IAM Role for access to rds database"
+  value       = var.create_elasticache_redis ? module.rds_iam_auth[0].iam_role_arn : null
+}
+
+output "karpenter_queue_name" {
+  description = "Interruption queue name for karpenter"
+  value       = var.enable_karpenter ? module.karpenter[0].queue_name : null
+}
+
+
+output "karpenter_sa_role" {
+  description = "IRSA role for karpenter SA"
+  value       = var.enable_karpenter ? module.karpenter[0].irsa_arn : null
+}
+

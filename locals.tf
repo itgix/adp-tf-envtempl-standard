@@ -23,6 +23,11 @@ locals {
     "us-west-2"      = "uw2"
   }
 
+  aws_default_tags = {
+    "platform:environment" = "${var.environment}"
+    "platform:customer"    = "${var.project_name}"
+  }
+
 
   vpc_name = "vpc-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-common"
 
@@ -30,8 +35,16 @@ locals {
 
   eks_name = "eks-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
 
-  secrets_kms_key_arns = [
-    module.rds_maindb[0].rds_credentials_kms_key_arn
-  ]
+  # compact function will remove null elements from list to not interfere with jsonencode afterwards
+  secrets_kms_key_arns = compact([
+    length(module.rds_maindb) > 0 ? module.rds_maindb[0].rds_credentials_kms_key_arn : null ,
+    length(module.elasticache) > 0 ? module.elasticache[0].redis_secret_kms_key_arn : null
+  ])
+
+  karpenter_queue_name           = "queue-${var.region}-${var.environment}-karpenter"
+  karpenter_namespace            = "karpenter"
+  karpenter_service_account_name = "karpenter"
+
 
 }
+

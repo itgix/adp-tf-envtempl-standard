@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source  = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-rds-cluster.git?ref=development"
+  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-rds-cluster.git?ref=development"
 
   environment = var.environment
 
@@ -11,8 +11,8 @@ module "rds_maindb" {
   aws_account_id = var.aws_account_id
   project_name   = var.project_name
 
-  rds_vpc_id        = module.common_vpc.vpc_id
-  rds_subnets       = module.common_vpc.database_subnets
+  rds_vpc_id          = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
+  rds_subnets         = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
   rds_security_groups = [module.eks[0].node_security_group_id]
 
   rds_config = ({
@@ -30,8 +30,8 @@ module "rds_maindb" {
     max_capacity = var.rds_scaling_config.max_capacity
   })
 
-  rds_iam_auth_enabled  = var.rds_iam_auth_enabled
-  rds_default_username  = var.rds_default_username
+  rds_iam_auth_enabled = var.rds_iam_auth_enabled
+  rds_default_username = var.rds_default_username
 
   rds_logs_exports = var.rds_logs_exports
 

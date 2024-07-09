@@ -1,10 +1,7 @@
 terraform {
   required_version = "~> 1.1"
-  backend "s3" {
-    region = "eu-central-1"
-    key    = "terraform.tfstate"
-    bucket = "itgix-dev-ec1-terraform-state-backend"
-  }
+  backend "s3" {}
+
 
 
   required_providers {
@@ -21,6 +18,12 @@ terraform {
 
 provider "aws" {
   region = var.region
+}
+
+# needed for WAF module
+provider "aws" {
+  alias  = "virginia"
+  region = "us-east-1"
 }
 
 provider "kubernetes" {

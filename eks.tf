@@ -17,25 +17,28 @@ module "eks" {
   cluster_log_retention_in_days = var.cluster_log_retention_in_days
   addons_versions               = var.addons_versions
 
-  vpc_id                   = module.common_vpc.vpc_id
-  subnet_ids               = module.common_vpc.private_subnets
-  control_plane_subnet_ids = module.common_vpc.public_subnets
+  vpc_id                   = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
+  subnet_ids               = var.provision_vpc ? module.common_vpc[0].private_subnets : var.vpc_private_subnet_ids
+  control_plane_subnet_ids = var.provision_vpc ? module.common_vpc[0].public_subnets : var.vpc_public_subnet_ids
 
-  eks_ami_type                 = var.eks_ami_type
-  eks_disk_size                = var.eks_disk_size
-  eks_instance_types           = var.eks_instance_types
-  eks_volume_type              = var.eks_volume_type
-  eks_volume_iops              = var.eks_volume_iops
+
+  eks_ami_type       = var.eks_ami_type
+  eks_disk_size      = var.eks_disk_size
+  eks_instance_types = var.eks_instance_types
+  eks_volume_type    = var.eks_volume_type
+  eks_volume_iops    = var.eks_volume_iops
 
   eks_ng_min_size      = var.eks_ng_min_size
   eks_ng_max_size      = var.eks_ng_max_size
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
 
+  eks_aws_auth_roles = var.eks_aws_auth_roles
   eks_aws_auth_users = var.eks_aws_auth_users
+  eks_aws_users_path = var.eks_aws_users_path
 
-  eks_tags = var.aws_default_tags
+  eks_tags = local.aws_default_tags
 
-  kms_key_users = var.eks_kms_key_users
+  kms_key_users        = var.eks_kms_key_users
   secrets_kms_key_arns = local.secrets_kms_key_arns
 }
