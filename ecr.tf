@@ -1,5 +1,5 @@
 module "ecr" {
-  source                = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-container-registry.git?ref=development"
+  source                = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-container-registry.git?ref=v1.0.0"
   ecr_create_repository = var.provision_ecr
 
   aws_region   = var.region
