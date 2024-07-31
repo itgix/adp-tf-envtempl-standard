@@ -106,7 +106,7 @@ rds_default_username = "postgres"
 # SQS
 sqs_username = ""
 sqs_iam_role_name = ""
-provision_sqs = true
+provision_sqs = false
 sqs_queues = {
   card-service_config = {
     sns_topic_name            = "config_topic"
