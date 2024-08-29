@@ -216,30 +216,36 @@ waf_country_codes_match = [
   "RU"
 ]
 aws_managed_waf_rule_groups = [
+  // Baseline rule groups
   {
-    "name"     = "AWSManagedRulesAdminProtectionRuleSet"
-    "priority" = 1
-    "action"   = "none"
+    name                    = "AWSManagedRulesAdminProtectionRuleSet"
+    priority                = 1
+    action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesCommonRuleSet"
     "priority" = 2
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
     "priority" = 3
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesLinuxRuleSet"
     "priority" = 4
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesSQLiRuleSet"
     "priority" = 5
     "action"   = "none"
+    rules_override_to_count = []
   }
 ]
 provision_ecr                       = false
