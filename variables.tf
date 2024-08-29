@@ -327,12 +327,14 @@ variable "waf_country_codes_match" {}
 variable "waf_log_retention_days" {}
 variable "aws_managed_waf_rule_groups" {
   type = list(any)
-  default =  {
-    name                    = "AWSManagedRulesAdminProtectionRuleSet"
-    priority                = 1
-    action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
-    rules_override_to_count = []
-  }
+  default =  [
+    {
+      name                    = "AWSManagedRulesAdminProtectionRuleSet"
+      priority                = 1
+      action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
+      rules_override_to_count = []
+    }
+  ]
 }
 
 #########################################################################
