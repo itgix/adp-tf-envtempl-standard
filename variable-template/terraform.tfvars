@@ -105,22 +105,24 @@ rds_scaling_config = {
   "max_capacity" = 2
 }
 rds_config = {
-  "engine"         = "aurora-postgresql"
-  "engine_version" = 14.9
-  "engine_mode"    = "provisioned"
-  "cluster_family" = "aurora-postgresql14"
-  "cluster_size"   = 1
-  "db_port"        = 5432
-  "db_name"        = ""
+    engine         = "aurora-postgresql"
+    engine_version = "14.9"
+    engine_mode    = "provisioned"
+    cluster_family = "aurora-postgresql14"
+    cluster_size   = 1
+    db_port        = 5432
+    db_name        = ""
 }
 rds_iam_auth_enabled = false
 rds_logs_exports = [
   "postgresql"
 ]
 rds_default_username = "postgres"
-sqs_username         = ""
-sqs_iam_role_name    = ""
-provision_sqs        = false
+
+# SQS
+sqs_username = ""
+sqs_iam_role_name = ""
+provision_sqs = false
 sqs_queues = {
   "card-service_config" = {
     "sns_topic_name" = "config_topic"
