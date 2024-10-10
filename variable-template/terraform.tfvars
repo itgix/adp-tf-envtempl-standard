@@ -124,8 +124,8 @@ sqs_username = ""
 sqs_iam_role_name = ""
 provision_sqs = false
 sqs_queues = {
-  "card-service_config" = {
-    "sns_topic_name" = "config_topic"
+  "sample-service_topic" = {
+    "sns_topic_name" = "sample_topic"
     "dlq_enable"     = false
   }
   "adyen-connector_config" = {
