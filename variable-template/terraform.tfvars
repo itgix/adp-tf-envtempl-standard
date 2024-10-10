@@ -131,6 +131,7 @@ sqs_queues = {
   "sample-secondservice_queue" = {
     "sns_topic_name" = "sample_topic"
     "dlq_enable"     = false
+  }
 }
 sns_topics = {
   "sample_topic" = {
