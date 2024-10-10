@@ -327,35 +327,13 @@ variable "waf_country_codes_match" {}
 variable "waf_log_retention_days" {}
 variable "aws_managed_waf_rule_groups" {
   type = list(any)
-  default = [
-    // Baseline rule groups
+  default =  [
     {
-      name     = "AWSManagedRulesAdminProtectionRuleSet"
-      priority = 1
-      action   = "none"
-    },
-    {
-      name     = "AWSManagedRulesCommonRuleSet"
-      priority = 2
-      action   = "none"
-    },
-    {
-      name     = "AWSManagedRulesKnownBadInputsRuleSet"
-      priority = 3
-      action   = "none"
-    },
-    // Use-case specific rule groups
-    {
-      name     = "AWSManagedRulesLinuxRuleSet"
-      priority = 4
-      action   = "none"
-    },
-    {
-      name     = "AWSManagedRulesSQLiRuleSet"
-      priority = 5
-      action   = "none"
+      name                    = "AWSManagedRulesAdminProtectionRuleSet"
+      priority                = 1
+      action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
+      rules_override_to_count = []
     }
-
   ]
 }
 

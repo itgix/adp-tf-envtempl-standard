@@ -3,7 +3,7 @@ region         = "ap-south-1"
 project_name   = "seva"
 aws_account_id = "253490778887"
 rds_iam_irsa   = true
-provision_vpc  = false
+provision_vpc  = true
 vpc_cidr       = "10.51.0.0/16"
 vpc_id         = "vpc-055db3bf67a2ee634"
 vpc_private_subnet_ids = [
@@ -124,81 +124,19 @@ sqs_username = ""
 sqs_iam_role_name = ""
 provision_sqs = false
 sqs_queues = {
-  "card-service_config" = {
-    "sns_topic_name" = "config_topic"
+  "sample-service_queue" = {
+    "sns_topic_name" = "sample_topic"
     "dlq_enable"     = false
   }
-  "adyen-connector_config" = {
-    "sns_topic_name" = "config_topic"
+  "sample-secondservice_queue" = {
+    "sns_topic_name" = "sample_topic"
     "dlq_enable"     = false
-  }
-  "checkout-connector_config" = {
-    "sns_topic_name" = "config_topic"
-    "dlq_enable"     = false
-  }
-  "amex-connector_config" = {
-    "sns_topic_name" = "config_topic"
-    "dlq_enable"     = false
-  }
-  "card-service_assets" = {
-    "sns_topic_name" = "assets"
-    "dlq_enable"     = false
-  }
-  "card-service_payment-events" = {
-    "sns_topic_name" = "payment-events"
-    "dlq_enable"     = false
-  }
-  "payment-service_payments" = {
-    "sns_topic_name" = "payments"
-    "dlq_enable"     = false
-  }
-  "reporting-service_settlements" = {
-    "sns_topic_name" = "settlements"
-    "dlq_enable"     = false
-  }
-  "reporting-service_payment-events" = {
-    "sns_topic_name" = "payment-events"
-    "dlq_enable"     = false
-  }
-  "paypal-service_assets" = {
-    "sns_topic_name" = "assets"
-    "dlq_enable"     = false
-  }
-  "reporting-service_assets" = {
-    "sns_topic_name" = "assets"
-    "dlq_enable"     = false
-  }
-  "notification-service_payments" = {
-    "sns_topic_name" = "payments"
-    "dlq_enable"     = false
-  }
-  "notification-service_assets" = {
-    "sns_topic_name" = "assets"
-    "dlq_enable"     = false
-  }
-  "notification-service_payment-events" = {
-    "sns_topic_name" = "payment-events"
-    "dlq_enable"     = false
-  }
-  "notification-service_settlements" = {
-    "sns_topic_name" = "settlements"
-    "dlq_enable"     = false
-  }
 }
 sns_topics = {
-  "config_topic" = {
+  "sample_topic" = {
     "enable_fifo" = false
   }
-  "assets" = {
-    "enable_fifo" = false
-  }
-  "payments" = {
-    "enable_fifo" = false
-  }
-  "payment-events" = {
-    "enable_fifo" = false
-  }
-  "settlements" = {
+  "sample_second_topic" = {
     "enable_fifo" = false
   }
 }
@@ -216,30 +154,36 @@ waf_country_codes_match = [
   "RU"
 ]
 aws_managed_waf_rule_groups = [
+  // Baseline rule groups
   {
-    "name"     = "AWSManagedRulesAdminProtectionRuleSet"
-    "priority" = 1
-    "action"   = "none"
+    name                    = "AWSManagedRulesAdminProtectionRuleSet"
+    priority                = 1
+    action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesCommonRuleSet"
     "priority" = 2
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
     "priority" = 3
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesLinuxRuleSet"
     "priority" = 4
     "action"   = "none"
+    rules_override_to_count = []
   },
   {
     "name"     = "AWSManagedRulesSQLiRuleSet"
     "priority" = 5
     "action"   = "none"
+    rules_override_to_count = []
   }
 ]
 provision_ecr                       = false
