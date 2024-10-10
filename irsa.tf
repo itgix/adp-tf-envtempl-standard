@@ -24,6 +24,8 @@ module "rds_iam_auth" {
   }
 }
 
+
+
 resource "aws_iam_policy" "rds_iam_auth" {
 
   name_prefix = "rds_iam_auth"
@@ -39,6 +41,50 @@ resource "aws_iam_policy" "rds_iam_auth" {
             "Effect": "Allow",
             "Resource": "arn:aws:rds-db:${var.region}:${var.aws_account_id}:dbuser:*/*",
             "Sid": "AllowRDSiamAccess"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+EOT
+}
+
+
+##########################
+#IRSA for ITGix ADP agent   #
+##########################
+module "irsa_itgix_adp_agent" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test     = "StringLike"
+  create_role = true
+  role_name   = "irsa-itgix-adp-${local.eks_name}"
+  role_policy_arns = {
+    itgix_adp_agent_policy = aws_iam_policy.irsa_itgix_adp_agent.arn
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["*:*"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "irsa_itgix_adp_agent" {
+
+  name_prefix = "irsa_itgix_adp_agent"
+  description = "Policy for ServiceAccounts allowing calls to AWS metering API for cluster ${local.eks_name}"
+  policy      = <<EOT
+{
+    "Statement": [
+        {
+            "Action": [
+                "aws-marketplace:RegisterUsage",
+                "aws-marketplace:MeterUsage"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
         }
     ],
     "Version": "2012-10-17"

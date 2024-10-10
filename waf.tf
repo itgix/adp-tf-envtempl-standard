@@ -1,5 +1,5 @@
 module "wafv2_application" {
-  source                         = "git::git@gitlab.itgix.com:rnd/aws-landing-zones/terraform-modules/wafv2.git?ref=v1"
+  source                         = "git::git@gitlab.itgix.com:itgix-public/terraform-modules/wafv2.git?ref=v1"
   waf_enabled                    = var.application_waf_enabled
   project                        = var.project_name
   env                            = var.environment
@@ -18,7 +18,7 @@ module "wafv2_application" {
 }
 
 module "wafv2_cloudfront" {
-  source      = "git::git@gitlab.itgix.com:rnd/aws-landing-zones/terraform-modules/wafv2.git?ref=v1"
+  source      = "git::git@gitlab.itgix.com:itgix-public/terraform-modules/wafv2.git?ref=v1"
   waf_enabled = var.cloudfront_waf_enabled
 
   providers = {
