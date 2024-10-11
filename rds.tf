@@ -15,6 +15,8 @@ module "rds_maindb" {
   rds_subnets         = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
   rds_security_groups = [module.eks[0].node_security_group_id]
 
+  rds_allowed_cidr_blocks = var.rds_allowed_cidr_blocks
+
   rds_config = ({
     engine         = var.rds_config.engine
     engine_version = var.rds_config.engine_version

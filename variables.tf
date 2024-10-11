@@ -66,6 +66,12 @@ variable "vpc_private_route_table_ids" {
   default     = [""]
 }
 
+variable "rds_allowed_cidr_blocks" {
+  type        = list(string)
+  default     = []
+  description = "List of CIDRs to be allowed to connect to the DB instance"
+}
+
 #########################################################################
 ##                   EKS Variables                              ##
 #########################################################################

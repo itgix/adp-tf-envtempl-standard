@@ -118,6 +118,7 @@ rds_logs_exports = [
   "postgresql"
 ]
 rds_default_username = "postgres"
+rds_allowed_cidr_blocks = []
 
 # SQS
 sqs_username = ""
