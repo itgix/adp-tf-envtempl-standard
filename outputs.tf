@@ -150,3 +150,7 @@ output "karpenter_sa_role" {
   value       = var.enable_karpenter ? module.karpenter[0].irsa_arn : null
 }
 
+output "fluentbit_sa_role_arn" {
+  description = "IAM Role ARN for Fluent Bit Service Account"
+  value       = module.irsa_fluentbit_cloudwatch.iam_role_arn
+}
