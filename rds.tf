@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-rds-cluster.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-rds.git?ref=v1.0.1"
 
   environment = var.environment
 
@@ -14,6 +14,8 @@ module "rds_maindb" {
   rds_vpc_id          = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
   rds_subnets         = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
   rds_security_groups = [module.eks[0].node_security_group_id]
+
+  rds_allowed_cidr_blocks = var.rds_allowed_cidr_blocks
 
   rds_config = ({
     engine         = var.rds_config.engine

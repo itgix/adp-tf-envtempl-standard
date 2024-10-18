@@ -1,7 +1,7 @@
 environment    = "dev"
-region         = "ap-south-1"
-project_name   = "seva"
-aws_account_id = "253490778887"
+region         = "eu-west-1"
+project_name   = "test"
+aws_account_id = "722377226063"
 rds_iam_irsa   = true
 provision_vpc  = true
 vpc_cidr       = "10.51.0.0/16"
@@ -118,6 +118,7 @@ rds_logs_exports = [
   "postgresql"
 ]
 rds_default_username = "postgres"
+rds_allowed_cidr_blocks = []
 
 # SQS
 sqs_username = ""
@@ -221,7 +222,7 @@ redis_cloudwatch_logs_enabled    = true
 redis_multi_az_enabled           = false
 redis_automatic_failover_enabled = false
 acm_certificate_enable           = true
-dns_hosted_zone                  = "Z0284046LY2B1N8REV07"
-dns_main_domain                  = "dev.sevamoney.com"
+dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
+dns_main_domain                  = "itgix.eu"
 enable_karpenter                 = false
 ec2_spot_service_role            = false

@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/elastic-kubernetes-service.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.0.0"
   count  = var.provision_eks ? 1 : 0
 
   providers = {

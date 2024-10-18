@@ -1,5 +1,5 @@
 module "sqs_dev" {
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/sqs-sns.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-sqs-sns.git?ref=v1.0.0"
   count  = var.provision_sqs ? 1 : 0
 
   sqs_username      = var.sqs_username

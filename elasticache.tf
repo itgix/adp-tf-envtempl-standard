@@ -1,6 +1,6 @@
 module "elasticache" {
 
-  source = "git::git@gitlab.itgix.com:rnd/app-platform/iac-modules/aws-elasticache-redis.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-redis.git?ref=v1.0.0"
 
   count = var.create_elasticache_redis ? 1 : 0
 
