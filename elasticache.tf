@@ -15,7 +15,7 @@ module "elasticache" {
   automatic_failover_enabled = var.redis_automatic_failover_enabled
   engine_version             = var.redis_engine_version
   family                     = var.redis_family
-  allowed_cidr_blocks        = var.redis_allowed_cidr_blocks
+  allowed_cidr_blocks        = local.redis_allowed_cidr_blocks
   allowed_security_group_ids = var.redis_allowed_security_group_ids
 
 }
