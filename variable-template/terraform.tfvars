@@ -105,25 +105,25 @@ rds_scaling_config = {
   "max_capacity" = 2
 }
 rds_config = {
-    engine         = "aurora-postgresql"
-    engine_version = "14.9"
-    engine_mode    = "provisioned"
-    cluster_family = "aurora-postgresql14"
-    cluster_size   = 1
-    db_port        = 5432
-    db_name        = ""
+  engine         = "aurora-postgresql"
+  engine_version = "14.9"
+  engine_mode    = "provisioned"
+  cluster_family = "aurora-postgresql14"
+  cluster_size   = 1
+  db_port        = 5432
+  db_name        = ""
 }
 rds_iam_auth_enabled = false
 rds_logs_exports = [
   "postgresql"
 ]
-rds_default_username = "postgres"
+rds_default_username    = "postgres"
 rds_allowed_cidr_blocks = []
 
 # SQS
-sqs_username = ""
+sqs_username      = ""
 sqs_iam_role_name = ""
-provision_sqs = false
+provision_sqs     = false
 sqs_queues = {
   "sample-service_queue" = {
     "sns_topic_name" = "sample_topic"
@@ -164,27 +164,27 @@ aws_managed_waf_rule_groups = [
     rules_override_to_count = []
   },
   {
-    "name"     = "AWSManagedRulesCommonRuleSet"
-    "priority" = 2
-    "action"   = "none"
+    "name"                  = "AWSManagedRulesCommonRuleSet"
+    "priority"              = 2
+    "action"                = "none"
     rules_override_to_count = []
   },
   {
-    "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
-    "priority" = 3
-    "action"   = "none"
+    "name"                  = "AWSManagedRulesKnownBadInputsRuleSet"
+    "priority"              = 3
+    "action"                = "none"
     rules_override_to_count = []
   },
   {
-    "name"     = "AWSManagedRulesLinuxRuleSet"
-    "priority" = 4
-    "action"   = "none"
+    "name"                  = "AWSManagedRulesLinuxRuleSet"
+    "priority"              = 4
+    "action"                = "none"
     rules_override_to_count = []
   },
   {
-    "name"     = "AWSManagedRulesSQLiRuleSet"
-    "priority" = 5
-    "action"   = "none"
+    "name"                  = "AWSManagedRulesSQLiRuleSet"
+    "priority"              = 5
+    "action"                = "none"
     rules_override_to_count = []
   }
 ]
@@ -226,3 +226,5 @@ dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
 dns_main_domain                  = "itgix.eu"
 enable_karpenter                 = false
 ec2_spot_service_role            = false
+custom_secrets = [
+]
