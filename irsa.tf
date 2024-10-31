@@ -6,15 +6,15 @@ module "rds_iam_auth" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   count   = var.rds_iam_irsa ? 1 : 0
   version = "5.34.0"
-  
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "rds-iam-auth-${local.eks_name}"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "rds-iam-auth-${local.eks_name}"
   role_policy_arns = {
     rds_iam_auth_policy = aws_iam_policy.rds_iam_auth.arn
-    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
-    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
-    policy_kmspw = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
+    policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_kmspw        = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
   }
   oidc_providers = {
     main = {
@@ -57,9 +57,9 @@ module "irsa_itgix_adp_agent" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "irsa-itgix-adp-${local.eks_name}"
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "irsa-itgix-adp-${local.eks_name}"
   role_policy_arns = {
     itgix_adp_agent_policy = aws_iam_policy.irsa_itgix_adp_agent.arn
   }
@@ -100,9 +100,9 @@ module "irsa_fluentbit_cloudwatch" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "irsa-fluentbit-cloudwatch-${local.eks_name}"
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "irsa-fluentbit-cloudwatch-${local.eks_name}"
   role_policy_arns = {
     aws_managed_policy = "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
   }

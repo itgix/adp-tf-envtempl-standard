@@ -333,7 +333,7 @@ variable "waf_country_codes_match" {}
 variable "waf_log_retention_days" {}
 variable "aws_managed_waf_rule_groups" {
   type = list(any)
-  default =  [
+  default = [
     {
       name                    = "AWSManagedRulesAdminProtectionRuleSet"
       priority                = 1
@@ -523,3 +523,25 @@ variable "ec2_spot_service_role" {
   description = "Configure EC2 spot service role provisioning."
 }
 
+################################################################################
+# Custom Secrets Variables - ITGix tf-module-awssm-passgen
+################################################################################
+
+
+variable "custom_secrets" {
+  description = "List of custom secrets to create"
+  type = list(object({
+    secret_name      = string
+    length           = optional(number)
+    special          = optional(bool)
+    override_special = optional(string)
+    keepers          = optional(map(string))
+    manual           = optional(bool, false)
+  }))
+}
+
+variable "custom_secret_keepers" {
+  description = "Map of keepers for the secrets"
+  type        = map(map(string))
+  default     = {}
+}
