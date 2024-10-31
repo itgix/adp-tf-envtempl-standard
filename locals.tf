@@ -37,7 +37,7 @@ locals {
 
   # compact function will remove null elements from list to not interfere with jsonencode afterwards
   secrets_kms_key_arns = compact([
-    length(module.rds_maindb) > 0 ? module.rds_maindb[0].rds_credentials_kms_key_arn : null ,
+    length(module.rds_maindb) > 0 ? module.rds_maindb[0].rds_credentials_kms_key_arn : null,
     length(module.elasticache) > 0 ? module.elasticache[0].redis_secret_kms_key_arn : null
   ])
 
@@ -45,6 +45,7 @@ locals {
   karpenter_namespace            = "karpenter"
   karpenter_service_account_name = "karpenter"
 
+  redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
 }
 
