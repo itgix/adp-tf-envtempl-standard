@@ -147,7 +147,7 @@ output "karpenter_queue_name" {
 
 output "karpenter_sa_role" {
   description = "IRSA role for karpenter SA"
-  value       = var.enable_karpenter ? module.karpenter[0].irsa_arn : null
+  value       = var.enable_karpenter ? module.irsa_karpenter.iam_role_arn : null
 }
 
 output "fluentbit_sa_role_arn" {
