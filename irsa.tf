@@ -113,3 +113,131 @@ module "irsa_fluentbit_cloudwatch" {
     }
   }
 }
+
+#############################################
+#IRSA for Karpenter                         #
+#############################################
+resource "aws_iam_policy" "irsa_karpenter" {
+
+  name_prefix = "irsa_karpenter"
+  description = "Policy for Karpenter ServiceAccounts for cluster ${local.eks_name}"
+  policy      = <<EOT
+{
+    "Statement": [
+        {
+            "Action": [
+                "pricing:GetProducts",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSpotPriceHistory",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:DescribeImages",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:CreateTags",
+                "ec2:CreateLaunchTemplate",
+                "ec2:CreateFleet"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Action": [
+                "ec2:TerminateInstances",
+                "ec2:DeleteLaunchTemplate"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "ec2:ResourceTag/karpenter.sh/discovery": "eks-as0-dev-seva"
+                }
+            },
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Action": "ec2:RunInstances",
+            "Condition": {
+                "StringEquals": {
+                    "ec2:ResourceTag/karpenter.sh/discovery": "eks-as0-dev-seva"
+                }
+            },
+            "Effect": "Allow",
+            "Resource": "arn:aws:ec2:*:253490778887:launch-template/*"
+        },
+        {
+            "Action": "ec2:RunInstances",
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:ec2:*::snapshot/*",
+                "arn:aws:ec2:*::image/*",
+                "arn:aws:ec2:*:*:volume/*",
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:spot-instances-request/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:ec2:*:*:instance/*"
+            ]
+        },
+        {
+            "Action": "ssm:GetParameter",
+            "Effect": "Allow",
+            "Resource": "arn:aws:ssm:*:*:parameter/aws/service/*"
+        },
+        {
+            "Action": "eks:DescribeCluster",
+            "Effect": "Allow",
+            "Resource": "arn:aws:eks:*:253490778887:cluster/eks-as0-dev-seva"
+        },
+        {
+            "Action": "iam:PassRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::253490778887:role/eks-as0-dev-seva-ng-eks-node-group-20240821134658324600000008"
+        },
+        {
+            "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes",
+                "sqs:DeleteMessage"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:sqs:ap-south-1:253490778887:queue-ap-south-1-dev-karpenter"
+        },
+        {
+            "Action": [
+                "iam:TagInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:GetInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:CreateInstanceProfile",
+                "iam:AddRoleToInstanceProfile"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+EOT
+}
+
+module "irsa_karpenter" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "irsa-karpenter-${local.eks_name}"
+  role_policy_arns = {
+    itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter.arn
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["${local.karpenter_namespace}:karpenter"]
+    }
+  }
+}
