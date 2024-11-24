@@ -230,7 +230,7 @@ module "irsa_karpenter" {
 
   assume_role_condition_test = "StringLike"
   create_role                = true
-  role_name                  = "irsa-karpenter-${local.eks_name}"
+  role_name                  = "KarpenterIRSA-${local.eks_name}"
   role_policy_arns = {
     itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter.arn
   }
