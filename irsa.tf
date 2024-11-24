@@ -150,7 +150,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
             ],
             "Condition": {
                 "StringEquals": {
-                    "ec2:ResourceTag/karpenter.sh/discovery": "eks-as0-dev-seva"
+                    "ec2:ResourceTag/karpenter.sh/discovery": "${local.eks_name}"
                 }
             },
             "Effect": "Allow",
@@ -160,11 +160,11 @@ resource "aws_iam_policy" "irsa_karpenter" {
             "Action": "ec2:RunInstances",
             "Condition": {
                 "StringEquals": {
-                    "ec2:ResourceTag/karpenter.sh/discovery": "eks-as0-dev-seva"
+                    "ec2:ResourceTag/karpenter.sh/discovery": "${local.eks_name}"
                 }
             },
             "Effect": "Allow",
-            "Resource": "arn:aws:ec2:*:253490778887:launch-template/*"
+            "Resource": "arn:aws:ec2:*:${var.aws_account_id}:launch-template/*"
         },
         {
             "Action": "ec2:RunInstances",
@@ -188,12 +188,12 @@ resource "aws_iam_policy" "irsa_karpenter" {
         {
             "Action": "eks:DescribeCluster",
             "Effect": "Allow",
-            "Resource": "arn:aws:eks:*:253490778887:cluster/eks-as0-dev-seva"
+            "Resource": "arn:aws:eks:*:${var.aws_account_id}:cluster/${local.eks_name}"
         },
         {
             "Action": "iam:PassRole",
             "Effect": "Allow",
-            "Resource": "arn:aws:iam::253490778887:role/eks-as0-dev-seva-ng-eks-node-group-20240821134658324600000008"
+            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-ng-eks-node-group-*"
         },
         {
             "Action": [
@@ -203,7 +203,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "sqs:DeleteMessage"
             ],
             "Effect": "Allow",
-            "Resource": "arn:aws:sqs:ap-south-1:253490778887:queue-ap-south-1-dev-karpenter"
+            "Resource": "arn:aws:sqs:${var.region}:${var.aws_account_id}:queue-${var.region}-${var.environment}-karpenter"
         },
         {
             "Action": [
@@ -228,7 +228,7 @@ module "irsa_karpenter" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
-  assume_role_condition_test = "StringLike"
+  assume_role_condition_test = "StringEquals"
   create_role                = true
   role_name                  = "KarpenterIRSA-${local.eks_name}"
   role_policy_arns = {
