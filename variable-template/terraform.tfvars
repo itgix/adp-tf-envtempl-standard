@@ -206,7 +206,7 @@ ecr_registry_scan_rules = [
 
 ]
 ecr_create_lifecycle_policy = false
-create_elasticache_redis    = true
+create_elasticache_redis    = false
 redis_cluster_size          = 1
 redis_cluster_mode_enabled  = false
 redis_instance_type         = "cache.t3.medium"
