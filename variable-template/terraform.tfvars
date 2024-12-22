@@ -1,10 +1,10 @@
-environment    = "dev"
+environment    = "min"
 region         = "eu-west-1"
-project_name   = "test"
+project_name   = "igxadp"
 aws_account_id = "722377226063"
 rds_iam_irsa   = true
 provision_vpc  = true
-vpc_cidr       = "10.51.0.0/16"
+vpc_cidr       = "10.56.0.0/16"
 vpc_id         = "vpc-055db3bf67a2ee634"
 vpc_private_subnet_ids = [
   "subnet-083c40359b035bf78",
@@ -40,10 +40,22 @@ eks_aws_auth_roles = [
     ]
   }
 ]
-eks_aws_users_path = "/"
+eks_aws_users_path = "/users/"
 eks_aws_auth_users = [
   {
     "username" = "ytodorov"
+    "groups" = [
+      "system:masters"
+    ]
+  },
+  {
+    "username" = "mvukadinoff"
+    "groups" = [
+      "system:masters"
+    ]
+  },
+  {
+    "username" = "htonev"
     "groups" = [
       "system:masters"
     ]
@@ -61,31 +73,13 @@ eks_aws_auth_users = [
     ]
   },
   {
-    "username" = "vdimitrov"
+    "username" = "tkazanova"
     "groups" = [
       "system:masters"
     ]
   },
   {
-    "username" = "dmilanov"
-    "groups" = [
-      "system:masters"
-    ]
-  },
-  {
-    "username" = "nkazakov"
-    "groups" = [
-      "system:masters"
-    ]
-  },
-  {
-    "username" = "htonev"
-    "groups" = [
-      "system:masters"
-    ]
-  },
-  {
-    "username" = "mvukadinoff"
+    "username" = "sracheva"
     "groups" = [
       "system:masters"
     ]
@@ -105,22 +99,22 @@ rds_scaling_config = {
   "max_capacity" = 2
 }
 rds_config = {
-  engine         = "aurora-postgresql"
-  engine_version = "14.9"
-  engine_mode    = "provisioned"
-  cluster_family = "aurora-postgresql14"
-  cluster_size   = 1
-  db_port        = 5432
-  db_name        = ""
+  "engine"         = "aurora-postgresql"
+  "engine_version" = "14.9"
+  "engine_mode"    = "provisioned"
+  "cluster_family" = "aurora-postgresql14"
+  "cluster_size"   = 1
+  "db_port"        = 5432
+  "db_name"        = ""
 }
 rds_iam_auth_enabled = false
 rds_logs_exports = [
   "postgresql"
 ]
-rds_default_username    = "postgres"
-rds_allowed_cidr_blocks = []
+rds_default_username = "postgres"
+rds_allowed_cidr_blocks = [
 
-# SQS
+]
 sqs_username      = ""
 sqs_iam_role_name = ""
 provision_sqs     = false
@@ -156,36 +150,45 @@ waf_country_codes_match = [
   "RU"
 ]
 aws_managed_waf_rule_groups = [
-  // Baseline rule groups
   {
-    name                    = "AWSManagedRulesAdminProtectionRuleSet"
-    priority                = 1
-    action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
-    rules_override_to_count = []
+    "name"     = "AWSManagedRulesAdminProtectionRuleSet"
+    "priority" = 1
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
   },
   {
-    "name"                  = "AWSManagedRulesCommonRuleSet"
-    "priority"              = 2
-    "action"                = "none"
-    rules_override_to_count = []
+    "name"     = "AWSManagedRulesCommonRuleSet"
+    "priority" = 2
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
   },
   {
-    "name"                  = "AWSManagedRulesKnownBadInputsRuleSet"
-    "priority"              = 3
-    "action"                = "none"
-    rules_override_to_count = []
+    "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
+    "priority" = 3
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
   },
   {
-    "name"                  = "AWSManagedRulesLinuxRuleSet"
-    "priority"              = 4
-    "action"                = "none"
-    rules_override_to_count = []
+    "name"     = "AWSManagedRulesLinuxRuleSet"
+    "priority" = 4
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
   },
   {
-    "name"                  = "AWSManagedRulesSQLiRuleSet"
-    "priority"              = 5
-    "action"                = "none"
-    rules_override_to_count = []
+    "name"     = "AWSManagedRulesSQLiRuleSet"
+    "priority" = 5
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
   }
 ]
 provision_ecr                       = false
@@ -216,7 +219,7 @@ redis_allowed_security_group_ids = [
 
 ]
 redis_allowed_cidr_blocks = [
-  "10.3.0.0/16"
+  "10.56.0.0/16"
 ]
 redis_cloudwatch_logs_enabled    = true
 redis_multi_az_enabled           = false
@@ -224,7 +227,8 @@ redis_automatic_failover_enabled = false
 acm_certificate_enable           = true
 dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
 dns_main_domain                  = "itgix.eu"
-enable_karpenter                 = false
+enable_karpenter                 = true
 ec2_spot_service_role            = false
 custom_secrets = [
+
 ]
