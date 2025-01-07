@@ -545,3 +545,97 @@ variable "custom_secret_keepers" {
   type        = map(map(string))
   default     = {}
 }
+#########################################################################
+##           DynamoDB - Table Configuration Variables                  ##
+#########################################################################
+
+variable "ddb_create"{
+  type        = bool
+  description = "If a DynomoDB table needs to be created"
+  default     = false
+
+}
+
+variable "ddb_global_create"{
+  type        = bool
+  description = "If a DynomoDB global table needs to be created"
+  default     = false
+
+}
+
+variable "ddb_table_configuration" {
+  type = list(object({
+    table_name_suffix = string
+    hash_key          = string
+    range_key         = string
+    hash_key_type     = string
+    range_key_type    = string
+    enable_autoscaler = optional(bool, false)
+    dynamodb_attributes = optional(list(object({
+      name = string
+      type = string
+    })), [])
+    global_secondary_index_map = optional(list(object({
+      hash_key           = string
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+      read_capacity      = optional(number, 0)
+      write_capacity     = optional(number, 0)
+    })), [])
+    local_secondary_index_map = optional(list(object({
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+    })), [])
+    replicas                      = optional(list(string), [])
+    tags_enabled                  = optional(bool, true)
+    billing_mode                  = optional(string, "PAY_PER_REQUEST")
+    enable_point_in_time_recovery = optional(bool, false)
+    ttl_enabled                   = optional(bool, false)
+    ttl_attribute                 = optional(string, "")
+    deletion_protection_enabled   = optional(bool, true)
+  }))
+  description = "List of objects to pass to the module for the creation of the table."
+}
+
+variable "ddb_global_table_configuration" {
+  type = list(object({
+    table_type        = optional(string, "regional")
+    table_name_suffix = string
+    hash_key          = string
+    range_key         = string
+    hash_key_type     = string
+    range_key_type    = string
+    enable_autoscaler = optional(bool, false)
+    dynamodb_attributes = optional(list(object({
+      name = string
+      type = string
+    })), [])
+    global_secondary_index_map = optional(list(object({
+      hash_key           = string
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+      read_capacity      = optional(number, 0)
+      write_capacity     = optional(number, 0)
+    })), [])
+    local_secondary_index_map = optional(list(object({
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+    })), [])
+    replicas                      = optional(list(string), [])
+    tags_enabled                  = optional(bool, true)
+    billing_mode                  = optional(string, "PAY_PER_REQUEST")
+    enable_point_in_time_recovery = optional(bool, false)
+    ttl_enabled                   = optional(bool, false)
+    ttl_attribute                 = optional(string, "")
+    deletion_protection_enabled   = optional(bool, true)
+  }))
+  description = "List of objects to pass to the module for the creation of the global table."
+}

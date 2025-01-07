@@ -232,3 +232,44 @@ ec2_spot_service_role            = false
 custom_secrets = [
 
 ]
+
+ddb_create = false
+
+
+ddb_table_configuration = [
+  {
+    #Default table
+    table_name_suffix = "dynamodb-table"
+    hash_key          = "Id"
+    range_key         = "version"
+    hash_key_type     = "S"
+    range_key_type    = "N"
+  }
+]
+
+ddb_global_create=false
+
+ddb_global_table_configuration = [
+  {
+    #DefaultGlobalTable
+    table_type        = "global"
+    table_name_suffix = "dynamodb-global-table"
+    replicas          = ["us-east-2", "eu-west-1"]
+    dynamodb_attributes = [
+      {
+        name = "Id"
+        type = "S"
+      },
+      {
+        name = "version"
+        type = "N"
+      }
+    ]
+    hash_key                      = "Id"
+    range_key                     = "version"
+    hash_key_type                 = "S"
+    range_key_type                = "N"
+    enable_point_in_time_recovery = true
+  }
+
+]
