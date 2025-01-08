@@ -17,7 +17,7 @@ module "karpenter" {
   enable_karpenter_instance_profile_creation = true
   irsa_oidc_provider_arn                     = module.eks[0].oidc_provider_arn
   irsa_namespace_service_accounts            = ["${local.karpenter_namespace}:karpenter"]
-  create_irsa                                = true
+  create_irsa                                = false
   irsa_use_name_prefix                       = false
 }
 

@@ -6,15 +6,15 @@ module "rds_iam_auth" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   count   = var.rds_iam_irsa ? 1 : 0
   version = "5.34.0"
-  
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "rds-iam-auth-${local.eks_name}"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "rds-iam-auth-${local.eks_name}"
   role_policy_arns = {
     rds_iam_auth_policy = aws_iam_policy.rds_iam_auth.arn
-    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
-    policy_sqs = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
-    policy_kmspw = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
+    policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+    policy_kmspw        = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
   }
   oidc_providers = {
     main = {
@@ -57,9 +57,9 @@ module "irsa_itgix_adp_agent" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "irsa-itgix-adp-${local.eks_name}"
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "irsa-itgix-adp-${local.eks_name}"
   role_policy_arns = {
     itgix_adp_agent_policy = aws_iam_policy.irsa_itgix_adp_agent.arn
   }
@@ -100,9 +100,9 @@ module "irsa_fluentbit_cloudwatch" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
-  assume_role_condition_test     = "StringLike"
-  create_role = true
-  role_name   = "irsa-fluentbit-cloudwatch-${local.eks_name}"
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "irsa-fluentbit-cloudwatch-${local.eks_name}"
   role_policy_arns = {
     aws_managed_policy = "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
   }
@@ -110,6 +110,134 @@ module "irsa_fluentbit_cloudwatch" {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
       namespace_service_accounts = ["fluent-bit:fluent-bit"]
+    }
+  }
+}
+
+#############################################
+#IRSA for Karpenter                         #
+#############################################
+resource "aws_iam_policy" "irsa_karpenter" {
+
+  name_prefix = "irsa_karpenter"
+  description = "Policy for Karpenter ServiceAccounts for cluster ${local.eks_name}"
+  policy      = <<EOT
+{
+    "Statement": [
+        {
+            "Action": [
+                "pricing:GetProducts",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSpotPriceHistory",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:DescribeImages",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:CreateTags",
+                "ec2:CreateLaunchTemplate",
+                "ec2:CreateFleet"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Action": [
+                "ec2:TerminateInstances",
+                "ec2:DeleteLaunchTemplate"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "ec2:ResourceTag/karpenter.sh/discovery": "${local.eks_name}"
+                }
+            },
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Action": "ec2:RunInstances",
+            "Condition": {
+                "StringEquals": {
+                    "ec2:ResourceTag/karpenter.sh/discovery": "${local.eks_name}"
+                }
+            },
+            "Effect": "Allow",
+            "Resource": "arn:aws:ec2:*:${var.aws_account_id}:launch-template/*"
+        },
+        {
+            "Action": "ec2:RunInstances",
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:ec2:*::snapshot/*",
+                "arn:aws:ec2:*::image/*",
+                "arn:aws:ec2:*:*:volume/*",
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:spot-instances-request/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:ec2:*:*:instance/*"
+            ]
+        },
+        {
+            "Action": "ssm:GetParameter",
+            "Effect": "Allow",
+            "Resource": "arn:aws:ssm:*:*:parameter/aws/service/*"
+        },
+        {
+            "Action": "eks:DescribeCluster",
+            "Effect": "Allow",
+            "Resource": "arn:aws:eks:*:${var.aws_account_id}:cluster/${local.eks_name}"
+        },
+        {
+            "Action": "iam:PassRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-ng-eks-node-group-*"
+        },
+        {
+            "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes",
+                "sqs:DeleteMessage"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:sqs:${var.region}:${var.aws_account_id}:queue-${var.region}-${var.environment}-karpenter"
+        },
+        {
+            "Action": [
+                "iam:TagInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:GetInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:CreateInstanceProfile",
+                "iam:AddRoleToInstanceProfile"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+EOT
+}
+
+module "irsa_karpenter" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringEquals"
+  create_role                = true
+  role_name                  = "KarpenterIRSA-${local.eks_name}"
+  role_policy_arns = {
+    itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter.arn
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["${local.karpenter_namespace}:karpenter"]
     }
   }
 }

@@ -147,10 +147,29 @@ output "karpenter_queue_name" {
 
 output "karpenter_sa_role" {
   description = "IRSA role for karpenter SA"
-  value       = var.enable_karpenter ? module.karpenter[0].irsa_arn : null
+  value       = var.enable_karpenter ? module.irsa_karpenter.iam_role_arn : null
 }
 
 output "fluentbit_sa_role_arn" {
   description = "IAM Role ARN for Fluent Bit Service Account"
   value       = module.irsa_fluentbit_cloudwatch.iam_role_arn
+}
+
+# Custom Secrets
+
+output "custom_secret_arns" {
+  value = module.custom_secrets_password_module.secret_arns
+}
+
+output "custom_secret_names" {
+  value = module.custom_secrets_password_module.secret_names
+}
+
+output "custom_secret_versions" {
+  value = module.custom_secrets_password_module.secret_versions
+}
+
+output "custom_secret_values" {
+  value     = module.custom_secrets_password_module.secret_values
+  sensitive = true
 }

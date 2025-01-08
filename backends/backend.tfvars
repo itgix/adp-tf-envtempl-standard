@@ -1,4 +1,4 @@
 encrypt = true
-bucket  = "igxadp-stg-eu-west-1-idp-state"
+bucket  = "igxadp-min-eu-west-1-idp-state"
 region  = "eu-west-1"
-key     = "igxadp-stg-eu-west-1-terraform.tfstate"
+key     = "igxadp-min-eu-west-1-terraform.tfstate"
