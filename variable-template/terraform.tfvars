@@ -86,8 +86,7 @@ eks_aws_auth_users = [
   }
 ]
 eks_kms_key_users = [
-  "arn:aws:iam::722377226063:user/users/mvukadinoff",
-  "arn:aws:iam::722377226063:user/users/vdimitrov"
+  "arn:aws:iam::722377226063:user/users/mvukadinoff"
 ]
 create_rds = true
 rds_extra_credentials = {
