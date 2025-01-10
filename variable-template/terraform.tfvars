@@ -16,6 +16,8 @@ vpc_public_subnet_ids = [
   "subnet-0f875da511ab96da4",
   "subnet-08f878f0703b72b50"
 ]
+vpc_single_nat_gateway = false
+
 provision_eks       = true
 eks_cluster_version = "1.30"
 eks_instance_types = [
