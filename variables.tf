@@ -66,10 +66,10 @@ variable "vpc_private_route_table_ids" {
   default     = [""]
 }
 
-variable "rds_allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDRs to be allowed to connect to the DB instance"
+variable "vpc_single_nat_gateway" {
+  type        = bool
+  default     = false
+  description = "Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments"
 }
 
 #########################################################################
@@ -251,6 +251,12 @@ variable "rds_logs_exports" {
   type        = list(string)
   description = "List of log types to export to cloudwatch. Aurora MySQL: audit, error, general, slowquery. Aurora PostgreSQL: postgresql"
   default     = ["postgresql"]
+}
+
+variable "rds_allowed_cidr_blocks" {
+  type = list(string)
+  default = []
+  description = "List of CIDRs to be allowed to connect to the DB instance"
 }
 
 variable "rds_extra_credentials" {
@@ -544,4 +550,98 @@ variable "custom_secret_keepers" {
   description = "Map of keepers for the secrets"
   type        = map(map(string))
   default     = {}
+}
+#########################################################################
+##           DynamoDB - Table Configuration Variables                  ##
+#########################################################################
+
+variable "ddb_create"{
+  type        = bool
+  description = "If a DynomoDB table needs to be created"
+  default     = false
+
+}
+
+variable "ddb_global_create"{
+  type        = bool
+  description = "If a DynomoDB global table needs to be created"
+  default     = false
+
+}
+
+variable "ddb_table_configuration" {
+  type = list(object({
+    table_name_suffix = string
+    hash_key          = string
+    range_key         = string
+    hash_key_type     = string
+    range_key_type    = string
+    enable_autoscaler = optional(bool, false)
+    dynamodb_attributes = optional(list(object({
+      name = string
+      type = string
+    })), [])
+    global_secondary_index_map = optional(list(object({
+      hash_key           = string
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+      read_capacity      = optional(number, 0)
+      write_capacity     = optional(number, 0)
+    })), [])
+    local_secondary_index_map = optional(list(object({
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+    })), [])
+    replicas                      = optional(list(string), [])
+    tags_enabled                  = optional(bool, true)
+    billing_mode                  = optional(string, "PAY_PER_REQUEST")
+    enable_point_in_time_recovery = optional(bool, false)
+    ttl_enabled                   = optional(bool, false)
+    ttl_attribute                 = optional(string, "")
+    deletion_protection_enabled   = optional(bool, true)
+  }))
+  description = "List of objects to pass to the module for the creation of the table."
+}
+
+variable "ddb_global_table_configuration" {
+  type = list(object({
+    table_type        = optional(string, "regional")
+    table_name_suffix = string
+    hash_key          = string
+    range_key         = string
+    hash_key_type     = string
+    range_key_type    = string
+    enable_autoscaler = optional(bool, false)
+    dynamodb_attributes = optional(list(object({
+      name = string
+      type = string
+    })), [])
+    global_secondary_index_map = optional(list(object({
+      hash_key           = string
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+      read_capacity      = optional(number, 0)
+      write_capacity     = optional(number, 0)
+    })), [])
+    local_secondary_index_map = optional(list(object({
+      name               = string
+      projection_type    = string
+      range_key          = string
+      non_key_attributes = optional(list(string), [])
+    })), [])
+    replicas                      = optional(list(string), [])
+    tags_enabled                  = optional(bool, true)
+    billing_mode                  = optional(string, "PAY_PER_REQUEST")
+    enable_point_in_time_recovery = optional(bool, false)
+    ttl_enabled                   = optional(bool, false)
+    ttl_attribute                 = optional(string, "")
+    deletion_protection_enabled   = optional(bool, true)
+  }))
+  description = "List of objects to pass to the module for the creation of the global table."
 }

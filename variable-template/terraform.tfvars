@@ -16,6 +16,8 @@ vpc_public_subnet_ids = [
   "subnet-0f875da511ab96da4",
   "subnet-08f878f0703b72b50"
 ]
+vpc_single_nat_gateway = false
+
 provision_eks       = true
 eks_cluster_version = "1.30"
 eks_instance_types = [
@@ -229,5 +231,46 @@ dns_main_domain                  = "itgix.eu"
 enable_karpenter                 = true
 ec2_spot_service_role            = false
 custom_secrets = [
+
+]
+
+ddb_create = false
+
+
+ddb_table_configuration = [
+  {
+    #Default table
+    table_name_suffix = "dynamodb-table"
+    hash_key          = "Id"
+    range_key         = "version"
+    hash_key_type     = "S"
+    range_key_type    = "N"
+  }
+]
+
+ddb_global_create=false
+
+ddb_global_table_configuration = [
+  {
+    #DefaultGlobalTable
+    table_type        = "global"
+    table_name_suffix = "dynamodb-global-table"
+    replicas          = ["us-east-2", "eu-west-1"]
+    dynamodb_attributes = [
+      {
+        name = "Id"
+        type = "S"
+      },
+      {
+        name = "version"
+        type = "N"
+      }
+    ]
+    hash_key                      = "Id"
+    range_key                     = "version"
+    hash_key_type                 = "S"
+    range_key_type                = "N"
+    enable_point_in_time_recovery = true
+  }
 
 ]
