@@ -66,10 +66,10 @@ variable "vpc_private_route_table_ids" {
   default     = [""]
 }
 
-variable "rds_allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDRs to be allowed to connect to the DB instance"
+variable "vpc_single_nat_gateway" {
+  type        = bool
+  default     = false
+  description = "Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments"
 }
 
 #########################################################################
@@ -251,6 +251,12 @@ variable "rds_logs_exports" {
   type        = list(string)
   description = "List of log types to export to cloudwatch. Aurora MySQL: audit, error, general, slowquery. Aurora PostgreSQL: postgresql"
   default     = ["postgresql"]
+}
+
+variable "rds_allowed_cidr_blocks" {
+  type = list(string)
+  default = []
+  description = "List of CIDRs to be allowed to connect to the DB instance"
 }
 
 variable "rds_extra_credentials" {

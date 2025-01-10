@@ -14,8 +14,8 @@ module "common_vpc" {
   enable_dns_support     = true
   enable_ipv6            = false
   enable_nat_gateway     = true
-  single_nat_gateway     = false
-  one_nat_gateway_per_az = true
+  single_nat_gateway     = var.vpc_single_nat_gateway
+  one_nat_gateway_per_az = var.vpc_single_nat_gateway ? false : true
 
   ## Subnets
   private_subnets = [
