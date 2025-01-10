@@ -1,6 +1,6 @@
 module "dynamodb" {
   count = var.ddb_create ? 1 : 0
-  source  = "git@github.com:itgix/tf-module-dynamodb.git"
+  source  = "git::git@github.com:itgix/tf-module-dynamodb.git?ref=v1.0.0"
   
 
   region      = var.region
@@ -14,7 +14,7 @@ module "dynamodb" {
 
 module "global_dynamodb" {
   count = var.ddb_global_create ? 1 : 0
-  source  = "git@github.com:itgix/tf-module-dynamodb.git"
+  source  = "git::git@github.com:itgix/tf-module-dynamodb.git?ref=v1.0.0"
   
 
   region      = var.region
