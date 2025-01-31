@@ -17,5 +17,6 @@ module "elasticache" {
   family                     = var.redis_family
   allowed_cidr_blocks        = local.redis_allowed_cidr_blocks
   allowed_security_group_ids = var.redis_allowed_security_group_ids
+  rds_tags                   = local.aws_default_tags
 
 }
