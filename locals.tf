@@ -30,6 +30,7 @@ locals {
     "Environment"          = "${var.environment}"
     "CostCenter"           = "n/a"
     "Application"          = "adp"
+    "ManagedBy"            = "Terraform"
   }
 
 
