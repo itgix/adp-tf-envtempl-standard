@@ -236,7 +236,6 @@ custom_secrets = [
 
 ddb_create = false
 
-
 ddb_table_configuration = [
   {
     #Default table
@@ -248,7 +247,7 @@ ddb_table_configuration = [
   }
 ]
 
-ddb_global_create=false
+ddb_global_create = false
 
 ddb_global_table_configuration = [
   {
