@@ -275,7 +275,7 @@ ddb_global_table_configuration = [
 ]
 
   s3_create               = false
-  app                     = "test"
+
 
   bucket_configuration = [{
     

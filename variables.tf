@@ -656,10 +656,6 @@ variable "s3_create" {
 
 }
 
-variable "app"{
-  type        = string
-  description = "Creation of a S3 bucket"
-}
 
 variable "bucket_configuration" {
   type = list(object({

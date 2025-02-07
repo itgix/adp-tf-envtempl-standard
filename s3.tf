@@ -1,11 +1,11 @@
 module "s3_bucket" {
   count = var.s3_create ? 1 : 0
-  source  = "git::git@github.com:itgix/tf-module-s3.git?ref=v1.1.1"
+  source  = "git::git@github.com:itgix/tf-module-s3.git?ref= v1.1.2"
   
 
   region          = var.region
   environment     = var.environment
-  app             = var.app
+  project_name    = var.project_name
 
   # s3 bucket configuration
   bucket_configuration = var.bucket_configuration 
