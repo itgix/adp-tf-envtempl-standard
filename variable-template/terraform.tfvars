@@ -273,3 +273,21 @@ ddb_global_table_configuration = [
   }
 
 ]
+
+  s3_create               = false
+  app                     = "test"
+
+  bucket_configuration = [{
+    
+    bucket_name_prefix      = ""
+    acl_type                = "log-delivery-write"
+    create_s3_user          = false
+    versioning_enabled      = true
+    sse_algorithm           = "AES256"
+    store_access_key_in_ssm = true
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = true
+    restrict_public_buckets = true
+    cors_configuration      = []
+  }]
