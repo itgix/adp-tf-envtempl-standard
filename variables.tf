@@ -682,7 +682,7 @@ variable "bucket_configuration" {
   }))
   description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket." 
   default = [{
-    bucket_name_suffix      = string
+    bucket_name_suffix      = "bkt"
     acl_type                = "log-delivery-write"
     create_s3_user          = false
     versioning_enabled      = true
