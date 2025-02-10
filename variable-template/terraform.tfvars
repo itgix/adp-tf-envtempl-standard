@@ -279,7 +279,7 @@ ddb_global_table_configuration = [
 
   bucket_configuration = [{
     
-    bucket_name_suffix      = string
+    bucket_name_suffix      = "bkt"
     acl_type                = "log-delivery-write"
     create_s3_user          = false
     versioning_enabled      = true
