@@ -283,6 +283,11 @@ variable "rds_extra_credentials" {
 #  default     = false
 #}
 
+variable "rds_retention_period" {
+  type        = number
+  default     = 5
+  description = "Number of days to retain backups for"
+}
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################

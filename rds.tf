@@ -40,4 +40,6 @@ module "rds_maindb" {
   #enable_rds_s3_exports = var.enable_rds_s3_exports
 
   rds_tags        = local.aws_default_tags
+
+  rds_retention_period = var.rds_retention_period
 }
