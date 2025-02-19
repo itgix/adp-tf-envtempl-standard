@@ -41,5 +41,5 @@ module "rds_maindb" {
 
   rds_tags        = local.aws_default_tags
 
-  rds_retention_period = var.rds_retention_period
+  rds_backup_retention_period = var.rds_backup_retention_period
 }

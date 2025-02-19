@@ -116,7 +116,7 @@ rds_default_username = "postgres"
 rds_allowed_cidr_blocks = [
 
 ]
-rds_retention_period = 5
+rds_backup_retention_period = 5
 
 sqs_username      = ""
 sqs_iam_role_name = ""
