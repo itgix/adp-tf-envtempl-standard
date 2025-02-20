@@ -276,12 +276,11 @@ ddb_global_table_configuration = [
 
 ]
 
-  s3_create               = false
+s3_create               = false
 
 
-  bucket_configuration = [{
-    
-    bucket_name_prefix      = ""
+bucket_configuration = [{
+    bucket_name_suffix      = "bkt"
     acl_type                = "log-delivery-write"
     create_s3_user          = false
     versioning_enabled      = true
@@ -292,4 +291,4 @@ ddb_global_table_configuration = [
     ignore_public_acls      = true
     restrict_public_buckets = true
     cors_configuration      = []
-  }]
+}]
