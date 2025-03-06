@@ -20,5 +20,8 @@ module "karpenter" {
   irsa_namespace_service_accounts = ["${local.karpenter_namespace}:karpenter"]
   create_iam_role                 = false
   iam_role_use_name_prefix        = false
+
+  # Error: creating EKS Access Entry ResourceInUseException: The specified access entry resource is already in use on this cluster.
+  create_access_entry = false
 }
 
