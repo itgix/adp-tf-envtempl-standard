@@ -12,6 +12,8 @@ module "eks" {
   eks_cluster_version = var.eks_cluster_version
   eks_cluster_name    = local.eks_name
 
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   cluster_log_retention_in_days = var.cluster_log_retention_in_days

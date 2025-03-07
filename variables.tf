@@ -138,6 +138,13 @@ variable "eks_aws_users_path" {
   default     = "/"
 }
 
+# TODO: Remove when upgrading to v21
+variable "enable_cluster_creator_admin_permissions" {
+  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  type        = bool
+  default     = false
+}
+
 ################################################################################
 # Node group defaults
 ################################################################################
@@ -254,8 +261,8 @@ variable "rds_logs_exports" {
 }
 
 variable "rds_allowed_cidr_blocks" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "List of CIDRs to be allowed to connect to the DB instance"
 }
 
@@ -560,14 +567,14 @@ variable "custom_secret_keepers" {
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################
 
-variable "ddb_create"{
+variable "ddb_create" {
   type        = bool
   description = "If a DynomoDB table needs to be created"
   default     = false
 
 }
 
-variable "ddb_global_create"{
+variable "ddb_global_create" {
   type        = bool
   description = "If a DynomoDB global table needs to be created"
   default     = false
@@ -685,7 +692,7 @@ variable "bucket_configuration" {
     privileged_principal_arns    = optional(list(map(list(string))))
     privileged_principal_actions = optional(list(string))
   }))
-  description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket." 
+  description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket."
   default = [{
     bucket_name_suffix      = "bkt"
     acl_type                = "log-delivery-write"

@@ -23,6 +23,7 @@ eks_cluster_version = "1.30"
 eks_instance_types = [
   "m5a.large"
 ]
+enable_cluster_creator_admin_permissions = false
 addons_versions = {
   "coredns"    = "v1.11.4-eksbuild.1"
   "kube_proxy" = "v1.30.7-eksbuild.2"
@@ -276,19 +277,19 @@ ddb_global_table_configuration = [
 
 ]
 
-s3_create               = false
+s3_create = false
 
 
 bucket_configuration = [{
-    bucket_name_suffix      = "bkt"
-    acl_type                = "log-delivery-write"
-    create_s3_user          = false
-    versioning_enabled      = true
-    sse_algorithm           = "AES256"
-    store_access_key_in_ssm = true
-    block_public_acls       = true
-    block_public_policy     = true
-    ignore_public_acls      = true
-    restrict_public_buckets = true
-    cors_configuration      = []
+  bucket_name_suffix      = "bkt"
+  acl_type                = "log-delivery-write"
+  create_s3_user          = false
+  versioning_enabled      = true
+  sse_algorithm           = "AES256"
+  store_access_key_in_ssm = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+  cors_configuration      = []
 }]
