@@ -44,3 +44,11 @@ module "eks" {
   kms_key_users        = var.eks_kms_key_users
   secrets_kms_key_arns = local.secrets_kms_key_arns
 }
+
+# TODO: Remove when upgrading to v21
+removed {
+  from = module.eks.module.eks.kubernetes_config_map_v1_data.aws_auth
+  lifecycle {
+    destroy = false
+  }
+}
