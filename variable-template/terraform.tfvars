@@ -195,29 +195,9 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
-rules = [
-  {
-    name     = "SizeRestrictions_BODY"
-    priority = "6"
-    action = "allow"
-    size_constraint_statement = {
- 
-      comparison_operator = "GT"
-      size                = 5242881
-    }
-    text_transformation{
-      priority            = 1
-      type                = "NONE"
-    }
-     
-    visibility_config = {
-      cloudwatch_metrics_enabled = false
-      metric_name = "SizeRestrictions_BODY"
-      sampled_requests_enabled   = false
-    }
+rules = []
 
-  }
-]
+
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
