@@ -1,5 +1,5 @@
 module "wafv2_application" {
-  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v2"
+  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v3"
   waf_enabled                    = var.application_waf_enabled
   project                        = var.project_name
   env                            = var.environment
@@ -19,7 +19,7 @@ module "wafv2_application" {
 }
 
 module "wafv2_cloudfront" {
-  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v2"
+  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v3"
   waf_enabled = var.cloudfront_waf_enabled
 
   providers = {
