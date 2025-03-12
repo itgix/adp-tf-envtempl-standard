@@ -347,6 +347,12 @@ variable "aws_managed_waf_rule_groups" {
   ]
 }
 
+variable "rules" {
+  description = "List of WAF rules."
+  type        = any
+  default     = []
+}
+
 #########################################################################
 ##                   ECR Variables                                     ##
 #########################################################################
