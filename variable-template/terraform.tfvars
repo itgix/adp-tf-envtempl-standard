@@ -23,7 +23,6 @@ eks_cluster_version = "1.30"
 eks_instance_types = [
   "m5a.large"
 ]
-enable_cluster_creator_admin_permissions = false
 addons_versions = {
   "coredns"    = "v1.11.4-eksbuild.1"
   "kube_proxy" = "v1.30.7-eksbuild.2"
