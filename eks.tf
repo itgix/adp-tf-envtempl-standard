@@ -12,7 +12,8 @@ module "eks" {
   eks_cluster_version = var.eks_cluster_version
   eks_cluster_name    = local.eks_name
 
-  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+  cluster_admins = var.eks_cluster_admins
+  access_entries = var.eks_access_entries
 
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
@@ -35,20 +36,8 @@ module "eks" {
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
 
-  eks_aws_auth_roles = var.eks_aws_auth_roles
-  eks_aws_auth_users = var.eks_aws_auth_users
-  eks_aws_users_path = var.eks_aws_users_path
-
   eks_tags = local.aws_default_tags
 
   kms_key_users        = var.eks_kms_key_users
   secrets_kms_key_arns = local.secrets_kms_key_arns
-}
-
-# TODO: Remove when upgrading to v21
-removed {
-  from = module.eks.module.eks.kubernetes_config_map_v1_data.aws_auth
-  lifecycle {
-    destroy = false
-  }
 }

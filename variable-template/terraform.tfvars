@@ -34,58 +34,27 @@ eks_ng_min_size      = 2
 eks_ng_desired_size  = 2
 eks_ng_max_size      = 4
 eks_ng_capacity_type = "SPOT"
-eks_aws_auth_roles = [
-  {
-    "rolearn"  = "aws-reserved/sso.amazonaws.com/AWSReservedSSO_Non-Prod-AdministratorAccess_863469e97b9e999b"
-    "username" = "eks-admin"
-    "groups" = [
-      "system:masters"
-    ]
-  }
-]
-eks_aws_users_path = "/users/"
-eks_aws_auth_users = [
+eks_cluster_admins = [
   {
     "username" = "ytodorov"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "mvukadinoff"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "htonev"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "bdimitrov"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "aalexiev"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "tkazanova"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "sracheva"
-    "groups" = [
-      "system:masters"
-    ]
   }
 ]
 eks_kms_key_users = [

@@ -109,40 +109,26 @@ variable "addons_versions" {
   })
 }
 
-variable "eks_aws_auth_roles" {
-  type = list(object({
-    rolearn  = string
-    username = string
-    groups   = list(string)
-  }))
-  default = []
-}
-
-variable "eks_aws_auth_users" {
-  type = list(object({
-    username = string
-    groups   = list(string)
-  }))
-  default = []
-}
-
 variable "eks_kms_key_users" {
   description = "A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users)"
   type        = list(string)
   default     = []
 }
 
-variable "eks_aws_users_path" {
-  type        = string
-  description = "The organizational path of the user used for building the arn , by default it's just / "
-  default     = "/"
+variable "eks_cluster_admins" {
+  type = list(
+    object({
+      username = string
+      path     = optional(string, "users")
+    })
+  )
+  default = []
 }
 
-# TODO: Remove when upgrading to v21
-variable "enable_cluster_creator_admin_permissions" {
-  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
-  type        = bool
-  default     = false
+variable "eks_access_entries" {
+  type        = any
+  description = "Map of access entries to add to the cluster"
+  default     = {}
 }
 
 ################################################################################
