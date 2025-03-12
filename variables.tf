@@ -119,7 +119,7 @@ variable "eks_cluster_admins" {
   type = list(
     object({
       username = string
-      path     = optional(string, "users")
+      path     = optional(string, "/users/")
     })
   )
   default = []

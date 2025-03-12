@@ -52,6 +52,7 @@ eks_cluster_admins = [
   },
   {
     "username" = "tkazanova"
+    "path"     = "/"
   },
   {
     "username" = "sracheva"
