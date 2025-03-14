@@ -116,6 +116,8 @@ rds_default_username = "postgres"
 rds_allowed_cidr_blocks = [
 
 ]
+rds_backup_retention_period = 5
+
 sqs_username      = ""
 sqs_iam_role_name = ""
 provision_sqs     = false
@@ -192,6 +194,10 @@ aws_managed_waf_rule_groups = [
     ]
   }
 ]
+
+rules = []
+
+
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
@@ -236,7 +242,6 @@ custom_secrets = [
 
 ddb_create = false
 
-
 ddb_table_configuration = [
   {
     #Default table
@@ -248,7 +253,7 @@ ddb_table_configuration = [
   }
 ]
 
-ddb_global_create=false
+ddb_global_create = false
 
 ddb_global_table_configuration = [
   {
@@ -274,3 +279,20 @@ ddb_global_table_configuration = [
   }
 
 ]
+
+s3_create               = false
+
+
+bucket_configuration = [{
+    bucket_name_suffix      = "bkt"
+    acl_type                = "log-delivery-write"
+    create_s3_user          = false
+    versioning_enabled      = true
+    sse_algorithm           = "AES256"
+    store_access_key_in_ssm = true
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = true
+    restrict_public_buckets = true
+    cors_configuration      = []
+}]

@@ -26,6 +26,11 @@ locals {
   aws_default_tags = {
     "platform:environment" = "${var.environment}"
     "platform:customer"    = "${var.project_name}"
+    "Project"              = "${var.project_name}"
+    "Environment"          = "${var.environment}"
+    "CostCenter"           = "n/a"
+    "Application"          = "adp"
+    "ManagedBy"            = "Terraform"
   }
 
 

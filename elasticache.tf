@@ -1,6 +1,6 @@
 module "elasticache" {
 
-  source = "git::git@github.com:itgix/tf-module-redis.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-redis.git?ref=v1.0.2"
 
   count = var.create_elasticache_redis ? 1 : 0
 
@@ -17,5 +17,6 @@ module "elasticache" {
   family                     = var.redis_family
   allowed_cidr_blocks        = local.redis_allowed_cidr_blocks
   allowed_security_group_ids = var.redis_allowed_security_group_ids
+  redis_tags                 = local.aws_default_tags
 
 }

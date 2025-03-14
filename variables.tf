@@ -283,6 +283,11 @@ variable "rds_extra_credentials" {
 #  default     = false
 #}
 
+variable "rds_backup_retention_period" {
+  type        = number
+  default     = 5
+  description = "Number of days to retain backups for"
+}
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
@@ -347,6 +352,12 @@ variable "aws_managed_waf_rule_groups" {
       rules_override_to_count = []
     }
   ]
+}
+
+variable "rules" {
+  description = "List of WAF rules."
+  type        = any
+  default     = []
 }
 
 #########################################################################
@@ -644,4 +655,54 @@ variable "ddb_global_table_configuration" {
     deletion_protection_enabled   = optional(bool, true)
   }))
   description = "List of objects to pass to the module for the creation of the global table."
+}
+#########################################################################
+##           S3 - Bucket Configuration Variables                       ##
+#########################################################################
+
+variable "s3_create" {
+  type        = bool
+  description = "Creation of a S3 bucket"
+  default     = false
+
+}
+
+
+variable "bucket_configuration" {
+  type = list(object({
+    bucket_name_suffix      = string
+    acl_type                = string
+    create_s3_user          = bool
+    versioning_enabled      = bool
+    sse_algorithm           = string
+    store_access_key_in_ssm = bool
+    logging_bucket_name     = optional(string)
+    block_public_acls       = optional(bool)
+    block_public_policy     = optional(bool)
+    ignore_public_acls      = optional(bool)
+    restrict_public_buckets = optional(bool)
+    cors_configuration = list(object({
+      allowed_headers = list(string)
+      allowed_methods = list(string)
+      allowed_origins = list(string)
+      expose_headers  = list(string)
+      max_age_seconds = number
+    }))
+    privileged_principal_arns    = optional(list(map(list(string))))
+    privileged_principal_actions = optional(list(string))
+  }))
+  description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket." 
+  default = [{
+    bucket_name_suffix      = "bkt"
+    acl_type                = "log-delivery-write"
+    create_s3_user          = false
+    versioning_enabled      = true
+    sse_algorithm           = "AES256"
+    store_access_key_in_ssm = true
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = true
+    restrict_public_buckets = true
+    cors_configuration      = []
+  }]
 }
