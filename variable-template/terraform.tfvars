@@ -33,58 +33,28 @@ eks_ng_min_size      = 2
 eks_ng_desired_size  = 2
 eks_ng_max_size      = 4
 eks_ng_capacity_type = "SPOT"
-eks_aws_auth_roles = [
-  {
-    "rolearn"  = "aws-reserved/sso.amazonaws.com/AWSReservedSSO_Non-Prod-AdministratorAccess_863469e97b9e999b"
-    "username" = "eks-admin"
-    "groups" = [
-      "system:masters"
-    ]
-  }
-]
-eks_aws_users_path = "/users/"
-eks_aws_auth_users = [
+eks_cluster_admins = [
   {
     "username" = "ytodorov"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "mvukadinoff"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "htonev"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "bdimitrov"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "aalexiev"
-    "groups" = [
-      "system:masters"
-    ]
   },
   {
     "username" = "tkazanova"
-    "groups" = [
-      "system:masters"
-    ]
+    "path"     = "/"
   },
   {
     "username" = "sracheva"
-    "groups" = [
-      "system:masters"
-    ]
   }
 ]
 eks_kms_key_users = [
@@ -280,19 +250,19 @@ ddb_global_table_configuration = [
 
 ]
 
-s3_create               = false
+s3_create = false
 
 
 bucket_configuration = [{
-    bucket_name_suffix      = "bkt"
-    acl_type                = "log-delivery-write"
-    create_s3_user          = false
-    versioning_enabled      = true
-    sse_algorithm           = "AES256"
-    store_access_key_in_ssm = true
-    block_public_acls       = true
-    block_public_policy     = true
-    ignore_public_acls      = true
-    restrict_public_buckets = true
-    cors_configuration      = []
+  bucket_name_suffix      = "bkt"
+  acl_type                = "log-delivery-write"
+  create_s3_user          = false
+  versioning_enabled      = true
+  sse_algorithm           = "AES256"
+  store_access_key_in_ssm = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+  cors_configuration      = []
 }]

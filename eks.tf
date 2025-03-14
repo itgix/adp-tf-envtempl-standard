@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.0.0"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.0"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -11,6 +11,9 @@ module "eks" {
 
   eks_cluster_version = var.eks_cluster_version
   eks_cluster_name    = local.eks_name
+
+  cluster_admins = var.eks_cluster_admins
+  access_entries = var.eks_access_entries
 
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
@@ -32,10 +35,6 @@ module "eks" {
   eks_ng_max_size      = var.eks_ng_max_size
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
-
-  eks_aws_auth_roles = var.eks_aws_auth_roles
-  eks_aws_auth_users = var.eks_aws_auth_users
-  eks_aws_users_path = var.eks_aws_users_path
 
   eks_tags = local.aws_default_tags
 
