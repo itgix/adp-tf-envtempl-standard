@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=eks-karpenter-20.31.6-upgrade"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.0"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
