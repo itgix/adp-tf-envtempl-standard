@@ -109,33 +109,26 @@ variable "addons_versions" {
   })
 }
 
-variable "eks_aws_auth_roles" {
-  type = list(object({
-    rolearn  = string
-    username = string
-    groups   = list(string)
-  }))
-  default = []
-}
-
-variable "eks_aws_auth_users" {
-  type = list(object({
-    username = string
-    groups   = list(string)
-  }))
-  default = []
-}
-
 variable "eks_kms_key_users" {
   description = "A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users)"
   type        = list(string)
   default     = []
 }
 
-variable "eks_aws_users_path" {
-  type        = string
-  description = "The organizational path of the user used for building the arn , by default it's just / "
-  default     = "/"
+variable "eks_cluster_admins" {
+  type = list(
+    object({
+      username = string
+      path     = optional(string, "/users/")
+    })
+  )
+  default = []
+}
+
+variable "eks_access_entries" {
+  type        = any
+  description = "Map of access entries to add to the cluster"
+  default     = {}
 }
 
 ################################################################################
@@ -254,8 +247,8 @@ variable "rds_logs_exports" {
 }
 
 variable "rds_allowed_cidr_blocks" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
   description = "List of CIDRs to be allowed to connect to the DB instance"
 }
 
@@ -566,14 +559,14 @@ variable "custom_secret_keepers" {
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################
 
-variable "ddb_create"{
+variable "ddb_create" {
   type        = bool
   description = "If a DynomoDB table needs to be created"
   default     = false
 
 }
 
-variable "ddb_global_create"{
+variable "ddb_global_create" {
   type        = bool
   description = "If a DynomoDB global table needs to be created"
   default     = false
@@ -691,7 +684,7 @@ variable "bucket_configuration" {
     privileged_principal_arns    = optional(list(map(list(string))))
     privileged_principal_actions = optional(list(string))
   }))
-  description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket." 
+  description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket."
   default = [{
     bucket_name_suffix      = "bkt"
     acl_type                = "log-delivery-write"
