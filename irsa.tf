@@ -241,3 +241,24 @@ module "irsa_karpenter" {
     }
   }
 }
+##########################
+#IRSA for AI Bedrock   #
+##########################
+module "ai_bedrock" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "ai-bedrock-${local.eks_name}"
+  role_policy_arns = {
+    aws_managed_policy = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["rag-demo:ai_service_account"]
+    }
+  }
+}
