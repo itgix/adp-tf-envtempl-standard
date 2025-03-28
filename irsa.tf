@@ -265,7 +265,7 @@ module "ai_bedrock" {
 ##########################
 #IRSA for S3 bucket   #
 ##########################
-module "ai_bedrock" {
+module "s3_bucket" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
