@@ -22,10 +22,6 @@ output "rds_iam_auth_irsa_arn" {
   value = module.rds_iam_auth[0].iam_role_arn
 }
 
-output "node_iam_role_name" {
-  value = module.eks[0].node_iam_role_name
-}
-
 output "node_security_group" {
   value = module.eks[0].node_security_group_id
 }
@@ -137,17 +133,6 @@ output "redis_primary_endpoint_address" {
 output "irsa_rds_role_arn" {
   description = "ARN of the IAM Role for access to rds database"
   value       = var.create_elasticache_redis ? module.rds_iam_auth[0].iam_role_arn : null
-}
-
-output "karpenter_queue_name" {
-  description = "Interruption queue name for karpenter"
-  value       = var.enable_karpenter ? module.karpenter[0].queue_name : null
-}
-
-
-output "karpenter_sa_role" {
-  description = "IRSA role for karpenter SA"
-  value       = var.enable_karpenter ? module.irsa_karpenter.iam_role_arn : null
 }
 
 output "fluentbit_sa_role_arn" {

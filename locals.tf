@@ -46,10 +46,6 @@ locals {
     length(module.elasticache) > 0 ? module.elasticache[0].redis_secret_kms_key_arn : null
   ])
 
-  karpenter_queue_name           = "queue-${var.region}-${var.environment}-karpenter"
-  karpenter_namespace            = "karpenter"
-  karpenter_service_account_name = "karpenter"
-
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
 }
