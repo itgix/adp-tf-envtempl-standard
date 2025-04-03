@@ -451,22 +451,6 @@ variable "dns_main_domain" {
 }
 
 ################################################################################
-# Karpenter
-################################################################################
-
-
-variable "enable_karpenter" {
-  type    = bool
-  default = false
-}
-
-variable "ec2_spot_service_role" {
-  type        = bool
-  default     = false
-  description = "Configure EC2 spot service role provisioning."
-}
-
-################################################################################
 # Custom Secrets Variables - ITGix tf-module-awssm-passgen
 ################################################################################
 

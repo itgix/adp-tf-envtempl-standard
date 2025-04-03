@@ -191,7 +191,6 @@ redis_automatic_failover_enabled = false
 acm_certificate_enable           = true
 dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
 dns_main_domain                  = "itgix.eu"
-enable_karpenter                 = true
 ec2_spot_service_role            = false
 custom_secrets = [
 
