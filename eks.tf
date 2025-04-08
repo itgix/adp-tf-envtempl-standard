@@ -27,5 +27,5 @@ module "eks" {
   eks_tags = local.aws_default_tags
 
   kms_key_users        = var.eks_kms_key_users
-  secrets_kms_key_arns = length(module.rds_maindb) > 0 ? local.secrets_kms_key_arns : "*"
+  secrets_kms_key_arns = length(local.secrets_kms_key_arns) > 0 ? local.secrets_kms_key_arns : "*"
 }
