@@ -118,7 +118,7 @@ module "irsa_fluentbit_cloudwatch" {
 ##########################
 #IRSA for AI Bedrock   #
 ##########################
-module "ai_bedrock" {
+module "irsa_ai_bedrock" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
@@ -139,7 +139,7 @@ module "ai_bedrock" {
 ##########################
 #IRSA for S3 bucket   #
 ##########################
-module "s3_bucket" {
+module "irsa_s3_bucket" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
