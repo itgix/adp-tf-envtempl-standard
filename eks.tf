@@ -6,8 +6,9 @@ module "eks" {
     aws = aws
   }
 
-  aws_region  = var.region
-  environment = var.environment
+  aws_region   = var.region
+  environment  = var.environment
+  project_name = var.project_name
 
   eks_cluster_version = var.eks_cluster_version
   eks_cluster_name    = local.eks_name
