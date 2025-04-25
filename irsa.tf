@@ -120,6 +120,7 @@ module "irsa_fluentbit_cloudwatch" {
 module "irsa_ai_bedrock" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  count   = var.create_ai_iam_irsa ? 1 : 0
   version = "5.34.0"
 
   assume_role_condition_test = "StringLike"
@@ -128,6 +129,22 @@ module "irsa_ai_bedrock" {
   role_policy_arns = {
     aws_managed_policy = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
   }
+   policy      = <<EOT
+  {
+    "Statement": [
+        {
+             "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:bedrock:${var.region}:${var.aws_account_id}:${var.ai_profile}/${var.ai_model}"
+        }
+    ],
+    "Version": "2012-10-17"
+  }
+ EOT
+ 
   oidc_providers = {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn

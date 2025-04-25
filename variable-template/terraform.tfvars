@@ -32,7 +32,12 @@ eks_cluster_admins = [
 eks_kms_key_users = [
   "arn:aws:iam::722377226063:user/users/mvukadinoff"
 ]
-create_rds = false
+
+create_ai_iam_irsa = false
+ai_profile         = ""
+ai_model           = ""
+
+create_rds = true
 rds_extra_credentials = {
   "username" = "demouser"
   "database" = "demodb"

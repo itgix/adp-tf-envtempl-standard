@@ -616,3 +616,22 @@ variable "bucket_configuration" {
     cors_configuration      = []
   }]
 }
+#########################################################################
+##                   IRSA Variabless                                   ##
+#########################################################################
+
+variable "create_ai_iam_irsa" {
+  type        = bool
+  description = If a IRSA for Bedrock needs to be created
+  default     = false
+}
+variable "ai_profile" {
+  type        = string 
+  description = Example: foundation-model .This is the type of the model
+  default     = ""
+}
+variable "ai_model" {
+  type        = string
+  description = Example: us.anthropic.claude-3-5-sonnet-20241022-v2:0 .This is the model name"
+  default     = ""
+}
