@@ -37,7 +37,7 @@ create_ai_iam_irsa = false
 ai_profile         = ""
 ai_model           = ""
 
-create_rds = true
+create_rds = false
 rds_extra_credentials = {
   "username" = "demouser"
   "database" = "demodb"
