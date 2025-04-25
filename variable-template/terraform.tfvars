@@ -1,10 +1,10 @@
-environment    = "min"
-region         = "eu-west-1"
-project_name   = "igxadp"
-aws_account_id = "722377226063"
+environment    = "dev"
+region         = "eu-central-1"
+project_name   = "oxai"
+aws_account_id = "282339819921"
 rds_iam_irsa   = true
 provision_vpc  = true
-vpc_cidr       = "10.56.0.0/16"
+vpc_cidr       = "10.75.0.0/16"
 vpc_id         = "vpc-055db3bf67a2ee634"
 vpc_private_subnet_ids = [
   "subnet-083c40359b035bf78",
@@ -16,38 +16,23 @@ vpc_public_subnet_ids = [
   "subnet-0f875da511ab96da4",
   "subnet-08f878f0703b72b50"
 ]
-vpc_single_nat_gateway = false
-
-provision_eks       = true
-eks_cluster_version = "1.30"
+vpc_single_nat_gateway = true
+provision_eks          = true
+eks_cluster_version    = "1.30"
 eks_cluster_admins = [
   {
-    "username" = "ytodorov"
-  },
-  {
-    "username" = "mvukadinoff"
-  },
-  {
-    "username" = "htonev"
-  },
-  {
-    "username" = "bdimitrov"
-  },
-  {
-    "username" = "aalexiev"
-  },
-  {
-    "username" = "tkazanova"
+    "username" = "mihail.vukadinoff"
     "path"     = "/"
   },
   {
-    "username" = "sracheva"
+    "username" = "hristiyan.tonev"
+    "path"     = "/"
   }
 ]
 eks_kms_key_users = [
   "arn:aws:iam::722377226063:user/users/mvukadinoff"
 ]
-create_rds = true
+create_rds = false
 rds_extra_credentials = {
   "username" = "demouser"
   "database" = "demodb"
@@ -74,10 +59,9 @@ rds_allowed_cidr_blocks = [
 
 ]
 rds_backup_retention_period = 5
-
-sqs_username      = ""
-sqs_iam_role_name = ""
-provision_sqs     = false
+sqs_username                = ""
+sqs_iam_role_name           = ""
+provision_sqs               = false
 sqs_queues = {
   "sample-service_queue" = {
     "sns_topic_name" = "sample_topic"
@@ -151,10 +135,9 @@ aws_managed_waf_rule_groups = [
     ]
   }
 ]
+rules = [
 
-rules = []
-
-
+]
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
@@ -189,66 +172,63 @@ redis_cloudwatch_logs_enabled    = true
 redis_multi_az_enabled           = false
 redis_automatic_failover_enabled = false
 acm_certificate_enable           = true
-dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
-dns_main_domain                  = "itgix.eu"
+dns_hosted_zone                  = "Z099176436DDAGFK3L3K2"
+dns_main_domain                  = "coidemo.com"
 ec2_spot_service_role            = false
 custom_secrets = [
 
 ]
-
 ddb_create = false
-
 ddb_table_configuration = [
   {
-    #Default table
-    table_name_suffix = "dynamodb-table"
-    hash_key          = "Id"
-    range_key         = "version"
-    hash_key_type     = "S"
-    range_key_type    = "N"
+    "table_name_suffix" = "dynamodb-table"
+    "hash_key"          = "Id"
+    "range_key"         = "version"
+    "hash_key_type"     = "S"
+    "range_key_type"    = "N"
   }
 ]
-
 ddb_global_create = false
-
 ddb_global_table_configuration = [
   {
-    #DefaultGlobalTable
-    table_type        = "global"
-    table_name_suffix = "dynamodb-global-table"
-    replicas          = ["us-east-2", "eu-west-1"]
-    dynamodb_attributes = [
+    "table_type"        = "global"
+    "table_name_suffix" = "dynamodb-global-table"
+    "replicas" = [
+      "us-east-2",
+      "eu-west-1"
+    ]
+    "dynamodb_attributes" = [
       {
-        name = "Id"
-        type = "S"
+        "name" = "Id"
+        "type" = "S"
       },
       {
-        name = "version"
-        type = "N"
+        "name" = "version"
+        "type" = "N"
       }
     ]
-    hash_key                      = "Id"
-    range_key                     = "version"
-    hash_key_type                 = "S"
-    range_key_type                = "N"
-    enable_point_in_time_recovery = true
+    "hash_key"                      = "Id"
+    "range_key"                     = "version"
+    "hash_key_type"                 = "S"
+    "range_key_type"                = "N"
+    "enable_point_in_time_recovery" = true
   }
-
 ]
-
 s3_create = false
+bucket_configuration = [
+  {
+    "bucket_name_suffix"      = "bkt"
+    "acl_type"                = "log-delivery-write"
+    "create_s3_user"          = false
+    "versioning_enabled"      = true
+    "sse_algorithm"           = "AES256"
+    "store_access_key_in_ssm" = true
+    "block_public_acls"       = true
+    "block_public_policy"     = true
+    "ignore_public_acls"      = true
+    "restrict_public_buckets" = true
+    "cors_configuration" = [
 
-
-bucket_configuration = [{
-  bucket_name_suffix      = "bkt"
-  acl_type                = "log-delivery-write"
-  create_s3_user          = false
-  versioning_enabled      = true
-  sse_algorithm           = "AES256"
-  store_access_key_in_ssm = true
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-  cors_configuration      = []
-}]
+    ]
+  }
+]

@@ -1,4 +1,4 @@
 encrypt = true
-bucket  = "igxadp-min-eu-west-1-idp-state"
-region  = "eu-west-1"
-key     = "igxadp-min-eu-west-1-terraform.tfstate"
+bucket  = "oxai-dev-eu-central-1-idp-state"
+region  = "eu-central-1"
+key     = "oxai-dev-eu-central-1-terraform.tfstate"
