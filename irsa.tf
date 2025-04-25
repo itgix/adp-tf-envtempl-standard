@@ -258,7 +258,7 @@ module "ai_bedrock" {
   oidc_providers = {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
-      namespace_service_accounts = ["rag-demo:ai_service_account"]
+      namespace_service_accounts = [":"]
     }
   }
 }
@@ -279,7 +279,7 @@ module "s3_bucket" {
   oidc_providers = {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
-      namespace_service_accounts = ["rag-demo:s3_service_account"]
+      namespace_service_accounts = [":"]
     }
   }
 }
