@@ -131,7 +131,7 @@ module "irsa_ai_bedrock" {
   oidc_providers = {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
-      namespace_service_accounts = [":"]
+      namespace_service_accounts = ["*:*"]
     }
   }
 }
@@ -152,7 +152,7 @@ module "s3_bucket_irsa_role" {
   oidc_providers = {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
-      namespace_service_accounts = [":"]
+      namespace_service_accounts = ["*:*"]
     }
   }
 }
