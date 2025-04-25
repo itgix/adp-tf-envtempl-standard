@@ -179,7 +179,6 @@ redis_automatic_failover_enabled = false
 acm_certificate_enable           = true
 dns_hosted_zone                  = "Z099176436DDAGFK3L3K2"
 dns_main_domain                  = "coidemo.com"
-ec2_spot_service_role            = false
 custom_secrets = [
 
 ]
