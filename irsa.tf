@@ -247,7 +247,6 @@ module "irsa_karpenter" {
 module "ai_bedrock" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  count   = var.create_ai_iam_irsa ? 1 : 0
   version = "5.34.0"
 
   assume_role_condition_test = "StringLike"
@@ -265,7 +264,7 @@ module "ai_bedrock" {
                 "bedrock:InvokeModelWithResponseStream"
             ],
             "Effect": "Allow",
-            "Resource": "arn:aws:bedrock:${var.region}:${var.aws_account_id}:${var.ai_profile}/${var.ai_model}"
+            "Resource": "arn:aws:bedrock:${var.region}:${var.aws_account_id}:*/*"
         }
     ],
     "Version": "2012-10-17"
