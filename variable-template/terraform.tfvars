@@ -33,10 +33,6 @@ eks_kms_key_users = [
   "arn:aws:iam::722377226063:user/users/mvukadinoff"
 ]
 
-create_ai_iam_irsa = false
-ai_profile         = ""
-ai_model           = ""
-
 create_rds = false
 rds_extra_credentials = {
   "username" = "demouser"
