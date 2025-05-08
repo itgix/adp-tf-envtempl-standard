@@ -241,10 +241,11 @@ module "irsa_karpenter" {
     }
   }
 }
+
 ##########################
 #IRSA for AI Bedrock   #
 ##########################
-module "ai_bedrock" {
+module "irsa_ai_bedrock" {
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
@@ -253,9 +254,22 @@ module "ai_bedrock" {
   create_role                = true
   role_name                  = "ai-bedrock-${local.eks_name}"
   role_policy_arns = {
-    aws_managed_policy = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+    aws_managed_policy = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
+    irsa_ai_bedrock_custom_policy = aws_iam_policy.irsa_ai_bedrock_custom.arn
+
   }
-   policy      = <<EOT
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["*:*"]
+    }
+  }
+}
+resource "aws_iam_policy" "irsa_ai_bedrock_custom" {
+
+  name_prefix = "irsa_ai_bedrock_custom"
+  description = "Policy for ServiceAccounts allowing invoking bedrock model"
+     policy      = <<EOT
   {
     "Statement": [
         {
@@ -270,13 +284,6 @@ module "ai_bedrock" {
     "Version": "2012-10-17"
   }
  EOT
- 
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks[0].oidc_provider_arn
-      namespace_service_accounts = ["*:*"]
-    }
-  }
 }
 ##########################
 #IRSA for S3 bucket   #
