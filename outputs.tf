@@ -158,3 +158,7 @@ output "custom_secret_values" {
   value     = module.custom_secrets_password_module.secret_values
   sensitive = true
 }
+
+output "region_short" {
+  value = local.aws_regions_short[var.region]
+}
