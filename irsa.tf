@@ -256,6 +256,7 @@ module "irsa_ai_bedrock" {
   role_policy_arns = {
     aws_managed_policy = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
     irsa_ai_bedrock_custom_policy = aws_iam_policy.irsa_ai_bedrock_custom.arn
+    irsa_ai_bedrock_s3_policy = aws_iam_policy.irsa_ai_bedrock_s3.arn
 
   }
   oidc_providers = {
@@ -284,6 +285,34 @@ resource "aws_iam_policy" "irsa_ai_bedrock_custom" {
     "Version": "2012-10-17"
   }
  EOT
+}
+resource "aws_iam_policy" "irsa_ai_bedrock_s3"{
+
+  name_prefix = "irsa_ai_bedrock_s3"
+  description = "Policy for ServiceAccounts allowing S3 bucket access"
+  policy      = <<EOT
+  {
+    "Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket"
+			],
+			"Resource": "arn:aws:s3:::*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject"
+			],
+			"Resource": "arn:aws:s3:::*/*"
+		}
+	],
+    "Version": "2012-10-17"
+  }
+ EOT  
+
 }
 ##########################
 #IRSA for S3 bucket   #
