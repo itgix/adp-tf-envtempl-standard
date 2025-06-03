@@ -15,7 +15,8 @@ module "wafv2_application" {
   waf_log_retention_days         = var.waf_log_retention_days
   country_codes_match            = var.waf_country_codes_match     # list of countries to be blocked by WAF
   aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
-  rules                          = var.rules
+  custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
+  custom_waf_rules               = var.custom_waf_rules
 }
 
 module "wafv2_cloudfront" {
@@ -38,5 +39,6 @@ module "wafv2_cloudfront" {
   waf_log_retention_days      = var.waf_log_retention_days
   country_codes_match         = var.waf_country_codes_match     # list of countries to be blocked by WAF
   aws_managed_waf_rule_groups = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
-  rules                       = var.rules
+  custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
+  custom_waf_rules               = var.custom_waf_rules
 }
