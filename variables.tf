@@ -347,8 +347,8 @@ variable "aws_managed_waf_rule_groups" {
   ]
 }
 
-variable "rules" {
-  description = "List of WAF rules."
+variable "custom_waf_rules" {
+  description = "List of custom WAF rules."
   type        = any
   default     = []
 }
