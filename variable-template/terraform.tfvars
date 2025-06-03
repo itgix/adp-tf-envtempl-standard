@@ -284,3 +284,6 @@ bucket_configuration = [{
   restrict_public_buckets = true
   cors_configuration      = []
 }]
+
+custom_terraform_vars = {}
+

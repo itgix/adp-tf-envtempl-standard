@@ -723,3 +723,9 @@ variable "bucket_configuration" {
     cors_configuration      = []
   }]
 }
+
+variable "custom_terraform_vars" {
+  type    = map(any)
+  default = {}
+  description = "Map of custom values that can be used for extra terraform files outside of the template"
+}
