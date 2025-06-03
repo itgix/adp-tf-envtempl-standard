@@ -725,7 +725,7 @@ variable "bucket_configuration" {
 }
 
 variable "custom_terraform_vars" {
-  type    = map(any)
-  default = {}
-  description = "Map of custom values that can be used for extra terraform files outside of the template"
+   type = any
+   default = {}
+   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
