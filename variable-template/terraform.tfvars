@@ -123,9 +123,17 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
+custom_managed_waf_rule_groups = [
+  {
+      name                    = "CustomManagedRuleSet"
+      priority                = 1
+      action                  = "none"
+      rules_override_to_count = [
 
-custom_managed_waf_rule_groups = []
+      ]
+  }
 
+]
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
@@ -168,24 +176,7 @@ aws_managed_waf_rule_groups = [
     ]
   }
 ]
-
-custom_waf_rules = [
-  {
-    name     = "LimitRequestBodySize"
-    priority = 14
-    action   = "count"
-    match_conditions = [
-      {
-        type      = "BodySize"
-        operator  = "GT"
-        value     = "15728640" # 15MB in bytes
-        transform = "NONE"
-      }
-    ]
-  }
-]
-
-
+custom_waf_rules = []
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
@@ -240,9 +231,7 @@ ddb_table_configuration = [
     range_key_type    = "N"
   }
 ]
-
 ddb_global_create = false
-
 ddb_global_table_configuration = [
   {
     #DefaultGlobalTable
@@ -267,10 +256,7 @@ ddb_global_table_configuration = [
   }
 
 ]
-
 s3_create = false
-
-
 bucket_configuration = [{
   bucket_name_suffix      = "bkt"
   acl_type                = "log-delivery-write"
@@ -284,6 +270,8 @@ bucket_configuration = [{
   restrict_public_buckets = true
   cors_configuration      = []
 }]
-
-custom_terraform_vars = {}
+custom_terraform_vars = {
+  enable_nlb = false
+  sample_var = "changeme"
+}
 
