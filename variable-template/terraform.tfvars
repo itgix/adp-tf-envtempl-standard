@@ -177,7 +177,7 @@ custom_waf_rules = [
     match_conditions = [
       {
         type      = "BodySize"
-        operator  = "GREATER_THAN"
+        operator  = "GT"
         value     = "15728640" # 15MB in bytes
         transform = "NONE"
       }
