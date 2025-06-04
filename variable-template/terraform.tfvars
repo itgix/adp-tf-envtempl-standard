@@ -173,7 +173,7 @@ custom_waf_rules = [
   {
     name     = "LimitRequestBodySize"
     priority = 14
-    action   = "LOG"
+    action   = "count"
     match_conditions = [
       {
         type      = "BodySize"
