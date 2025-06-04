@@ -357,6 +357,11 @@ variable "custom_managed_waf_rule_groups" {
   }))
   default = []
 }
+variable "custom_managed_waf_rule_groups" {
+  description = "List of custom waf groups."
+  type        = any
+  default     = []
+}
 
 
 variable "custom_waf_rules" {
