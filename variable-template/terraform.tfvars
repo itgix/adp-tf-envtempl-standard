@@ -128,6 +128,7 @@ custom_managed_waf_rule_groups = [
   {
     name           = "CustomManagedRuleSetRegional"
     priority       = 1
+    rule_group_arn = ""
     action         = "none"
     rules          = []
   }
