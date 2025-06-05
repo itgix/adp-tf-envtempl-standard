@@ -124,17 +124,7 @@ waf_country_codes_match = [
   "RU"
 ]
 
-custom_managed_waf_rule_groups = [
-  {
-      name                    = "CustomManagedRuleSet"
-      priority                = 1
-      action                  = "none"
-      rules_override_to_count = [
-
-      ]
-  }
-
-]
+custom_managed_waf_rule_groups = []
 
 aws_managed_waf_rule_groups = [
   {
@@ -183,11 +173,11 @@ custom_waf_rules = [
   {
     name     = "LimitRequestBodySize"
     priority = 14
-    action   = "LOG"
+    action   = "count"
     match_conditions = [
       {
         type      = "BodySize"
-        operator  = "GREATER_THAN"
+        operator  = "GT"
         value     = "15728640" # 15MB in bytes
         transform = "NONE"
       }

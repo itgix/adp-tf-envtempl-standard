@@ -17,6 +17,8 @@ module "wafv2_application" {
   aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
   custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_waf_rules               = var.custom_waf_rules
+  cloudfront_true                = false
+  application_true               = true
 }
 
 module "wafv2_cloudfront" {
@@ -41,4 +43,6 @@ module "wafv2_cloudfront" {
   aws_managed_waf_rule_groups = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
   custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_waf_rules               = var.custom_waf_rules
+  cloudfront_true                = true
+  application_true               = false
 }
