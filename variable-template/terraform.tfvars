@@ -124,15 +124,7 @@ waf_country_codes_match = [
   "RU"
 ]
 
-custom_managed_waf_rule_groups = [
-  {
-    name           = "CustomManagedRuleSetRegional"
-    priority       = 1
-    rule_group_arn = ""
-    action         = "none"
-    rules          = []
-  }
-]
+custom_managed_waf_rule_groups = []
 
 aws_managed_waf_rule_groups = [
   {

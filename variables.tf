@@ -348,21 +348,15 @@ variable "aws_managed_waf_rule_groups" {
 }
 
 variable "custom_managed_waf_rule_groups" {
-  description = "List of custom managed WAF rule groups with optional ARN"
   type = list(object({
-    name           = string
-    priority       = number
-    action         = string
-    rule_group_arn = optional(string)
-    rules          = optional(list(object({
-      name     = string
-      priority = number
-      action   = string
-    })), [])
+    name                    = string
+    priority                = number
+    action                  = string
+    rule_group_arn          = string
+    rules_override_to_count = list(string)
   }))
   default = []
 }
-
 
 
 variable "custom_waf_rules" {
