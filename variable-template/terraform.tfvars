@@ -171,17 +171,12 @@ aws_managed_waf_rule_groups = [
 
 custom_waf_rules = [
   {
-    name     = "LimitRequestBodySize"
-    priority = 14
-    action   = "count"
-    match_conditions = [
-      {
-        type      = "BodySize"
-        operator  = "GT"
-        value     = "15728640" # 15MB in bytes
-        transform = "NONE"
-      }
-    ]
+    name                = "LimitRequestBodySize"
+    priority            = 1
+    action              = "allow"
+    comparison_operator = "LE"
+    size                = 15728640
+    transform           = "NONE"
   }
 ]
 
