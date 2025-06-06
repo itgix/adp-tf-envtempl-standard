@@ -123,17 +123,8 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
-custom_managed_waf_rule_groups = [
-  {
-      name                    = "CustomManagedRuleSet"
-      priority                = 1
-      action                  = "none"
-      rules_override_to_count = [
+custom_managed_waf_rule_groups = []
 
-      ]
-  }
-
-]
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
