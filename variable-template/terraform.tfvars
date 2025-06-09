@@ -169,23 +169,7 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
-custom_waf_rules = [
-  {
-    name     = "LimitRequestBodySize"
-    priority = 14
-    action   = "LOG"
-    match_conditions = [
-      {
-        type      = "BodySize"
-        operator  = "GREATER_THAN"
-        value     = "15728640" # 15MB in bytes
-        transform = "NONE"
-      }
-    ]
-  }
-]
-
-
+custom_waf_rules = []
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
