@@ -358,7 +358,6 @@ variable "custom_managed_waf_rule_groups" {
   default = []
 }
 
-
 variable "custom_waf_rules" {
   description = "List of custom WAF rules to include in the rule group"
   type = list(object({
@@ -718,4 +717,10 @@ variable "bucket_configuration" {
     restrict_public_buckets = true
     cors_configuration      = []
   }]
+}
+
+variable "custom_terraform_vars" {
+   type = any
+   default = {}
+   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
