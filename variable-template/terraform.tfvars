@@ -170,6 +170,7 @@ aws_managed_waf_rule_groups = [
 ]
 
 custom_waf_rules = []
+
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
