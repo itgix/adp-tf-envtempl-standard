@@ -358,6 +358,7 @@ variable "custom_managed_waf_rule_groups" {
   default = []
 }
 
+
 variable "custom_waf_rules" {
   description = "List of custom WAF rules to include in the rule group"
   type = list(object({
