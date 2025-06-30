@@ -19,7 +19,7 @@ module "wafv2_application" {
   custom_waf_rules               = var.custom_waf_rules
   cloudfront_true                = false
   application_true               = true
-  waf_ignore_rule_changes        = var.waf_ignore_rule_changes
+  
 }
 
 module "wafv2_cloudfront" {
@@ -46,5 +46,5 @@ module "wafv2_cloudfront" {
   custom_waf_rules               = var.custom_waf_rules
   cloudfront_true                = true
   application_true               = false
-  waf_ignore_rule_changes        = var.waf_ignore_rule_changes
+
 }

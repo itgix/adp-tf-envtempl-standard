@@ -171,7 +171,6 @@ aws_managed_waf_rule_groups = [
 
 custom_waf_rules = []
 
-waf_ignore_rule_changes = false
 
 provision_ecr                       = false
 ecr_repository_type                 = "private"
