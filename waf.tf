@@ -1,5 +1,5 @@
 module "wafv2_application" {
-  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=waf_custom_rule"
+  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=custom_rule_group_waf"
   waf_enabled                    = var.application_waf_enabled
   project                        = var.project_name
   env                            = var.environment
@@ -19,10 +19,11 @@ module "wafv2_application" {
   custom_waf_rules               = var.custom_waf_rules
   cloudfront_true                = false
   application_true               = true
+  waf_ignore_rule_changes        = var.waf_ignore_rule_changes
 }
 
 module "wafv2_cloudfront" {
-  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=waf_custom_rule"
+  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=custom_rule_group_waf"
   waf_enabled = var.cloudfront_waf_enabled
 
   providers = {
@@ -45,4 +46,5 @@ module "wafv2_cloudfront" {
   custom_waf_rules               = var.custom_waf_rules
   cloudfront_true                = true
   application_true               = false
+  waf_ignore_rule_changes        = var.waf_ignore_rule_changes
 }
