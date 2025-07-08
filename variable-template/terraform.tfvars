@@ -94,17 +94,10 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
+custom_managed_waf_rule_groups = []
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
-    "priority" = 1
-    "action"   = "none"
-    "rules_override_to_count" = [
-
-    ]
-  },
-  {
-    "name"     = "AWSManagedRulesCommonRuleSet"
     "priority" = 2
     "action"   = "none"
     "rules_override_to_count" = [
@@ -112,7 +105,7 @@ aws_managed_waf_rule_groups = [
     ]
   },
   {
-    "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
+    "name"     = "AWSManagedRulesCommonRuleSet"
     "priority" = 3
     "action"   = "none"
     "rules_override_to_count" = [
@@ -120,7 +113,7 @@ aws_managed_waf_rule_groups = [
     ]
   },
   {
-    "name"     = "AWSManagedRulesLinuxRuleSet"
+    "name"     = "AWSManagedRulesKnownBadInputsRuleSet"
     "priority" = 4
     "action"   = "none"
     "rules_override_to_count" = [
@@ -128,17 +121,23 @@ aws_managed_waf_rule_groups = [
     ]
   },
   {
-    "name"     = "AWSManagedRulesSQLiRuleSet"
+    "name"     = "AWSManagedRulesLinuxRuleSet"
     "priority" = 5
+    "action"   = "none"
+    "rules_override_to_count" = [
+
+    ]
+  },
+  {
+    "name"     = "AWSManagedRulesSQLiRuleSet"
+    "priority" = 6
     "action"   = "none"
     "rules_override_to_count" = [
 
     ]
   }
 ]
-rules = [
-
-]
+custom_waf_rules                    = []
 provision_ecr                       = false
 ecr_repository_type                 = "private"
 ecr_repository_name                 = ""
@@ -232,3 +231,8 @@ bucket_configuration = [
     ]
   }
 ]
+custom_terraform_vars = {
+  enable_nlb = false
+  sample_var = "changeme"
+}
+

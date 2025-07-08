@@ -280,10 +280,28 @@ variable "aws_managed_waf_rule_groups" {
   ]
 }
 
-variable "rules" {
-  description = "List of WAF rules."
-  type        = any
-  default     = []
+variable "custom_managed_waf_rule_groups" {
+  type = list(object({
+    name                    = string
+    priority                = number
+    action                  = string
+    rule_group_arn          = string
+    rules_override_to_count = list(string)
+  }))
+  default = []
+}
+
+variable "custom_waf_rules" {
+  description = "List of custom WAF rules to include in the rule group"
+  type = list(object({
+    name                = string
+    priority            = number
+    action              = string # "allow", "block", or "count"
+    comparison_operator = string # e.g. "GT"
+    size                = number # e.g. 15728640 (15MB)
+    transform           = optional(string, "NONE")
+  }))
+  default = []
 }
 
 #########################################################################
@@ -616,3 +634,10 @@ variable "bucket_configuration" {
     cors_configuration      = []
   }]
 }
+
+variable "custom_terraform_vars" {
+  type        = any
+  default     = {}
+  description = "Object of custom values that can be used for extra terraform files outside of the template"
+}
+
