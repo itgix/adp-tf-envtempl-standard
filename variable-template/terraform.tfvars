@@ -72,7 +72,7 @@ rds_scaling_config = {
 }
 rds_config = {
   "engine"         = "aurora-postgresql"
-  "engine_version" = "14.9"
+  "engine_version" = "14.15"
   "engine_mode"    = "provisioned"
   "cluster_family" = "aurora-postgresql14"
   "cluster_size"   = 1
