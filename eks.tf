@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=init-eks-auto-mode"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=feat/longer-project-name-automode"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
