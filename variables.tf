@@ -28,6 +28,12 @@ variable "rds_iam_irsa" {
   default     = false
 }
 
+variable "allow_long_names" {
+  type        = string
+  default     = true
+  description = "Allows longer IAM role names without suffixes. Leave true for new clusters. Set to false for pre-existing clusters to avoid re-creation."
+}
+
 #########################################################################
 ##                   Networking Variables                              ##
 #########################################################################
@@ -363,9 +369,9 @@ variable "custom_waf_rules" {
   type = list(object({
     name                = string
     priority            = number
-    action              = string              # "allow", "block", or "count"
-    comparison_operator = string              # e.g. "GT"
-    size                = number              # e.g. 15728640 (15MB)
+    action              = string # "allow", "block", or "count"
+    comparison_operator = string # e.g. "GT"
+    size                = number # e.g. 15728640 (15MB)
     transform           = optional(string, "NONE")
   }))
   default = []
@@ -720,7 +726,7 @@ variable "bucket_configuration" {
 }
 
 variable "custom_terraform_vars" {
-   type = any
-   default = {}
-   description = "Object of custom values that can be used for extra terraform files outside of the template"
+  type        = any
+  default     = {}
+  description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
