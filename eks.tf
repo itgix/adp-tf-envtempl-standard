@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.0"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.1"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -40,4 +40,6 @@ module "eks" {
 
   kms_key_users        = var.eks_kms_key_users
   secrets_kms_key_arns = local.secrets_kms_key_arns
+
+  allow_long_names = var.allow_long_names
 }

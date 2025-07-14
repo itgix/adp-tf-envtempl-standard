@@ -268,4 +268,4 @@ custom_terraform_vars = {
   enable_nlb = false
   sample_var = "changeme"
 }
-
+allow_long_names = true
