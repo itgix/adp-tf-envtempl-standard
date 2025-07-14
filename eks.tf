@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=init-eks-auto-mode"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.1-ai"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -29,4 +29,6 @@ module "eks" {
 
   kms_key_users        = var.eks_kms_key_users
   secrets_kms_key_arns = length(local.secrets_kms_key_arns) > 0 ? local.secrets_kms_key_arns : ["*"]
+
+  allow_long_names = var.allow_long_names
 }
