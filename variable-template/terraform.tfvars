@@ -18,7 +18,7 @@ vpc_public_subnet_ids = [
 ]
 vpc_single_nat_gateway = true
 provision_eks          = true
-eks_cluster_version    = "1.30"
+eks_cluster_version    = "1.31"
 eks_cluster_admins = [
   {
     "username" = "mihail.vukadinoff"
