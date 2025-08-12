@@ -1,3 +1,13 @@
+# Terraform Infrastructure Deployment
+
+This is the standard template for the cloud infrastructure of **ITGix ADP - Application Development Container Platform**.  
+It's meant to be used with the **idp-installer** bootstrapping script.
+
+Variables can be passed via the main YAML configuration file of **idp-installer**, and they will override the provided defaults in the `variable-template` directory.
+
+---
+
+
 ## Requirements
 
 | Name | Version |
