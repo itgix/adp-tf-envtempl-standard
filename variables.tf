@@ -399,10 +399,10 @@ variable "ecr_repository_type" {
   default     = "private"
 }
 
-variable "ecr_repository_name" {
-  description = "The name of the repository"
-  type        = string
-  default     = ""
+variable "ecr_names_map" {
+  type        = map(string)
+  default     = {}
+  description = "Map of repositories to create. Example: { r1 = \"myfirstrepo\", r2 = \"mysecondrepo\" }"
 }
 
 variable "ecr_repository_image_tag_mutability" {

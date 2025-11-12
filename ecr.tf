@@ -6,7 +6,6 @@ module "ecr" {
   environment  = var.environment
   project_name = var.project_name
 
-  ecr_repository_name                   = var.ecr_repository_name
   ecr_repository_type                   = var.ecr_repository_type
   ecr_repository_read_write_access_arns = var.ecr_repository_read_write_access_arns
   ecr_repository_read_access_arns       = var.ecr_repository_read_access_arns
@@ -21,6 +20,8 @@ module "ecr" {
 
   ecr_create_lifecycle_policy = var.ecr_create_lifecycle_policy
 
-  resources_tags = local.aws_default_tags
+  ecr_names_map = var.ecr_names_map
+  # ecr_prefix_with_projectname               = var.ecr_prefix_with_projectname
 
+  resources_tags = local.aws_default_tags
 }

@@ -174,7 +174,6 @@ custom_waf_rules = []
 
 provision_ecr                       = false
 ecr_repository_type                 = "private"
-ecr_repository_name                 = ""
 ecr_repository_image_tag_mutability = "IMMUTABLE"
 ecr_repository_encryption_type      = "AES256"
 ecr_repository_image_scan_on_push   = false
@@ -190,6 +189,7 @@ ecr_registry_scan_rules = [
 
 ]
 ecr_create_lifecycle_policy = false
+ecr_names_map               = {}
 create_elasticache_redis    = false
 redis_cluster_size          = 1
 redis_cluster_mode_enabled  = false
