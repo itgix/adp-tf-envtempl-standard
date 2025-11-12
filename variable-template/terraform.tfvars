@@ -19,15 +19,15 @@ vpc_public_subnet_ids = [
 vpc_single_nat_gateway = false
 
 provision_eks       = true
-eks_cluster_version = "1.31"
+eks_cluster_version = "1.34"
 eks_instance_types = [
   "m5a.large"
 ]
 addons_versions = {
-  "coredns"    = "v1.11.4-eksbuild.14"
-  "kube_proxy" = "v1.31.9-eksbuild.2"
-  "vpc_cni"    = "v1.19.6-eksbuild.1"
-  "ebs_csi"    = "v1.38.1-eksbuild.1"
+  "coredns"    = "v1.12.3-eksbuild.1"
+  "kube_proxy" = "v1.34.0-eksbuild.2"
+  "vpc_cni"    = "v1.20.4-eksbuild.1"
+  "ebs_csi"    = "v1.51.1-eksbuild.1"
 }
 eks_ng_min_size      = 2
 eks_ng_desired_size  = 2
