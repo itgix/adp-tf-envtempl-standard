@@ -193,7 +193,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
         {
             "Action": "iam:PassRole",
             "Effect": "Allow",
-            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-ng-eks-node-group-*"
+            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-*"
         },
         {
             "Action": [
