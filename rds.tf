@@ -27,10 +27,7 @@ module "rds_maindb" {
     db_name        = var.rds_config.db_name
   })
 
-  rds_scaling_config = ({
-    min_capacity = var.rds_scaling_config.min_capacity
-    max_capacity = var.rds_scaling_config.max_capacity
-  })
+  rds_scaling_config = var.rds_scaling_config
 
   rds_iam_auth_enabled = var.rds_iam_auth_enabled
   rds_default_username = var.rds_default_username
