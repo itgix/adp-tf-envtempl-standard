@@ -529,6 +529,40 @@ variable "redis_automatic_failover_enabled" {
 }
 
 #########################################################################
+##                   Elasticache Valkey                                ##
+#########################################################################
+
+variable "create_elasticache_valkey" {
+  type    = bool
+  default = false
+}
+
+variable "valkey_snapshot_time" {
+  type    = string
+  default = "05:00"
+}
+
+variable "valkey_engine_version" {
+  type    = string
+  default = "7"
+}
+
+variable "valkey_data_storage_max" {
+  type    = number
+  default = 2
+}
+
+variable "valkey_ecpu_per_second_max" {
+  type    = number
+  default = 1000
+}
+
+variable "valkey_create_valkey_user_and_secret" {
+  type    = bool
+  default = true
+}
+
+#########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################
 variable "acm_certificate_enable" {
