@@ -89,7 +89,7 @@ rds_allowed_cidr_blocks = [
 
 ]
 rds_backup_retention_period = 5
-rds_instance_type           = "db.serverless"
+rds_instance_type = "db.serverless"
 
 sqs_username      = ""
 sqs_iam_role_name = ""
@@ -207,16 +207,18 @@ redis_cloudwatch_logs_enabled    = true
 redis_multi_az_enabled           = false
 redis_automatic_failover_enabled = false
 
-valkey_snapshot_time                 = "03:00"
-valkey_engine_version                = "7"
-valkey_data_storage_max              = 4
-valkey_ecpu_per_second_max           = 2000
+create_elasticache_valkey    = false
+valkey_snapshot_time         = "03:00"
+valkey_engine_version        = "7"
+valkey_data_storage_max      =  4
+valkey_ecpu_per_second_max   =  2000
 valkey_create_valkey_user_and_secret = true
-acm_certificate_enable               = true
-dns_hosted_zone                      = "Z2INQZ6AA9H9SI"
-dns_main_domain                      = "itgix.eu"
-enable_karpenter                     = true
-ec2_spot_service_role                = false
+
+acm_certificate_enable           = true
+dns_hosted_zone                  = "Z2INQZ6AA9H9SI"
+dns_main_domain                  = "itgix.eu"
+enable_karpenter                 = true
+ec2_spot_service_role            = false
 custom_secrets = [
 
 ]
