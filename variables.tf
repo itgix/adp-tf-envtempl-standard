@@ -292,6 +292,15 @@ variable "rds_backup_retention_period" {
   default     = 5
   description = "Number of days to retain backups for"
 }
+
+variable "rds_cluster_parameters" {
+  type = list(object({
+    name         = string
+    value        = string
+    apply_method = string
+  }))
+  default = []
+}
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################

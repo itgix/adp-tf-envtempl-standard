@@ -90,6 +90,7 @@ rds_allowed_cidr_blocks = [
 ]
 rds_backup_retention_period = 5
 rds_instance_type           = "db.serverless"
+rds_cluster_parameters      = []
 
 sqs_username      = ""
 sqs_iam_role_name = ""
