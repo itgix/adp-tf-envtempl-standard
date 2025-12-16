@@ -7,7 +7,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "= 5.93.0"
+      version = ">= 4.49, < 6.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -18,7 +18,18 @@ terraform {
 
 provider "aws" {
   region = var.region
+
+    default_tags {
+    tags = var.default_tags
+  }
+
 }
+
+variable "default_tags" {
+  type    = map(string)
+  default = {}  
+}
+
 
 # needed for WAF module
 provider "aws" {
