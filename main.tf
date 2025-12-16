@@ -20,15 +20,11 @@ provider "aws" {
   region = var.region
 
     default_tags {
-    tags = var.default_tags
+    tags = var.aws_default_tags
   }
 
 }
 
-variable "default_tags" {
-  type    = map(string)
-  default = {}  
-}
 
 
 # needed for WAF module
