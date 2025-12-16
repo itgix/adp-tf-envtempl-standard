@@ -20,7 +20,7 @@ provider "aws" {
   region = var.region
 
     default_tags {
-    tags = var.aws_default_tags
+    tags = local.aws_default_tags
   }
 
 }
