@@ -60,4 +60,8 @@ resource "aws_vpc_endpoint" "s3_gateway" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = var.provision_vpc ? module.common_vpc[0].private_route_table_ids : var.vpc_private_route_table_ids
   tags              = merge(local.aws_default_tags, { Name = "${local.vpc_s3_endpoint_name}" })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
