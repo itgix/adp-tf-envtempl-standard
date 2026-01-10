@@ -620,7 +620,7 @@ variable "custom_secrets" {
     override_special = optional(string)
     keepers          = optional(map(string))
     manual           = optional(bool, false)
-    value            = optional(string)
+    value            = optional(map(string))  # JSON object with multiple key-value pairs
   }))
 }
 
