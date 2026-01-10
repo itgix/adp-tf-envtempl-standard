@@ -221,14 +221,6 @@ dns_main_domain        = "itgix.eu"
 enable_karpenter       = true
 ec2_spot_service_role  = false
 custom_secrets = [
-  {
-    secret_name = "backstage-secrets"
-    manual      = true  # JSON value set manually: AUTH_GITHUB_CLIENT_ID, AUTH_GITHUB_CLIENT_SECRET, GITHUB_TOKEN, GITLAB_TOKEN, AUTH_SECRET
-  },
-  {
-    secret_name = "backstage-postgres-secrets"
-    manual      = true  # JSON value set manually: password, postgres-password
-  }
 ]
 
 ddb_create = false
