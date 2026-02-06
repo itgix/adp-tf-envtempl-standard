@@ -699,3 +699,12 @@ variable "bucket_configuration" {
     cors_configuration      = []
   }]
 }
+
+###############################################Valkey variables
+
+variable "create_elasticache_valkey" {
+  type        = bool
+  description = "elasticache_valkey"
+  default     = false
+
+}
