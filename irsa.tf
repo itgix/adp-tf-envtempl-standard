@@ -212,6 +212,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "iam:GetInstanceProfile",
                 "iam:DeleteInstanceProfile",
                 "iam:CreateInstanceProfile",
+                "iam:ListInstanceProfiles",
                 "iam:AddRoleToInstanceProfile"
             ],
             "Effect": "Allow",
