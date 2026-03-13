@@ -58,9 +58,7 @@ eks_cluster_admins = [
   }
 ]
 eks_access_entries = {}
-eks_kms_key_users = [
-  "arn:aws:iam::722377226063:user/users/mvukadinoff"
-]
+eks_kms_key_users = []
 
 create_rds = true
 rds_extra_credentials = {
