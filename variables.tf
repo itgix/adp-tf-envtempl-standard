@@ -350,6 +350,11 @@ variable "waf_geo_location_block_enforce" {
   default     = "block"
   description = "allow or block - action to take on geo location list of countries"
 }
+variable "waf_allow_aws_verified_bots_before_geo" {
+  type        = bool
+  default     = false
+  description = "Allow AWS verified bots before geo location list of countries"
+}
 variable "waf_webacl_cloudwatch_enabled" {}
 variable "waf_sampled_requests_enabled" {}
 variable "waf_logging_enabled" {}

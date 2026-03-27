@@ -129,6 +129,8 @@ waf_country_codes_match = [
 
 custom_managed_waf_rule_groups = []
 
+waf_allow_aws_verified_bots_before_geo = false
+
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
