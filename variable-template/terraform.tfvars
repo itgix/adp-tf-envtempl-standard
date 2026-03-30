@@ -131,10 +131,6 @@ waf_rate_limit_rules = []
 
 custom_managed_waf_rule_groups = []
 
-waf_allow_aws_verified_bots_before_geo = false
-waf_bot_control_labeling_priority      = 0
-waf_verified_bot_allow_priority        = 1
-
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
