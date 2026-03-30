@@ -419,9 +419,14 @@ variable "custom_waf_rules" {
     name                = string
     priority            = number
     action              = string # "allow", "block", or "count"
-    comparison_operator = string # e.g. "GT"
-    size                = number # e.g. 15728640 (15MB)
+    rule_type           = optional(string, "size_constraint")
+    comparison_operator = optional(string)
+    size                = optional(number)
     transform           = optional(string, "NONE")
+    label_match = optional(list(object({
+      scope = optional(string, "LABEL")
+      key   = string
+    })))
   }))
   default = []
 }
