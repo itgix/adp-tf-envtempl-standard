@@ -32,25 +32,26 @@ module "wafv2_cloudfront" {
     aws = aws.virginia
   }
 
-  project                        = var.project_name
-  env                            = var.environment
-  aws_region                     = var.region
-  pid                            = var.project_name
-  web_acl_scope                  = "CLOUDFRONT"
-  waf_attachment_type            = "cloudfront" # appended to WebACL and Log Group name
-  waf_default_action             = var.waf_default_action
-  waf_geo_location_block_enforce = var.waf_geo_location_block_enforce
-  geo_rule_enabled               = var.waf_geo_rule_enabled
-  geo_rule_priority              = var.waf_geo_rule_priority
-  web_acl_cloudwatch_enabled     = var.waf_webacl_cloudwatch_enabled
-  sampled_requests_enabled       = var.waf_sampled_requests_enabled
-  aws_waf_logging_enabled        = var.cloudfront_waf_enabled ? var.waf_logging_enabled : false
-  waf_log_retention_days         = var.waf_log_retention_days
-  country_codes_match            = var.waf_country_codes_match     # list of countries to be blocked by WAF
-  aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
-  rate_limit_rules               = var.waf_rate_limit_rules
-  custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
-  custom_waf_rules               = var.custom_waf_rules
-  cloudfront_true                = true
-  application_true               = false
+  project                                    = var.project_name
+  env                                        = var.environment
+  aws_region                                 = var.region
+  pid                                        = var.project_name
+  web_acl_scope                              = "CLOUDFRONT"
+  waf_attachment_type                        = "cloudfront" # appended to WebACL and Log Group name
+  waf_default_action                         = var.waf_default_action
+  waf_geo_location_block_enforce             = var.waf_geo_location_block_enforce
+  geo_rule_enabled                           = var.waf_geo_rule_enabled
+  geo_rule_priority                          = var.waf_geo_rule_priority
+  web_acl_cloudwatch_enabled                 = var.waf_webacl_cloudwatch_enabled
+  sampled_requests_enabled                   = var.waf_sampled_requests_enabled
+  aws_waf_logging_enabled                    = var.cloudfront_waf_enabled ? var.waf_logging_enabled : false
+  waf_log_retention_days                     = var.waf_log_retention_days
+  country_codes_match                        = var.waf_country_codes_match     # list of countries to be blocked by WAF
+  aws_managed_waf_rule_groups                = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
+  rate_limit_rules                           = var.waf_rate_limit_rules
+  custom_managed_waf_rule_groups             = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
+  attach_module_custom_rule_group_to_web_acl = var.waf_attach_module_custom_rule_group_to_web_acl
+  custom_waf_rules                           = var.custom_waf_rules
+  cloudfront_true                            = true
+  application_true                           = false
 }

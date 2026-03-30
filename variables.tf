@@ -397,6 +397,12 @@ variable "custom_waf_rules" {
   default     = []
 }
 
+variable "waf_attach_module_custom_rule_group_to_web_acl" {
+  type        = bool
+  default     = true
+  description = "Whether to attach the module's custom rule group to the Web ACL. Set true when custom rules are defined and should be included in the Web ACL."
+}
+
 
 #########################################################################
 ##                   ECR Variables                                     ##

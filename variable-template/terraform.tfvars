@@ -132,6 +132,8 @@ waf_rate_limit_rules = []
 
 custom_managed_waf_rule_groups = []
 
+waf_attach_module_custom_rule_group_to_web_acl = true
+
 aws_managed_waf_rule_groups = [
   {
     "name"     = "AWSManagedRulesAdminProtectionRuleSet"
