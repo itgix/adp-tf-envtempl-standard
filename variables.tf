@@ -365,24 +365,8 @@ variable "waf_geo_rule_enabled" {
 
 variable "waf_rate_limit_rules" {
   description = "Rate-based rules passed through to the WAF module (same schema as tf-module-wafv2 rate_limit_rules)."
-  type = list(object({
-    name                  = string
-    priority              = number
-    action                = string # "block", "count", or "captcha"
-    limit                 = number # max requests per evaluation window (min 100)
-    aggregate_key_type    = optional(string, "IP")
-    evaluation_window_sec = optional(number, 300)
-    forwarded_ip_config = optional(object({
-      header_name       = string
-      fallback_behavior = string
-    }))
-    scope_down_byte_match = optional(object({
-      search_string         = string
-      positional_constraint = string
-      text_transformation   = optional(string, "NONE")
-    }))
-  }))
-  default = []
+  type        = list(any)
+  default     = []
 }
 
 variable "waf_webacl_cloudwatch_enabled" {}
@@ -403,32 +387,14 @@ variable "aws_managed_waf_rule_groups" {
 }
 
 variable "custom_managed_waf_rule_groups" {
-  type = list(object({
-    name                    = string
-    priority                = number
-    action                  = string
-    rule_group_arn          = string
-    rules_override_to_count = list(string)
-  }))
+  type    = list(any)
   default = []
 }
 
 variable "custom_waf_rules" {
   description = "List of custom WAF rules to include in the rule group"
-  type = list(object({
-    name                = string
-    priority            = number
-    action              = string # "allow", "block", or "count"
-    rule_type           = optional(string, "size_constraint", "label_match")
-    comparison_operator = optional(string)
-    size                = optional(number)
-    transform           = optional(string, "NONE")
-    label_match = optional(list(object({
-      scope = optional(string, "LABEL")
-      key   = string
-    })))
-  }))
-  default = []
+  type        = list(any)
+  default     = []
 }
 
 
