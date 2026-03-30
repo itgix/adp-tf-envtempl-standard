@@ -9,6 +9,7 @@ module "wafv2_application" {
   waf_attachment_type                = "application"                      # appended to WebACL and Log Group name
   waf_default_action                 = var.waf_default_action             # allow or block - default action if a request doesn't match any rule
   waf_geo_location_block_enforce     = var.waf_geo_location_block_enforce # allow or block
+  geo_rule_priority                  = var.waf_geo_rule_priority          # priority for the geo location rule
   web_acl_cloudwatch_enabled         = var.waf_webacl_cloudwatch_enabled
   sampled_requests_enabled           = var.waf_sampled_requests_enabled
   aws_waf_logging_enabled            = var.application_waf_enabled ? var.waf_logging_enabled : false

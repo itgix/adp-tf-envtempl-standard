@@ -118,6 +118,7 @@ waf_webacl_cloudwatch_enabled  = true
 waf_logging_enabled            = true
 waf_log_retention_days         = 365
 waf_geo_location_block_enforce = "block"
+waf_geo_rule_priority          = 0
 waf_default_action             = "allow"
 waf_country_codes_match = [
   "CU",

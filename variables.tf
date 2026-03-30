@@ -350,6 +350,12 @@ variable "waf_geo_location_block_enforce" {
   default     = "block"
   description = "allow or block - action to take on geo location list of countries"
 }
+
+variable "waf_geo_rule_priority" {
+  type        = number
+  default     = 0
+  description = "priority for the geo location rule"
+}
 variable "waf_allow_aws_verified_bots_before_geo" {
   type        = bool
   default     = false
