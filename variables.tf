@@ -362,6 +362,18 @@ variable "waf_allow_aws_verified_bots_before_geo" {
   description = "Allow AWS verified bots before geo location list of countries"
 }
 
+variable "waf_bot_control_labeling_priority" {
+  type        = number
+  default     = 0
+  description = "priority for the bot control labeling"
+}
+
+variable "waf_verified_bot_allow_priority" {
+  type        = number
+  default     = 1
+  description = "priority for the verified bot allow"
+}
+
 variable "waf_rate_limit_rules" {
   type    = list(any)
   default = []
