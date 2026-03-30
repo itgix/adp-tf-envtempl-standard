@@ -118,6 +118,7 @@ waf_webacl_cloudwatch_enabled  = true
 waf_logging_enabled            = true
 waf_log_retention_days         = 365
 waf_geo_location_block_enforce = "block"
+waf_geo_rule_enabled           = true
 waf_geo_rule_priority          = 0
 waf_default_action             = "allow"
 waf_country_codes_match = [
@@ -174,6 +175,7 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
+# Body size rules for the custom rule group (size_constraint on body). See variables.tf custom_waf_rules for the object shape.
 custom_waf_rules = []
 
 provision_ecr                       = false

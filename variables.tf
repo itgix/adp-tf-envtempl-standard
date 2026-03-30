@@ -357,8 +357,31 @@ variable "waf_geo_rule_priority" {
   description = "priority for the geo location rule"
 }
 
+variable "waf_geo_rule_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to include the geo-match rule in the Web ACL. Set false when geo blocking is not needed."
+}
+
 variable "waf_rate_limit_rules" {
-  type    = list(any)
+  description = "Rate-based rules passed through to the WAF module (same schema as tf-module-wafv2 rate_limit_rules)."
+  type = list(object({
+    name                  = string
+    priority              = number
+    action                = string # "block", "count", or "captcha"
+    limit                 = number # max requests per evaluation window (min 100)
+    aggregate_key_type    = optional(string, "IP")
+    evaluation_window_sec = optional(number, 300)
+    forwarded_ip_config = optional(object({
+      header_name       = string
+      fallback_behavior = string
+    }))
+    scope_down_byte_match = optional(object({
+      search_string         = string
+      positional_constraint = string
+      text_transformation   = optional(string, "NONE")
+    }))
+  }))
   default = []
 }
 
