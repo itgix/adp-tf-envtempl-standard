@@ -126,6 +126,7 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
+waf_rate_limit_rules = []
 
 custom_managed_waf_rule_groups = []
 

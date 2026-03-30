@@ -16,6 +16,7 @@ module "wafv2_application" {
   country_codes_match                = var.waf_country_codes_match     # list of countries to be blocked by WAF
   aws_managed_waf_rule_groups        = var.aws_managed_waf_rule_groups # list of AWS managed security rules to be enabled
   allow_aws_verified_bots_before_geo = var.waf_allow_aws_verified_bots_before_geo
+  rate_limit_rules                   = var.waf_rate_limit_rules           # define rate limit rules for the WAF
   custom_managed_waf_rule_groups     = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_waf_rules                   = var.custom_waf_rules
   cloudfront_true                    = false

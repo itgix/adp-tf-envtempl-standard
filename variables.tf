@@ -355,6 +355,12 @@ variable "waf_allow_aws_verified_bots_before_geo" {
   default     = false
   description = "Allow AWS verified bots before geo location list of countries"
 }
+
+variable "waf_rate_limit_rules" {
+  type    = list(any)
+  default = []
+}
+
 variable "waf_webacl_cloudwatch_enabled" {}
 variable "waf_sampled_requests_enabled" {}
 variable "waf_logging_enabled" {}
