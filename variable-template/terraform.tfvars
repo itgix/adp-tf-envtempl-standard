@@ -128,6 +128,7 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
+
 custom_managed_waf_rule_groups = []
 
 aws_managed_waf_rule_groups = [

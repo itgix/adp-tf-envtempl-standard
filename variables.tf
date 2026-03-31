@@ -396,7 +396,7 @@ variable "waf_custom_rules" {
     Custom WAF rules passed to tf-module-wafv2 (name, priority, action, statement map).
     For rate limiting, use statement.rate_based_statement — there is no separate rate_limit_rules input.
   EOT
-  type        = list(any)
+  type        = any
   default     = []
 }
 
