@@ -111,23 +111,13 @@ sns_topics = {
     "enable_fifo" = false
   }
 }
-application_waf_enabled        = false
-cloudfront_waf_enabled         = false
-waf_sampled_requests_enabled   = true
-waf_webacl_cloudwatch_enabled  = true
-waf_logging_enabled            = true
-waf_log_retention_days         = 365
-waf_geo_location_block_enforce = "block"
-waf_geo_rule_enabled           = true
-waf_geo_rule_priority          = 0
-waf_default_action             = "allow"
-waf_country_codes_match = [
-  "CU",
-  "IR",
-  "SY",
-  "KP",
-  "RU"
-]
+application_waf_enabled       = false
+cloudfront_waf_enabled        = false
+waf_sampled_requests_enabled  = true
+waf_webacl_cloudwatch_enabled = true
+waf_logging_enabled           = true
+waf_log_retention_days        = 365
+waf_default_action            = "allow"
 
 custom_managed_waf_rule_groups = []
 
