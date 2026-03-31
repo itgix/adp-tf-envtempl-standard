@@ -128,11 +128,7 @@ waf_country_codes_match = [
   "KP",
   "RU"
 ]
-waf_rate_limit_rules = []
-
 custom_managed_waf_rule_groups = []
-
-waf_attach_module_custom_rule_group_to_web_acl = true
 
 aws_managed_waf_rule_groups = [
   {
@@ -177,8 +173,8 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
-# Body size rules for the custom rule group (size_constraint on body). See variables.tf custom_waf_rules for the object shape.
-custom_waf_rules = []
+# Custom rules (tf-module-wafv2): name, priority, action, statement — including rate_based_statement for rate limits.
+waf_custom_rules = []
 
 provision_ecr                       = false
 ecr_repository_type                 = "private"

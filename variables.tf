@@ -391,16 +391,13 @@ variable "custom_managed_waf_rule_groups" {
   default = []
 }
 
-variable "custom_waf_rules" {
-  description = "List of custom WAF rules to include in the rule group"
+variable "waf_custom_rules" {
+  description = <<-EOT
+    Custom WAF rules passed to tf-module-wafv2 (name, priority, action, statement map).
+    For rate limiting, use statement.rate_based_statement — there is no separate rate_limit_rules input.
+  EOT
   type        = list(any)
   default     = []
-}
-
-variable "waf_attach_module_custom_rule_group_to_web_acl" {
-  type        = bool
-  default     = true
-  description = "Whether to attach the module's custom rule group to the Web ACL. Set true when custom rules are defined and should be included in the Web ACL."
 }
 
 
