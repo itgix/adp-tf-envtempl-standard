@@ -357,15 +357,8 @@ variable "waf_sampled_requests_enabled" {}
 variable "waf_logging_enabled" {}
 variable "waf_log_retention_days" {}
 variable "aws_managed_waf_rule_groups" {
-  type = list(any)
-  default = [
-    {
-      name                    = "AWSManagedRulesAdminProtectionRuleSet"
-      priority                = 1
-      action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
-      rules_override_to_count = []
-    }
-  ]
+  type = any
+  default = []
 }
 
 variable "custom_managed_waf_rule_groups" {
