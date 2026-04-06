@@ -357,7 +357,7 @@ variable "waf_sampled_requests_enabled" {}
 variable "waf_logging_enabled" {}
 variable "waf_log_retention_days" {}
 variable "aws_managed_waf_rule_groups" {
-  type = any
+  type    = any
   default = []
 }
 
