@@ -18,7 +18,7 @@ module "wafv2_application" {
 }
 
 module "wafv2_cloudfront" {
-  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=flexible-waf-rules"
+  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v5"
   waf_enabled = var.cloudfront_waf_enabled
 
   providers = {
