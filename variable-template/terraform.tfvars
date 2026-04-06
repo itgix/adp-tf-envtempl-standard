@@ -58,7 +58,7 @@ eks_cluster_admins = [
   }
 ]
 eks_access_entries = {}
-eks_kms_key_users = []
+eks_kms_key_users  = []
 
 create_rds = true
 rds_extra_credentials = {
@@ -117,13 +117,7 @@ waf_sampled_requests_enabled  = true
 waf_webacl_cloudwatch_enabled = true
 waf_logging_enabled           = true
 waf_log_retention_days        = 365
-waf_country_codes_match = [
-  "CU",
-  "IR",
-  "SY",
-  "KP",
-  "RU"
-]
+waf_default_action            = "allow"
 
 custom_managed_waf_rule_groups = []
 
@@ -170,7 +164,8 @@ aws_managed_waf_rule_groups = [
   }
 ]
 
-custom_waf_rules = []
+# Custom rules (tf-module-wafv2): name, priority, action, statement — including rate_based_statement for rate limits.
+waf_custom_rules = []
 
 provision_ecr                       = false
 ecr_repository_type                 = "private"

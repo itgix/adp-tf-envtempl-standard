@@ -141,9 +141,7 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | External VPC private subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_public_subnet_ids"></a> [vpc\_public\_subnet\_ids](#input\_vpc\_public\_subnet\_ids) | External VPC public subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_single_nat_gateway"></a> [vpc\_single\_nat\_gateway](#input\_vpc\_single\_nat\_gateway) | Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments | `bool` | `false` | no |
-| <a name="input_waf_country_codes_match"></a> [waf\_country\_codes\_match](#input\_waf\_country\_codes\_match) | n/a | `any` | n/a | yes |
 | <a name="input_waf_default_action"></a> [waf\_default\_action](#input\_waf\_default\_action) | allow or block - default action of WAF when a request hasn't matched any rules | `string` | `"allow"` | no |
-| <a name="input_waf_geo_location_block_enforce"></a> [waf\_geo\_location\_block\_enforce](#input\_waf\_geo\_location\_block\_enforce) | allow or block - action to take on geo location list of countries | `string` | `"block"` | no |
 | <a name="input_waf_log_retention_days"></a> [waf\_log\_retention\_days](#input\_waf\_log\_retention\_days) | n/a | `any` | n/a | yes |
 | <a name="input_waf_logging_enabled"></a> [waf\_logging\_enabled](#input\_waf\_logging\_enabled) | n/a | `any` | n/a | yes |
 | <a name="input_waf_sampled_requests_enabled"></a> [waf\_sampled\_requests\_enabled](#input\_waf\_sampled\_requests\_enabled) | n/a | `any` | n/a | yes |
