@@ -1,5 +1,5 @@
 module "wafv2_application" {
-  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=flexible-waf-rules"
+  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v5"
   waf_enabled                    = var.application_waf_enabled
   project                        = var.project_name
   env                            = var.environment
