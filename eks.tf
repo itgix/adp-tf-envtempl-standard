@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=alb-controller-update-iam-policy"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.3"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
