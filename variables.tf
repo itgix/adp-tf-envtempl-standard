@@ -741,6 +741,7 @@ variable "bucket_configuration" {
     }))
     privileged_principal_arns    = optional(list(map(list(string))))
     privileged_principal_actions = optional(list(string))
+    source_policy_documents      = optional(list(string))
   }))
   description = "Values needed for the creation of a new S3 bucket. For the value of the argument 'bucket_name_prefix' it should be a value that has the service name and the purpose of that bucket."
   default = [{
