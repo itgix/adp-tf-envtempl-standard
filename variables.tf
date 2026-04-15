@@ -563,15 +563,11 @@ variable "acm_certificate_enable" {
   description = "Generate a validated acm cert"
   default     = false
 }
-variable "dns_hosted_zone" {
-  type        = string
-  description = "Managed R53 Zone ID"
-  default     = "Z2INQZ6AA9H9SI"
-}
-variable "dns_main_domain" {
-  type        = string
-  description = "Domain Managed under the R53 Zone"
-  default     = "itgix.eu"
+
+variable "dns_domain_names" {
+  type        = map(string)
+  description = "Map of ACM certificate primary domain name to Route53 hosted zone ID for DNS validation. Use an empty string when DNS is not in Route53: no validation records, no aws_acm_certificate_validation (apply will not wait). Use the certificate ARN output and complete validation in your DNS provider before attaching the cert to listeners."
+  default     = {}
 }
 
 ################################################################################
