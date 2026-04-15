@@ -570,6 +570,17 @@ variable "dns_domain_names" {
   default     = {}
 }
 
+variable "dns_hosted_zone" {
+  type        = string
+  description = "Managed R53 Zone ID"
+  default     = "Z2INQZ6AA9H9SI"
+}
+variable "dns_main_domain" {
+  type        = string
+  description = "Domain Managed under the R53 Zone"
+  default     = "itgix.eu"
+}
+
 ################################################################################
 # Karpenter
 ################################################################################

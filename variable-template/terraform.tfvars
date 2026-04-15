@@ -209,9 +209,9 @@ valkey_ecpu_per_second_max           = 2000
 valkey_create_valkey_user_and_secret = true
 
 acm_certificate_enable = true
-dns_domain_names = {
-  "itgix.eu" = "Z2INQZ6AA9H9SI"
-}
+dns_hosted_zone        = "Z2INQZ6AA9H9SI"
+dns_main_domain        = "itgix.eu"
+dns_domain_names       = {}
 
 enable_karpenter      = true
 ec2_spot_service_role = false
