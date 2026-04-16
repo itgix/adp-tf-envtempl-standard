@@ -211,8 +211,10 @@ valkey_create_valkey_user_and_secret = true
 acm_certificate_enable = true
 dns_hosted_zone        = "Z2INQZ6AA9H9SI"
 dns_main_domain        = "itgix.eu"
-enable_karpenter       = true
-ec2_spot_service_role  = false
+dns_domain_names       = {}
+
+enable_karpenter      = true
+ec2_spot_service_role = false
 custom_secrets = [
 
 ]
