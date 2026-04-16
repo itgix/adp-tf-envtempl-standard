@@ -7,7 +7,6 @@ module "acm" {
   r53_zone_id = var.dns_hosted_zone
   domain_name = "*.${var.dns_main_domain}"
 
-  # Use this one for multiple domains;
-  # If this one is used, the above one is not active for the terraform
+  # Use this one if you want to add more domains;
   domain_names = var.dns_domain_names
 }
