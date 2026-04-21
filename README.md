@@ -39,7 +39,7 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | <a name="module_irsa_karpenter"></a> [irsa\_karpenter](#module\_irsa\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 19.21.0 |
 | <a name="module_rds_iam_auth"></a> [rds\_iam\_auth](#module\_rds\_iam\_auth) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
-| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.1 |
+| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.7 |
 | <a name="module_sqs_dev"></a> [sqs\_dev](#module\_sqs\_dev) | git::git@github.com:itgix/tf-module-sqs-sns.git | v1.0.0 |
 | <a name="module_wafv2_application"></a> [wafv2\_application](#module\_wafv2\_application) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
 | <a name="module_wafv2_cloudfront"></a> [wafv2\_cloudfront](#module\_wafv2\_cloudfront) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
