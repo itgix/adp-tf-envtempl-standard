@@ -118,7 +118,7 @@ waf_webacl_cloudwatch_enabled = true
 waf_logging_enabled           = true
 waf_log_retention_days        = 365
 waf_default_action            = "allow"
-ip_whitelist_prefixes         = []
+waf_ip_whitelist_prefixes     = []
 
 custom_managed_waf_rule_groups = []
 

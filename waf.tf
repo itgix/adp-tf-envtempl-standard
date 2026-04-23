@@ -15,7 +15,7 @@ module "wafv2_application" {
   aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups    # list of AWS managed security rules to be enabled
   custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_rules                   = var.waf_custom_rules               # list of custom rules to be enabled
-  ip_whitelist_prefixes          = var.ip_whitelist_prefixes
+  ip_whitelist_prefixes          = var.waf_ip_whitelist_prefixes
 }
 
 module "wafv2_cloudfront" {
