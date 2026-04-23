@@ -111,14 +111,15 @@ sns_topics = {
     "enable_fifo" = false
   }
 }
-application_waf_enabled       = false
-cloudfront_waf_enabled        = false
-waf_sampled_requests_enabled  = true
-waf_webacl_cloudwatch_enabled = true
-waf_logging_enabled           = true
-waf_log_retention_days        = 365
-waf_default_action            = "allow"
-waf_ip_whitelist_prefixes     = []
+application_waf_enabled        = false
+cloudfront_waf_enabled         = false
+waf_sampled_requests_enabled   = true
+waf_webacl_cloudwatch_enabled  = true
+waf_logging_enabled            = true
+waf_log_retention_days         = 365
+waf_default_action             = "allow"
+waf_ip_whitelist_prefixes      = []
+waf_ip_whitelist_rule_priority = 0
 
 custom_managed_waf_rule_groups = []
 

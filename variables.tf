@@ -773,3 +773,4 @@ variable "custom_terraform_vars" {
 }
 
 variable "waf_ip_whitelist_prefixes" {}
+variable "waf_ip_whitelist_rule_priority" {}
