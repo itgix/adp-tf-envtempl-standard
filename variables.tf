@@ -771,3 +771,5 @@ variable "custom_terraform_vars" {
   default     = {}
   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
+
+variable "ip_whitelist_prefixes" {}
