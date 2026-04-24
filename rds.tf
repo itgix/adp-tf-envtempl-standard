@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source = "git::git@github.com:itgix/tf-module-rds.git?ref=v1.0.7"
+  source = "git::git@github.com:itgix/tf-module-rds.git?ref=autoscaling"
 
   environment = var.environment
 
@@ -29,6 +29,15 @@ module "rds_maindb" {
 
   rds_scaling_config = var.rds_scaling_config
   rds_instance_type  = var.rds_instance_type
+
+  # On-demand replicas scaling config
+  rds_autoscaling_enabled            = var.rds_replicas_scaling.enabled
+  rds_autoscaling_min_capacity       = var.rds_replicas_scaling.min_capacity
+  rds_autoscaling_max_capacity       = var.rds_replicas_scaling.max_capacity
+  rds_autoscaling_target_metrics     = var.rds_replicas_scaling.target_metrics
+  rds_autoscaling_target_value       = var.rds_replicas_scaling.target_value
+  rds_autoscaling_scale_in_cooldown  = var.rds_replicas_scaling.scale_in_cooldown
+  rds_autoscaling_scale_out_cooldown = var.rds_replicas_scaling.scale_out_cooldown
 
   rds_iam_auth_enabled = var.rds_iam_auth_enabled
   rds_default_username = var.rds_default_username

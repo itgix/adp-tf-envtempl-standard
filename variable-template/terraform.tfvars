@@ -65,10 +65,24 @@ rds_extra_credentials = {
   "username" = "demouser"
   "database" = "demodb"
 }
+
+# Use this variable to configure the RDS serverless scaling
 rds_scaling_config = {
   "min_capacity" = 0.5
   "max_capacity" = 2
 }
+
+# Use this variable to enable/disable the on-demand replicas scaling
+rds_replicas_scaling = {
+  enabled            = false
+  min_capacity       = 1
+  max_capacity       = 5
+  target_metrics     = "RDSReaderAverageCPUUtilization"
+  target_value       = 70
+  scale_in_cooldown  = 300
+  scale_out_cooldown = 300
+}
+
 rds_config = {
   "engine"         = "aurora-postgresql"
   "engine_version" = "14.15"
@@ -78,6 +92,7 @@ rds_config = {
   "db_port"        = 5432
   "db_name"        = ""
 }
+
 rds_iam_auth_enabled = false
 rds_logs_exports = [
   "postgresql"
