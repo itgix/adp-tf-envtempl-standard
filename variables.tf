@@ -244,6 +244,29 @@ variable "rds_scaling_config" {
     }
   )
 }
+
+variable "rds_replicas_scaling" {
+  description = "Aurora reader replica Application Auto Scaling (on-demand replicas)"
+  type = object({
+    enabled            = bool
+    min_capacity       = number
+    max_capacity       = number
+    target_metrics     = string
+    target_value       = number
+    scale_in_cooldown  = number
+    scale_out_cooldown = number
+  })
+  default = {
+    enabled            = false
+    min_capacity       = 1
+    max_capacity       = 5
+    target_metrics     = "RDSReaderAverageCPUUtilization"
+    target_value       = 70
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+  }
+}
+
 variable "rds_default_username" {
   type        = string
   description = "DB username"
@@ -889,4 +912,15 @@ variable "custom_terraform_vars" {
     sample_var   = "changeme"
   }
   description = "Object of custom values that can be used for extra terraform files outside of the template"
+}
+
+variable "waf_ip_whitelist_prefixes" {
+  type        = list(string)
+  description = "List of IP prefixes to whitelist"
+  default     = []
+}
+variable "waf_ip_whitelist_rule_priority" {
+  type        = number
+  description = "Priority of the IP whitelist rule"
+  default     = 0
 }

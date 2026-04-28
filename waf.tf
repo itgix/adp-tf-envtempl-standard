@@ -1,5 +1,5 @@
 module "wafv2_application" {
-  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v6"
+  source                         = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v7"
   waf_enabled                    = var.application_waf_enabled
   project                        = var.project_name
   env                            = var.environment
@@ -15,10 +15,12 @@ module "wafv2_application" {
   aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups    # list of AWS managed security rules to be enabled
   custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_rules                   = var.waf_custom_rules               # list of custom rules to be enabled
+  ip_whitelist_prefixes          = var.waf_ip_whitelist_prefixes      # list of IP prefixes to whitelist
+  ip_whitelist_rule_priority     = var.waf_ip_whitelist_rule_priority # priority of the IP whitelist rule
 }
 
 module "wafv2_cloudfront" {
-  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v6"
+  source      = "git::git@github.com:itgix/tf-module-wafv2.git?ref=v7"
   waf_enabled = var.cloudfront_waf_enabled
 
   providers = {
@@ -39,4 +41,6 @@ module "wafv2_cloudfront" {
   aws_managed_waf_rule_groups    = var.aws_managed_waf_rule_groups    # list of AWS managed security rules to be enabled
   custom_managed_waf_rule_groups = var.custom_managed_waf_rule_groups # list of custom managed security rules to be enabled
   custom_rules                   = var.waf_custom_rules               # list of custom rules to be enabled
+  ip_whitelist_prefixes          = var.waf_ip_whitelist_prefixes      # list of IP prefixes to whitelist
+  ip_whitelist_rule_priority     = var.waf_ip_whitelist_rule_priority # priority of the IP whitelist rule
 }
