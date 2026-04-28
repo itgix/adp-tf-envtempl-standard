@@ -25,7 +25,7 @@ variable "project_name" {
 variable "rds_iam_irsa" {
   type        = bool
   description = "Enable creation of RDS IAM Policy"
-  default     = false
+  default     = true
 }
 
 variable "allow_long_names" {
@@ -74,7 +74,7 @@ variable "vpc_private_route_table_ids" {
 
 variable "vpc_single_nat_gateway" {
   type        = bool
-  default     = false
+  default     = true
   description = "Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments"
 }
 
@@ -91,7 +91,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.29"
+  default     = "1.31"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -149,7 +149,7 @@ variable "rds_config" {
   })
   default = ({
     engine         = "aurora-postgresql"
-    engine_version = "14.5"
+    engine_version = "14.9"
     engine_mode    = "provisioned"
     cluster_family = "aurora-postgresql14"
     cluster_size   = 1
@@ -236,9 +236,27 @@ variable "sqs_iam_role_name" {
 }
 variable "sqs_queues" {
   type = map(any)
+  default = {
+    "sample-service_queue" = {
+      "sns_topic_name" = "sample_topic"
+      "dlq_enable"     = false
+    }
+    "sample-secondservice_queue" = {
+      "sns_topic_name" = "sample_topic"
+      "dlq_enable"     = false
+    }
+  }
 }
 variable "sns_topics" {
   type = map(any)
+  default = {
+    "sample_topic" = {
+      "enable_fifo" = false
+    }
+    "sample_second_topic" = {
+      "enable_fifo" = false
+    }
+  }
 }
 variable "provision_sqs" {
   type        = string
@@ -269,18 +287,63 @@ variable "waf_geo_location_block_enforce" {
   default     = "block"
   description = "allow or block - action to take on geo location list of countries"
 }
-variable "waf_webacl_cloudwatch_enabled" {}
-variable "waf_sampled_requests_enabled" {}
-variable "waf_logging_enabled" {}
-variable "waf_country_codes_match" {}
-variable "waf_log_retention_days" {}
+variable "waf_webacl_cloudwatch_enabled" {
+  type    = bool
+  default = true
+}
+variable "waf_sampled_requests_enabled" {
+  type    = bool
+  default = true
+}
+variable "waf_logging_enabled" {
+  type    = bool
+  default = true
+}
+variable "waf_country_codes_match" {
+  default = [
+    "CU",
+    "IR",
+    "SY",
+    "KP",
+    "RU"
+  ]
+
+}
+variable "waf_log_retention_days" {
+  type    = number
+  default = 365
+}
 variable "aws_managed_waf_rule_groups" {
   type = list(any)
   default = [
     {
       name                    = "AWSManagedRulesAdminProtectionRuleSet"
-      priority                = 1
-      action                  = "none" # count (stop enforcing rule group) or none (let the rule group decide what action to take, i.e. enforcing)
+      priority                = 2
+      action                  = "none"
+      rules_override_to_count = []
+    },
+    {
+      name                    = "AWSManagedRulesCommonRuleSet"
+      priority                = 3
+      action                  = "none"
+      rules_override_to_count = []
+    },
+    {
+      name                    = "AWSManagedRulesKnownBadInputsRuleSet"
+      priority                = 4
+      action                  = "none"
+      rules_override_to_count = []
+    },
+    {
+      name                    = "AWSManagedRulesLinuxRuleSet"
+      priority                = 5
+      action                  = "none"
+      rules_override_to_count = []
+    },
+    {
+      name                    = "AWSManagedRulesSQLiRuleSet"
+      priority                = 6
+      action                  = "none"
       rules_override_to_count = []
     }
   ]
@@ -352,7 +415,7 @@ variable "ecr_repository_encryption_type" {
 variable "ecr_repository_image_scan_on_push" {
   description = "Indicates whether images are scanned after being pushed to the repository (`true`) or not scanned (`false`)"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "ecr_repository_read_access_arns" {
@@ -388,7 +451,7 @@ variable "ecr_registry_scan_rules" {
 variable "ecr_create_lifecycle_policy" {
   description = "Determines whether a lifecycle policy will be created"
   type        = bool
-  default     = true
+  default     = false
 }
 
 #########################################################################
@@ -397,36 +460,43 @@ variable "ecr_create_lifecycle_policy" {
 variable "create_elasticache_redis" {
   type        = bool
   description = "If a new Elasticache Redis instance needs to be created"
+  default     = false
 }
 
 variable "redis_cluster_size" {
   type        = number
   description = "Number of nodes in cluster. Ignored when redis_cluster_mode_enabled == true"
+  default     = 1
 }
 
 variable "redis_cluster_mode_enabled" {
   type        = bool
   description = "Flag to enable/disable cluster mode"
+  default     = false
 }
 
 variable "redis_instance_type" {
   type        = string
   description = "Elastic cache instance type"
+  default     = "cache.t3.medium"
 }
 
 variable "redis_engine_version" {
   type        = string
   description = "Redis engine version"
+  default     = "7.0"
 }
 
 variable "redis_family" {
   type        = string
   description = "Redis family"
+  default     = "redis7"
 }
 
 variable "redis_allowed_cidr_blocks" {
   type        = list(any)
   description = "List of CIDRs allowed on Redis security group rules"
+  default     = []
 }
 
 variable "redis_allowed_security_group_ids" {
@@ -434,12 +504,13 @@ variable "redis_allowed_security_group_ids" {
   description = <<-EOT
     A list of IDs of Security Groups to allow access to the security group created by this module on Redis port.
   EOT
+  deafult     = []
 }
 
 variable "redis_multi_az_enabled" {
   type        = bool
   description = "Flag to enable/disable Multiple AZs"
-  default     = true
+  default     = false
 }
 
 ## Elasticache Redis - Logging variables
@@ -447,12 +518,13 @@ variable "redis_multi_az_enabled" {
 variable "redis_cloudwatch_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
+  default     = true
 }
 
 variable "redis_automatic_failover_enabled" {
   type        = bool
   description = "Automatic failover (Not available for T1/T2 instances)"
-  default     = true
+  default     = false
 }
 
 #########################################################################
@@ -461,17 +533,17 @@ variable "redis_automatic_failover_enabled" {
 variable "acm_certificate_enable" {
   type        = bool
   description = "Generate a validated acm cert"
-  default     = false
+  default     = true
 }
 variable "dns_hosted_zone" {
   type        = string
   description = "Managed R53 Zone ID"
-  default     = "Z2INQZ6AA9H9SI"
+  default     = "Z099176436DDAGFK3L3K2"
 }
 variable "dns_main_domain" {
   type        = string
   description = "Domain Managed under the R53 Zone"
-  default     = "itgix.eu"
+  default     = "coidemo.com"
 }
 
 ################################################################################
@@ -489,6 +561,7 @@ variable "custom_secrets" {
     keepers          = optional(map(string))
     manual           = optional(bool, false)
   }))
+  default = []
 }
 
 variable "custom_secret_keepers" {
@@ -550,6 +623,15 @@ variable "ddb_table_configuration" {
     deletion_protection_enabled   = optional(bool, true)
   }))
   description = "List of objects to pass to the module for the creation of the table."
+  default = [
+    {
+      table_name_suffix = "dynamodb-table"
+      hash_key          = "Id"
+      range_key         = "version"
+      hash_key_type     = "S"
+      range_key_type    = "N"
+    }
+  ]
 }
 
 variable "ddb_global_table_configuration" {
@@ -589,6 +671,31 @@ variable "ddb_global_table_configuration" {
     deletion_protection_enabled   = optional(bool, true)
   }))
   description = "List of objects to pass to the module for the creation of the global table."
+  default = [
+    {
+      table_type        = "global"
+      table_name_suffix = "dynamodb-global-table"
+      replicas = [
+        "us-east-2",
+        "eu-west-1"
+      ]
+      dynamodb_attributes = [
+        {
+          name = "Id"
+          type = "S"
+        },
+        {
+          name = "version"
+          type = "N"
+        }
+      ]
+      hash_key                      = "Id"
+      range_key                     = "version"
+      hash_key_type                 = "S"
+      range_key_type                = "N"
+      enable_point_in_time_recovery = true
+    }
+  ]
 }
 #########################################################################
 ##           S3 - Bucket Configuration Variables                       ##
@@ -642,8 +749,10 @@ variable "bucket_configuration" {
 }
 
 variable "custom_terraform_vars" {
-  type        = any
-  default     = {}
+  type = any
+  default = {
+    enable_nlb = false
+    sample_var = "changeme"
+  }
   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
-
