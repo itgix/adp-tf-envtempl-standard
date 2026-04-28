@@ -25,7 +25,7 @@ variable "project_name" {
 variable "rds_iam_irsa" {
   type        = bool
   description = "Enable creation of RDS IAM Policy"
-  default     = false
+  default     = true
 }
 
 variable "allow_long_names" {
@@ -91,7 +91,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.29"
+  default     = "1.34"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -112,7 +112,15 @@ variable "addons_versions" {
     vpc_cni    = string
     coredns    = string
     ebs_csi    = string
+    efs_csi    = optional(string)
   })
+
+  default = {
+    kube_proxy = "v1.34.0-eksbuild.2"
+    vpc_cni    = "v1.20.4-eksbuild.1"
+    coredns    = "v1.12.3-eksbuild.1"
+    ebs_csi    = "v1.51.1-eksbuild.1"
+  }
 }
 
 variable "eks_kms_key_users" {
@@ -156,7 +164,7 @@ variable "eks_disk_size" {
 variable "eks_instance_types" {
   description = "EC2 instance types for the EKS worker nodes"
   type        = list(string)
-  default     = ["m5a.4xlarge"]
+  default     = ["m5a.large"]
 }
 
 variable "eks_volume_type" {
@@ -180,7 +188,7 @@ variable "eks_ng_min_size" {
 variable "eks_ng_max_size" {
   description = "Maximum number of the worker nodes in the node group"
   type        = number
-  default     = 5
+  default     = 4
 }
 
 variable "eks_ng_desired_size" {
@@ -201,7 +209,7 @@ variable "eks_ng_capacity_type" {
 variable "create_rds" {
   type        = bool
   description = "If a new RDS and Proxy needs to be created"
-  default     = false
+  default     = true
 }
 variable "rds_config" {
   description = "Configuration for RDS resources"
@@ -216,7 +224,7 @@ variable "rds_config" {
   })
   default = ({
     engine         = "aurora-postgresql"
-    engine_version = "14.5"
+    engine_version = "14.20"
     engine_mode    = "provisioned"
     cluster_family = "aurora-postgresql14"
     cluster_size   = 1
@@ -317,9 +325,27 @@ variable "sqs_iam_role_name" {
 }
 variable "sqs_queues" {
   type = map(any)
+  default = {
+    "sample-service_queue" = {
+      "sns_topic_name" = "sample_topic"
+      "dlq_enable"     = false
+    }
+    "sample-secondservice_queue" = {
+      "sns_topic_name" = "sample_topic"
+      "dlq_enable"     = false
+    }
+  }
 }
 variable "sns_topics" {
   type = map(any)
+  default = {
+    "sample_topic" = {
+      "enable_fifo" = false
+    }
+    "sample_second_topic" = {
+      "enable_fifo" = false
+    }
+  }
 }
 variable "provision_sqs" {
   type        = string
@@ -352,13 +378,62 @@ variable "waf_rate_limit_rules" {
   default     = []
 }
 
-variable "waf_webacl_cloudwatch_enabled" {}
-variable "waf_sampled_requests_enabled" {}
-variable "waf_logging_enabled" {}
-variable "waf_log_retention_days" {}
+variable "waf_webacl_cloudwatch_enabled" {
+  default = true
+}
+variable "waf_sampled_requests_enabled" {
+  default = true
+}
+variable "waf_logging_enabled" {
+  default = true
+}
+variable "waf_log_retention_days" {
+  default = 365
+}
 variable "aws_managed_waf_rule_groups" {
-  type    = any
-  default = []
+  type = any
+  default = [
+    {
+      name     = "AWSManagedRulesAdminProtectionRuleSet"
+      priority = 2
+      action   = "none"
+      rules_override_to_count = [
+
+      ]
+    },
+    {
+      name     = "AWSManagedRulesCommonRuleSet"
+      priority = 3
+      action   = "none"
+      rules_override_to_count = [
+
+      ]
+    },
+    {
+      name     = "AWSManagedRulesKnownBadInputsRuleSet"
+      priority = 4
+      action   = "none"
+      rules_override_to_count = [
+
+      ]
+    },
+    {
+      name     = "AWSManagedRulesLinuxRuleSet"
+      priority = 5
+      action   = "none"
+      rules_override_to_count = [
+
+      ]
+    },
+    {
+      name     = "AWSManagedRulesSQLiRuleSet"
+      priority = 6
+      action   = "none"
+      rules_override_to_count = [
+
+      ]
+    }
+  ]
 }
 
 variable "custom_managed_waf_rule_groups" {
@@ -418,7 +493,7 @@ variable "ecr_repository_encryption_type" {
 variable "ecr_repository_image_scan_on_push" {
   description = "Indicates whether images are scanned after being pushed to the repository (`true`) or not scanned (`false`)"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "ecr_repository_read_access_arns" {
@@ -454,7 +529,7 @@ variable "ecr_registry_scan_rules" {
 variable "ecr_create_lifecycle_policy" {
   description = "Determines whether a lifecycle policy will be created"
   type        = bool
-  default     = true
+  default     = false
 }
 
 #########################################################################
@@ -463,36 +538,43 @@ variable "ecr_create_lifecycle_policy" {
 variable "create_elasticache_redis" {
   type        = bool
   description = "If a new Elasticache Redis instance needs to be created"
+  default     = false
 }
 
 variable "redis_cluster_size" {
   type        = number
   description = "Number of nodes in cluster. Ignored when redis_cluster_mode_enabled == true"
+  default     = 1
 }
 
 variable "redis_cluster_mode_enabled" {
   type        = bool
   description = "Flag to enable/disable cluster mode"
+  default     = false
 }
 
 variable "redis_instance_type" {
   type        = string
   description = "Elastic cache instance type"
+  default     = "cache.t3.medium"
 }
 
 variable "redis_engine_version" {
   type        = string
   description = "Redis engine version"
+  default     = "7.0"
 }
 
 variable "redis_family" {
   type        = string
   description = "Redis family"
+  default     = "redis7"
 }
 
 variable "redis_allowed_cidr_blocks" {
   type        = list(any)
   description = "List of CIDRs allowed on Redis security group rules"
+  default     = []
 }
 
 variable "redis_allowed_security_group_ids" {
@@ -500,12 +582,13 @@ variable "redis_allowed_security_group_ids" {
   description = <<-EOT
     A list of IDs of Security Groups to allow access to the security group created by this module on Redis port.
   EOT
+  default     = []
 }
 
 variable "redis_multi_az_enabled" {
   type        = bool
   description = "Flag to enable/disable Multiple AZs"
-  default     = true
+  default     = false
 }
 
 ## Elasticache Redis - Logging variables
@@ -513,12 +596,13 @@ variable "redis_multi_az_enabled" {
 variable "redis_cloudwatch_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
+  default     = true
 }
 
 variable "redis_automatic_failover_enabled" {
   type        = bool
   description = "Automatic failover (Not available for T1/T2 instances)"
-  default     = true
+  default     = false
 }
 
 #########################################################################
@@ -532,7 +616,7 @@ variable "create_elasticache_valkey" {
 
 variable "valkey_snapshot_time" {
   type    = string
-  default = "05:00"
+  default = "03:00"
 }
 
 variable "valkey_engine_version" {
@@ -542,12 +626,12 @@ variable "valkey_engine_version" {
 
 variable "valkey_data_storage_max" {
   type    = number
-  default = 2
+  default = 4
 }
 
 variable "valkey_ecpu_per_second_max" {
   type    = number
-  default = 1000
+  default = 2000
 }
 
 variable "valkey_create_valkey_user_and_secret" {
@@ -561,7 +645,7 @@ variable "valkey_create_valkey_user_and_secret" {
 variable "acm_certificate_enable" {
   type        = bool
   description = "Generate a validated acm cert"
-  default     = false
+  default     = true
 }
 
 variable "dns_domain_names" {
@@ -588,7 +672,7 @@ variable "dns_main_domain" {
 
 variable "enable_karpenter" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "ec2_spot_service_role" {
@@ -613,6 +697,7 @@ variable "custom_secrets" {
     manual           = optional(bool, false)
     value            = optional(string)
   }))
+  default = []
 }
 
 variable "custom_secret_keepers" {
@@ -674,6 +759,15 @@ variable "ddb_table_configuration" {
     deletion_protection_enabled   = optional(bool, true)
   }))
   description = "List of objects to pass to the module for the creation of the table."
+  default = [
+    {
+      table_name_suffix = "dynamodb-table"
+      hash_key          = "Id"
+      range_key         = "version"
+      hash_key_type     = "S"
+      range_key_type    = "N"
+    }
+  ]
 }
 
 variable "ddb_global_table_configuration" {
@@ -713,6 +807,28 @@ variable "ddb_global_table_configuration" {
     deletion_protection_enabled   = optional(bool, true)
   }))
   description = "List of objects to pass to the module for the creation of the global table."
+  default = [
+    {
+      table_type        = "global"
+      table_name_suffix = "dynamodb-global-table"
+      replicas          = ["us-east-2", "eu-west-1"]
+      dynamodb_attributes = [
+        {
+          name = "Id"
+          type = "S"
+        },
+        {
+          name = "version"
+          type = "N"
+        }
+      ]
+      hash_key                      = "Id"
+      range_key                     = "version"
+      hash_key_type                 = "S"
+      range_key_type                = "N"
+      enable_point_in_time_recovery = true
+    }
+  ]
 }
 #########################################################################
 ##           S3 - Bucket Configuration Variables                       ##
@@ -767,7 +883,10 @@ variable "bucket_configuration" {
 }
 
 variable "custom_terraform_vars" {
-  type        = any
-  default     = {}
+  type = any
+  default = {
+    "enable_nlb" = false
+    sample_var   = "changeme"
+  }
   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
