@@ -924,3 +924,13 @@ variable "waf_ip_whitelist_rule_priority" {
   description = "Priority of the IP whitelist rule"
   default     = 0
 }
+
+variable "waf_ip_whitelist_forwarded_ip_config" {
+  type = object({
+    header_name       = string
+    fallback_behavior = string
+    position          = string
+  })
+  default     = null
+  description = "Optional. When the client IP is in a header (e.g. behind CloudFront/ALB), set this to use that header in the whitelist rule (same as ip_set_forwarded_ip_config on the IP set reference)."
+}
