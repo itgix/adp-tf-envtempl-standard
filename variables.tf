@@ -504,7 +504,7 @@ variable "redis_allowed_security_group_ids" {
   description = <<-EOT
     A list of IDs of Security Groups to allow access to the security group created by this module on Redis port.
   EOT
-  deafult     = []
+  default     = []
 }
 
 variable "redis_multi_az_enabled" {
