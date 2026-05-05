@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.1-ai"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.2-ai"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -31,4 +31,6 @@ module "eks" {
   secrets_kms_key_arns = length(local.secrets_kms_key_arns) > 0 ? local.secrets_kms_key_arns : ["*"]
 
   allow_long_names = var.allow_long_names
+
+  karpenter_allowed_instance_types = var.karpenter_allowed_instance_types
 }

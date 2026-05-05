@@ -128,6 +128,12 @@ variable "eks_access_entries" {
   default     = {}
 }
 
+variable "karpenter_allowed_instance_types" {
+  type        = list(string)
+  description = "Optional list of instance types allowed for Karpenter auto-mode NodePool. If not provided, no instance type restrictions are applied."
+  default     = []
+}
+
 #########################################################################
 ##                   RDS Variables                                     ##
 #########################################################################
