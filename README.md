@@ -1,3 +1,13 @@
+# Terraform Infrastructure Deployment
+
+This is the standard template for the cloud infrastructure of **ITGix ADP - Application Development Container Platform**.  
+It's meant to be used with the **idp-installer** bootstrapping script.
+
+Variables can be passed via the main YAML configuration file of **idp-installer**, and they will override the provided defaults in the `variable-template` directory.
+
+---
+
+
 ## Requirements
 
 | Name | Version |
@@ -16,7 +26,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_acm"></a> [acm](#module\_acm) | git::git@github.com:itgix/tf-module-acm.git | v1.0.1 |
+| <a name="module_acm"></a> [acm](#module\_acm) | git::git@github.com:itgix/tf-module-acm.git | v1.0.2 |
 | <a name="module_common_vpc"></a> [common\_vpc](#module\_common\_vpc) | terraform-aws-modules/vpc/aws | ~> 5.5.1 |
 | <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.0.0 |
 | <a name="module_dynamodb"></a> [dynamodb](#module\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
@@ -29,7 +39,7 @@
 | <a name="module_irsa_karpenter"></a> [irsa\_karpenter](#module\_irsa\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 19.21.0 |
 | <a name="module_rds_iam_auth"></a> [rds\_iam\_auth](#module\_rds\_iam\_auth) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
-| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.1 |
+| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.7 |
 | <a name="module_sqs_dev"></a> [sqs\_dev](#module\_sqs\_dev) | git::git@github.com:itgix/tf-module-sqs-sns.git | v1.0.0 |
 | <a name="module_wafv2_application"></a> [wafv2\_application](#module\_wafv2\_application) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
 | <a name="module_wafv2_cloudfront"></a> [wafv2\_cloudfront](#module\_wafv2\_cloudfront) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
@@ -68,6 +78,7 @@
 | <a name="input_ddb_table_configuration"></a> [ddb\_table\_configuration](#input\_ddb\_table\_configuration) | List of objects to pass to the module for the creation of the table. | <pre>list(object({<br>    table_name_suffix = string<br>    hash_key          = string<br>    range_key         = string<br>    hash_key_type     = string<br>    range_key_type    = string<br>    enable_autoscaler = optional(bool, false)<br>    dynamodb_attributes = optional(list(object({<br>      name = string<br>      type = string<br>    })), [])<br>    global_secondary_index_map = optional(list(object({<br>      hash_key           = string<br>      name               = string<br>      projection_type    = string<br>      range_key          = string<br>      non_key_attributes = optional(list(string), [])<br>      read_capacity      = optional(number, 0)<br>      write_capacity     = optional(number, 0)<br>    })), [])<br>    local_secondary_index_map = optional(list(object({<br>      name               = string<br>      projection_type    = string<br>      range_key          = string<br>      non_key_attributes = optional(list(string), [])<br>    })), [])<br>    replicas                      = optional(list(string), [])<br>    tags_enabled                  = optional(bool, true)<br>    billing_mode                  = optional(string, "PAY_PER_REQUEST")<br>    enable_point_in_time_recovery = optional(bool, false)<br>    ttl_enabled                   = optional(bool, false)<br>    ttl_attribute                 = optional(string, "")<br>    deletion_protection_enabled   = optional(bool, true)<br>  }))</pre> | n/a | yes |
 | <a name="input_dns_hosted_zone"></a> [dns\_hosted\_zone](#input\_dns\_hosted\_zone) | Managed R53 Zone ID | `string` | `"Z2INQZ6AA9H9SI"` | no |
 | <a name="input_dns_main_domain"></a> [dns\_main\_domain](#input\_dns\_main\_domain) | Domain Managed under the R53 Zone | `string` | `"itgix.eu"` | no |
+| <a name="input_dns_domain_names"></a> [dns\_domain\_names](#input\_dns\_domain\_names) | Map of ACM certificate domains and Route53 hosted zone ID for DNS validation. Use an empty string when DNS is not in Route53: no validation records, no aws_acm_certificate_validation (apply will not wait). Use the certificate ARN output and complete validation in your DNS provider before attaching the cert to listeners. | `map(string)` | `{}` | no |
 | <a name="input_ec2_spot_service_role"></a> [ec2\_spot\_service\_role](#input\_ec2\_spot\_service\_role) | Configure EC2 spot service role provisioning. | `bool` | `false` | no |
 | <a name="input_ecr_create_lifecycle_policy"></a> [ecr\_create\_lifecycle\_policy](#input\_ecr\_create\_lifecycle\_policy) | Determines whether a lifecycle policy will be created | `bool` | `true` | no |
 | <a name="input_ecr_manage_registry_scanning_configuration"></a> [ecr\_manage\_registry\_scanning\_configuration](#input\_ecr\_manage\_registry\_scanning\_configuration) | Determines whether the registry scanning configuration will be managed | `bool` | `false` | no |
@@ -131,9 +142,7 @@
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | External VPC private subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_public_subnet_ids"></a> [vpc\_public\_subnet\_ids](#input\_vpc\_public\_subnet\_ids) | External VPC public subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_single_nat_gateway"></a> [vpc\_single\_nat\_gateway](#input\_vpc\_single\_nat\_gateway) | Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments | `bool` | `false` | no |
-| <a name="input_waf_country_codes_match"></a> [waf\_country\_codes\_match](#input\_waf\_country\_codes\_match) | n/a | `any` | n/a | yes |
 | <a name="input_waf_default_action"></a> [waf\_default\_action](#input\_waf\_default\_action) | allow or block - default action of WAF when a request hasn't matched any rules | `string` | `"allow"` | no |
-| <a name="input_waf_geo_location_block_enforce"></a> [waf\_geo\_location\_block\_enforce](#input\_waf\_geo\_location\_block\_enforce) | allow or block - action to take on geo location list of countries | `string` | `"block"` | no |
 | <a name="input_waf_log_retention_days"></a> [waf\_log\_retention\_days](#input\_waf\_log\_retention\_days) | n/a | `any` | n/a | yes |
 | <a name="input_waf_logging_enabled"></a> [waf\_logging\_enabled](#input\_waf\_logging\_enabled) | n/a | `any` | n/a | yes |
 | <a name="input_waf_sampled_requests_enabled"></a> [waf\_sampled\_requests\_enabled](#input\_waf\_sampled\_requests\_enabled) | n/a | `any` | n/a | yes |
