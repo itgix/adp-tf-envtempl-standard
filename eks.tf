@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.3"
+  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.4"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -18,6 +18,7 @@ module "eks" {
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   cluster_log_retention_in_days = var.cluster_log_retention_in_days
+  enable_efs_csi                = var.enable_efs_csi
   addons_versions               = var.addons_versions
 
   vpc_id                   = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id

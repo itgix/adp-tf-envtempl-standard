@@ -30,6 +30,11 @@ output "node_security_group" {
   value = module.eks[0].node_security_group_id
 }
 
+output "efs_file_system_id" {
+  description = "EFS file system ID created for EFS CSI integration"
+  value       = var.enable_efs_csi ? aws_efs_file_system.this[0].id : null
+}
+
 output "az1" {
   value = data.aws_availability_zones.available.names[0]
 }
