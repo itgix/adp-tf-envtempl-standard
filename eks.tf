@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.4"
+  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.1.4"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
