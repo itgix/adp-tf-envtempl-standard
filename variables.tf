@@ -673,6 +673,44 @@ variable "redis_allowed_security_group_ids" {
   default     = []
 }
 
+variable "redis_serverless_enabled" {
+  type        = bool
+  description = "Enable ElastiCache serverless Redis instead of replication-group mode"
+  default     = false
+}
+
+variable "redis_serverless_major_engine_version" {
+  type        = string
+  description = "Major engine version for ElastiCache serverless Redis"
+  default     = "7"
+}
+
+variable "redis_serverless_snapshot_time" {
+  type        = string
+  description = "Daily snapshot time for serverless Redis"
+  default     = "06:00"
+}
+
+variable "redis_serverless_cache_usage_limits" {
+  type        = any
+  description = "Usage limits for serverless Redis cache"
+  default = {
+    data_storage = {
+      maximum = 4
+      unit    = "GB"
+    }
+    ecpu_per_second = {
+      maximum = 2000
+    }
+  }
+}
+
+variable "redis_serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  description = "Optional snapshot ARNs to restore a serverless Redis cache from"
+  default     = []
+}
+
 variable "redis_multi_az_enabled" {
   type        = bool
   description = "Flag to enable/disable Multiple AZs"
