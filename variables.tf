@@ -688,6 +688,12 @@ variable "dns_main_domain" {
   default     = "itgix.eu"
 }
 
+variable "acm_create_route53_validation_records" {
+  type        = bool
+  description = "Create Route53 validation records"
+  default     = true
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
