@@ -791,6 +791,12 @@ variable "dns_main_domain" {
   default     = "itgix.eu"
 }
 
+variable "acm_create_route53_validation_records" {
+  type        = bool
+  description = "Create Route53 validation records"
+  default     = true
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
@@ -1017,13 +1023,36 @@ variable "custom_terraform_vars" {
   description = "Object of custom values that can be used for extra terraform files outside of the template"
 }
 
-variable "waf_ip_whitelist_prefixes" {
-  type        = list(string)
-  description = "List of IP prefixes to whitelist"
-  default     = []
+variable "waf_ip_prefix_sets" {
+  type = map(object({
+    ipv4_prefixes = optional(list(string), [])
+    ipv6_prefixes = optional(list(string), [])
+    description   = optional(string, null)
+  }))
+  default     = {}
+  description = <<-EOT
+    Named IP prefix collections (IPv4 and/or IPv6 CIDRs). Each key becomes up to two WAFv2 IP sets (one per address family with at least one prefix).
+    Rules reference sets by key via ip_prefix_rules.ip_set_key.
+  EOT
 }
-variable "waf_ip_whitelist_rule_priority" {
-  type        = number
-  description = "Priority of the IP whitelist rule"
-  default     = 0
+
+variable "waf_ip_prefix_rules" {
+  type = list(object({
+    name       = string
+    priority   = number
+    action     = string
+    ip_set_key = string
+    forwarded_ip_config = optional(object({
+      header_name       = string
+      fallback_behavior = string
+      position          = string
+    }), null)
+  }))
+  default     = []
+  description = <<-EOT
+    Web ACL rules that match traffic against an ip_prefix_sets entry. Use multiple rules to combine allow/block (and count/captcha/challenge) with source IP vs forwarded header evaluation.
+    - action: allow, block, count, captcha, or challenge (same as custom_rules).
+    - forwarded_ip_config: omit or null to use the immediate source IP. Set to use a header (e.g. X-Forwarded-For) like Terraform ip_set_forwarded_ip_config on the IP set reference.
+    Rule names must be unique across this list, custom_rules, and managed rules (WAF requires unique priorities and names per ACL).
+  EOT
 }
