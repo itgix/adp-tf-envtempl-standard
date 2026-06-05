@@ -1,6 +1,6 @@
 module "acm" {
   count  = var.acm_certificate_enable ? 1 : 0
-  source = "git::git@github.com:itgix/tf-module-acm.git?ref=skip-route53-record-if-needed"
+  source = "git::git@github.com:itgix/tf-module-acm.git?ref=v1.0.3"
 
   # To support previous setup with single domain;
   # Still need to define it in the config file for the argo and infra facts setup;
