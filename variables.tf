@@ -121,6 +121,71 @@ variable "addons_versions" {
     coredns    = "v1.12.3-eksbuild.1"
     ebs_csi    = "v1.51.1-eksbuild.1"
   }
+
+  validation {
+    condition     = !var.enable_efs_csi || try(length(trimspace(var.addons_versions.efs_csi)) > 0, false)
+    error_message = "When enable_efs_csi is true, addons_versions.efs_csi must be set to a non-empty string."
+  }
+}
+
+variable "enable_efs_csi" {
+  type        = bool
+  description = "Enable EFS CSI addon integration and create EFS resources for the cluster"
+  default     = false
+}
+
+variable "efs_encrypted" {
+  type        = bool
+  description = "Whether to enable encryption at rest for the EFS filesystem"
+  default     = true
+}
+
+variable "efs_kms_key_id" {
+  type        = string
+  description = "Customer managed KMS key ID/ARN for EFS encryption. Leave null to use the AWS managed key."
+  default     = null
+}
+
+variable "efs_performance_mode" {
+  type        = string
+  description = "EFS performance mode"
+  default     = "generalPurpose"
+}
+
+variable "efs_throughput_mode" {
+  type        = string
+  description = "EFS throughput mode"
+  default     = "elastic"
+}
+
+variable "efs_provisioned_throughput_in_mibps" {
+  type        = number
+  description = "Provisioned throughput value in MiB/s when efs_throughput_mode is set to provisioned"
+  default     = null
+}
+
+variable "efs_transition_to_ia" {
+  type        = string
+  description = "Lifecycle policy transition to IA, for example AFTER_7_DAYS or AFTER_30_DAYS"
+  default     = "AFTER_30_DAYS"
+}
+
+variable "efs_transition_to_archive" {
+  type        = string
+  description = "Lifecycle policy transition to archive, for example AFTER_90_DAYS"
+  default     = "AFTER_90_DAYS"
+}
+
+variable "efs_transition_to_primary_storage_class" {
+  type        = string
+  description = "Lifecycle policy transition back to primary storage class, for example AFTER_1_ACCESS"
+  default     = "AFTER_1_ACCESS"
+}
+
+variable "efs_backup_policy_enabled" {
+  type        = bool
+  description = "Whether AWS Backup policy should be enabled for the EFS filesystem"
+  default     = true
 }
 
 variable "eks_kms_key_users" {
@@ -605,6 +670,44 @@ variable "redis_allowed_security_group_ids" {
   description = <<-EOT
     A list of IDs of Security Groups to allow access to the security group created by this module on Redis port.
   EOT
+  default     = []
+}
+
+variable "redis_serverless_enabled" {
+  type        = bool
+  description = "Enable ElastiCache serverless Redis instead of replication-group mode"
+  default     = false
+}
+
+variable "redis_serverless_major_engine_version" {
+  type        = string
+  description = "Major engine version for ElastiCache serverless Redis"
+  default     = "7"
+}
+
+variable "redis_serverless_snapshot_time" {
+  type        = string
+  description = "Daily snapshot time for serverless Redis"
+  default     = "06:00"
+}
+
+variable "redis_serverless_cache_usage_limits" {
+  type        = any
+  description = "Usage limits for serverless Redis cache"
+  default = {
+    data_storage = {
+      maximum = 4
+      unit    = "GB"
+    }
+    ecpu_per_second = {
+      maximum = 2000
+    }
+  }
+}
+
+variable "redis_serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  description = "Optional snapshot ARNs to restore a serverless Redis cache from"
   default     = []
 }
 
