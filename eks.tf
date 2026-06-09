@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::git@github.com:itgix/tf-module-eks.git?ref=v1.1.0"
+  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.1.4"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -18,6 +18,7 @@ module "eks" {
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   cluster_log_retention_in_days = var.cluster_log_retention_in_days
+  enable_efs_csi                = var.enable_efs_csi
   addons_versions               = var.addons_versions
 
   vpc_id                   = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
@@ -39,5 +40,7 @@ module "eks" {
   eks_tags = local.aws_default_tags
 
   kms_key_users        = var.eks_kms_key_users
-  secrets_kms_key_arns = local.secrets_kms_key_arns
+  secrets_kms_key_arns = length(local.secrets_kms_key_arns) > 0 ? local.secrets_kms_key_arns : ["*"]
+
+  allow_long_names = var.allow_long_names
 }

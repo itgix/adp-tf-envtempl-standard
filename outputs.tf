@@ -30,6 +30,11 @@ output "node_security_group" {
   value = module.eks[0].node_security_group_id
 }
 
+output "efs_file_system_id" {
+  description = "EFS file system ID created for EFS CSI integration"
+  value       = var.enable_efs_csi ? aws_efs_file_system.this[0].id : null
+}
+
 output "az1" {
   value = data.aws_availability_zones.available.names[0]
 }
@@ -102,25 +107,13 @@ output "waf_webacl_arn" {
 }
 
 # ECR
-
-output "ecr_repository_name" {
-  description = "Name of the repository"
-  value       = module.ecr.repository_name
+output "ecr_repository_names" {
+  description = "Names of the repository"
+  value       = module.ecr.repository_names
 }
-
-output "ecr_repository_arn" {
-  description = "Full ARN of the repository"
-  value       = module.ecr.repository_arn
-}
-
-output "ecr_repository_registry_id" {
-  description = "The registry ID where the repository was created"
-  value       = module.ecr.repository_registry_id
-}
-
-output "ecr_repository_url" {
-  description = "The URL of the repository (in the form `aws_account_id.dkr.ecr.region.amazonaws.com/repositoryName`)"
-  value       = module.ecr.repository_url
+output "ecr_repository_urls_map" {
+  description = "The URL of the repositories"
+  value       = module.ecr.repository_urls_map
 }
 
 # Elasticache Redis
@@ -172,4 +165,8 @@ output "custom_secret_versions" {
 output "custom_secret_values" {
   value     = module.custom_secrets_password_module.secret_values
   sensitive = true
+}
+
+output "region_short" {
+  value = local.aws_regions_short[var.region]
 }

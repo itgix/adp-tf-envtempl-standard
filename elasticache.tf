@@ -1,6 +1,6 @@
 module "elasticache" {
 
-  source = "git::git@github.com:itgix/tf-module-redis.git?ref=v1.0.2"
+  source = "git::https://github.com/itgix/tf-module-redis.git?ref=v1.0.4"
 
   count = var.create_elasticache_redis ? 1 : 0
 
@@ -19,4 +19,9 @@ module "elasticache" {
   allowed_security_group_ids = var.redis_allowed_security_group_ids
   redis_tags                 = local.aws_default_tags
 
+  serverless_enabled                  = var.redis_serverless_enabled
+  serverless_major_engine_version     = var.redis_serverless_major_engine_version
+  serverless_snapshot_time            = var.redis_serverless_snapshot_time
+  serverless_cache_usage_limits       = var.redis_serverless_cache_usage_limits
+  serverless_snapshot_arns_to_restore = var.redis_serverless_snapshot_arns_to_restore
 }

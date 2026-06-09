@@ -193,7 +193,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
         {
             "Action": "iam:PassRole",
             "Effect": "Allow",
-            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-ng-eks-node-group-*"
+            "Resource": "arn:aws:iam::${var.aws_account_id}:role/${local.eks_name}-*"
         },
         {
             "Action": [
@@ -212,6 +212,7 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "iam:GetInstanceProfile",
                 "iam:DeleteInstanceProfile",
                 "iam:CreateInstanceProfile",
+                "iam:ListInstanceProfiles",
                 "iam:AddRoleToInstanceProfile"
             ],
             "Effect": "Allow",
@@ -238,6 +239,100 @@ module "irsa_karpenter" {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
       namespace_service_accounts = ["${local.karpenter_namespace}:karpenter"]
+    }
+  }
+}
+
+##########################
+#IRSA for AI Bedrock   #
+##########################
+module "irsa_ai_bedrock" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "ai-bedrock-${local.eks_name}"
+  role_policy_arns = {
+    aws_managed_policy            = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
+    irsa_ai_bedrock_custom_policy = aws_iam_policy.irsa_ai_bedrock_custom.arn
+    irsa_ai_bedrock_s3_policy     = aws_iam_policy.irsa_ai_bedrock_s3.arn
+
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["*:*"]
+    }
+  }
+}
+resource "aws_iam_policy" "irsa_ai_bedrock_custom" {
+
+  name_prefix = "irsa_ai_bedrock_custom"
+  description = "Policy for ServiceAccounts allowing invoking bedrock model"
+  policy      = <<EOT
+  {
+    "Statement": [
+        {
+             "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:bedrock:${var.region}:${var.aws_account_id}:*/*"
+        }
+    ],
+    "Version": "2012-10-17"
+  }
+ EOT
+}
+resource "aws_iam_policy" "irsa_ai_bedrock_s3" {
+
+  name_prefix = "irsa_ai_bedrock_s3"
+  description = "Policy for ServiceAccounts allowing S3 bucket access"
+  policy      = <<EOT
+  {
+    "Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket"
+			],
+			"Resource": "arn:aws:s3:::*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject"
+			],
+			"Resource": "arn:aws:s3:::*/*"
+		}
+	],
+    "Version": "2012-10-17"
+  }
+ EOT  
+
+}
+##########################
+#IRSA for S3 bucket   #
+##########################
+module "s3_bucket_irsa_role" {
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringLike"
+  create_role                = true
+  role_name                  = "s3-bucket-${local.eks_name}"
+  role_policy_arns = {
+    aws_managed_policy = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["*:*"]
     }
   }
 }

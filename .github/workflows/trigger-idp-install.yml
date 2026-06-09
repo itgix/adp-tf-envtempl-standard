@@ -1,0 +1,34 @@
+name: Trigger IDP Install Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  trigger-idp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger GitLab idp-installer pipeline
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+
+          if [ "${{ github.event.action }}" = "closed" ]; then
+            DESTROY="true"
+          else
+            DESTROY="false"
+          fi
+
+          curl -s -X POST \
+            --form token="${{ secrets.GITLAB_TRIGGER_TOKEN }}" \
+            --form ref=develop \
+            --form "variables[TEMPLATE_BRANCH]=$BRANCH" \
+            --form "variables[TEMPLATE_REPO]=env" \
+            --form "variables[DESTROY]=$DESTROY" \
+            "https://gitlab.itgix.com/api/v4/projects/${{ secrets.IDP_INSTALLER_PROJECT_ID }}/trigger/pipeline"
