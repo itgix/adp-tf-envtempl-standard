@@ -397,6 +397,13 @@ variable "rds_cluster_parameters" {
   }))
   default = []
 }
+
+variable "rds_failover_priority" {
+  type        = number
+  default     = 0
+  description = "Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoted to writer."
+}
+
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
