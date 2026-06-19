@@ -107,11 +107,12 @@ variable "cluster_log_retention_in_days" {
 }
 
 variable "addons_versions" {
+  description = "Versions of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module"
   type = object({
-    kube_proxy = string
-    vpc_cni    = string
-    coredns    = string
-    ebs_csi    = string
+    kube_proxy = optional(string)
+    vpc_cni    = optional(string)
+    coredns    = optional(string)
+    ebs_csi    = optional(string)
     efs_csi    = optional(string)
   })
 
@@ -120,11 +121,6 @@ variable "addons_versions" {
     vpc_cni    = "v1.20.4-eksbuild.1"
     coredns    = "v1.12.3-eksbuild.1"
     ebs_csi    = "v1.51.1-eksbuild.1"
-  }
-
-  validation {
-    condition     = !var.enable_efs_csi || try(length(trimspace(var.addons_versions.efs_csi)) > 0, false)
-    error_message = "When enable_efs_csi is true, addons_versions.efs_csi must be set to a non-empty string."
   }
 }
 
@@ -210,6 +206,12 @@ variable "eks_access_entries" {
   default     = {}
 }
 
+variable "enable_eks_auto_mode" {
+  type        = bool
+  description = "Enable EKS Auto Mode instead of the managed node group and standard EKS add-ons"
+  default     = false
+}
+
 ################################################################################
 # Node group defaults
 ################################################################################
@@ -266,6 +268,12 @@ variable "eks_ng_capacity_type" {
   description = "capacity type for node group nodes"
   type        = string
   default     = "SPOT"
+}
+
+variable "karpenter_allowed_instance_types" {
+  description = "Optional instance types allowed by the EKS Auto Mode NodePool; an empty list applies no instance type restriction"
+  type        = list(string)
+  default     = []
 }
 
 #########################################################################

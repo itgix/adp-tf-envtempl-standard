@@ -5,7 +5,7 @@ resource "aws_iam_service_linked_role" "spot" {
 
 ## Karpenter
 module "karpenter" {
-  count   = var.enable_karpenter ? 1 : 0
+  count   = local.classic_karpenter_enabled ? 1 : 0
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "20.31.6"
 
@@ -24,4 +24,3 @@ module "karpenter" {
   # Error: creating EKS Access Entry ResourceInUseException: The specified access entry resource is already in use on this cluster.
   create_access_entry = false
 }
-
