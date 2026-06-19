@@ -49,8 +49,8 @@ locals {
   karpenter_queue_name           = "queue-${var.region}-${var.environment}-karpenter"
   karpenter_namespace            = "karpenter"
   karpenter_service_account_name = "karpenter"
+  classic_karpenter_enabled      = var.enable_karpenter && !var.enable_eks_auto_mode
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
 }
-
