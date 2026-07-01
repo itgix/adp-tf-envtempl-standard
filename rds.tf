@@ -51,7 +51,8 @@ module "rds_maindb" {
 
   rds_backup_retention_period = var.rds_backup_retention_period
 
-  rds_cluster_parameters = var.rds_cluster_parameters
+  rds_cluster_parameters     = var.rds_cluster_parameters
+  rds_db_instance_parameters = var.rds_db_instance_parameters
 
   failover_priority = var.rds_failover_priority
 }
