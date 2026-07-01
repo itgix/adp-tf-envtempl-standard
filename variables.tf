@@ -406,6 +406,16 @@ variable "rds_cluster_parameters" {
   default = []
 }
 
+variable "rds_db_instance_parameters" {
+  type = list(object({
+    apply_method = optional(string)
+    name         = string
+    value        = string
+  }))
+  default     = []
+  description = "A list of DB instance parameters to apply"
+}
+
 variable "rds_failover_priority" {
   type        = number
   default     = 0
