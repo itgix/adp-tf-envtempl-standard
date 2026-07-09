@@ -3,8 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  #source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.8"
-  source = "git::https://github.com/itgix/tf-module-rds.git?ref=failover_priority"
+  source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.9"
 
   environment = var.environment
 
