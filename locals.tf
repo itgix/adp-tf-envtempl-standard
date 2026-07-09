@@ -31,6 +31,7 @@ locals {
     "CostCenter"           = "n/a"
     "Application"          = "adp"
     "ManagedBy"            = "Terraform"
+    "aws-apn-id"           = "pc:5uhf95x0bz6d518p795cfi07s"
   }
 
 
