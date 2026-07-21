@@ -1,5 +1,6 @@
 module "eks" {
-  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.2.0"
+  #source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.2.0"
+  source = "git::https://github.com/itgix/tf-module-eks.git?ref=xvdb-volume"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
@@ -39,6 +40,8 @@ module "eks" {
   eks_ng_max_size      = var.eks_ng_max_size
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
+
+  eks_additional_block_device_mappings = var.eks_additional_block_device_mappings
 
   karpenter_allowed_instance_types = var.karpenter_allowed_instance_types
 
