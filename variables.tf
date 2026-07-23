@@ -107,18 +107,19 @@ variable "cluster_log_retention_in_days" {
 }
 
 variable "addons_versions" {
-  description = "Versions of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module"
+  description = "Configuration of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module"
   type = object({
-    kube_proxy = optional(string)
-    vpc_cni    = optional(string)
-    coredns    = optional(string)
-    ebs_csi    = optional(string)
-    efs_csi    = optional(string)
+    kube_proxy                  = optional(string)
+    vpc_cni                     = optional(string)
+    coredns                     = optional(string)
+    ebs_csi                     = optional(string)
+    efs_csi                     = optional(string)
+    resolve_conflicts_on_create = optional(string, "OVERWRITE")
   })
 
   default = {
     kube_proxy = "v1.34.0-eksbuild.2"
-    vpc_cni    = "v1.20.4-eksbuild.1"
+    vpc_cni    = "v1.21.2-eksbuild.2"
     coredns    = "v1.12.3-eksbuild.1"
     ebs_csi    = "v1.51.1-eksbuild.1"
   }

@@ -142,9 +142,13 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "ec2:DescribeInstanceTypeOfferings",
                 "ec2:DescribeImages",
                 "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeCapacityReservations",
                 "ec2:CreateTags",
                 "ec2:CreateLaunchTemplate",
-                "ec2:CreateFleet"
+                "ec2:CreateFleet",
+                "ec2:DescribeInstanceStatus",
+                "ec2:DescribePlacementGroups",
+                "arc-zonal-shift:GetManagedResource"
             ],
             "Effect": "Allow",
             "Resource": "*"
@@ -183,7 +187,9 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "arn:aws:ec2:*:*:spot-instances-request/*",
                 "arn:aws:ec2:*:*:security-group/*",
                 "arn:aws:ec2:*:*:network-interface/*",
-                "arn:aws:ec2:*:*:instance/*"
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:capacity-reservation/*",
+                "arn:aws:ec2:*:*:placement-group/*"
             ]
         },
         {
