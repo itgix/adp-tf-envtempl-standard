@@ -428,6 +428,7 @@ variable "database_insights_mode" {
 }
 variable "rds_performance_retention" {
   type        = number
+  description = "Performance Insights retention period in days. Database Insights Advanced requires at least 465."
 }
 #########################################################################
 ##                   SQS Variables                                     ##

@@ -57,7 +57,4 @@ module "rds_maindb" {
 
   database_insights_mode = var.database_insights_mode
   rds_performance_retention = var.rds_performance_retention
-
-  
-
 }
