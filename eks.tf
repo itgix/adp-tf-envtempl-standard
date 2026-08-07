@@ -1,13 +1,15 @@
 module "eks" {
-  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.1.4"
+  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.3.3"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
-    aws = aws
+    aws     = aws
+    kubectl = kubectl
   }
 
-  aws_region  = var.region
-  environment = var.environment
+  aws_region   = var.region
+  environment  = var.environment
+  project_name = var.project_name
 
   eks_cluster_version = var.eks_cluster_version
   eks_cluster_name    = local.eks_name
@@ -20,6 +22,7 @@ module "eks" {
   cluster_log_retention_in_days = var.cluster_log_retention_in_days
   enable_efs_csi                = var.enable_efs_csi
   addons_versions               = var.addons_versions
+  enable_eks_auto_mode          = var.enable_eks_auto_mode
 
   vpc_id                   = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
   subnet_ids               = var.provision_vpc ? module.common_vpc[0].private_subnets : var.vpc_private_subnet_ids
@@ -36,6 +39,8 @@ module "eks" {
   eks_ng_max_size      = var.eks_ng_max_size
   eks_ng_desired_size  = var.eks_ng_desired_size
   eks_ng_capacity_type = var.eks_ng_capacity_type
+
+  karpenter_allowed_instance_types = var.karpenter_allowed_instance_types
 
   eks_tags = local.aws_default_tags
 
