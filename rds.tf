@@ -54,4 +54,7 @@ module "rds_maindb" {
   rds_db_instance_parameters = var.rds_db_instance_parameters
 
   failover_priority = var.rds_failover_priority
+
+  rds_performance_retention  = var.rds_performance_retention
+  rds_database_insights_mode = var.rds_database_insights_mode
 }

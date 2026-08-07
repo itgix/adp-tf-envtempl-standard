@@ -423,6 +423,18 @@ variable "rds_failover_priority" {
   description = "Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoted to writer."
 }
 
+variable "rds_performance_retention" {
+  type        = number
+  default     = 465
+  description = "Performance Insights retention period in days. Database Insights Advanced requires at least 465."
+}
+
+variable "rds_database_insights_mode" {
+  type        = string
+  default     = null
+  description = "Database Insights mode. Valid values: standard, advanced. Advanced requires performance_insights_retention >= 465."
+}
+
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
