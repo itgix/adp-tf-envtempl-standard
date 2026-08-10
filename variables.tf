@@ -425,6 +425,7 @@ variable "rds_failover_priority" {
 
 variable "database_insights_mode" {
   type        = string
+  default     = "standard"
 }
 variable "rds_performance_retention" {
   type        = number
