@@ -166,7 +166,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.34"
+  default     = "1.36"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -193,10 +193,10 @@ variable "addons_versions" {
   })
 
   default = {
-    kube_proxy = "v1.34.0-eksbuild.2"
-    vpc_cni    = "v1.21.2-eksbuild.2"
-    coredns    = "v1.12.3-eksbuild.1"
-    ebs_csi    = "v1.51.1-eksbuild.1"
+    kube_proxy = "v1.36.0-eksbuild.17"
+    vpc_cni    = "v1.22.4-eksbuild.3"
+    coredns    = "v1.14.3-eksbuild.14"
+    ebs_csi    = "v1.65.0-eksbuild.1"
   }
 }
 
