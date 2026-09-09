@@ -64,7 +64,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.0.0 |
 | <a name="module_dynamodb"></a> [dynamodb](#module\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git::git@github.com:itgix/tf-module-ecr.git | v1.0.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | git::git@github.com:itgix/tf-module-eks.git | v1.0.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | git::https://github.com/itgix/tf-module-eks.git | v1.3.4 |
 | <a name="module_elasticache"></a> [elasticache](#module\_elasticache) | git::git@github.com:itgix/tf-module-redis.git | v1.0.0 |
 | <a name="module_global_dynamodb"></a> [global\_dynamodb](#module\_global\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_irsa_fluentbit_cloudwatch"></a> [irsa\_fluentbit\_cloudwatch](#module\_irsa\_fluentbit\_cloudwatch) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
