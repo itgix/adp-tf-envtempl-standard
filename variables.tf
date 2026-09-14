@@ -79,6 +79,81 @@ variable "vpc_single_nat_gateway" {
 }
 
 #########################################################################
+##                   VPC subnet layout                                 ##
+#########################################################################
+## Each tier is described either by an explicit list of CIDRs, or - the
+## default - by a subnet size (newbits, added to the VPC prefix length) and
+## the offsets of the subnets inside var.vpc_cidr. Offsets are counted in
+## blocks of the resulting size, exactly like the cidrsubnet() function.
+##
+## With the default /16 VPC the defaults produce:
+##   private  10.x.0.0/21,  10.x.8.0/21,  10.x.16.0/21   (2046 IPs each)
+##   database 10.x.24.0/24, 10.x.25.0/24, 10.x.26.0/24   (unchanged)
+##   public   10.x.28.0/23, 10.x.30.0/23, 10.x.32.0/23   (510 IPs each)
+##
+## An already provisioned VPC keeps the subnets it has, see
+## force_subnet_resize / force_database_subnet_resize below.
+
+variable "vpc_private_subnets" {
+  description = "Private (EKS node / pod) subnet layout inside var.vpc_cidr. Defaults to three /21 subnets on a /16 VPC. Set cidrs to pin exact ranges instead."
+  type = object({
+    newbits = optional(number, 5)
+    offsets = optional(list(number), [0, 1, 2])
+    cidrs   = optional(list(string), [])
+  })
+  default = {}
+
+  validation {
+    condition     = length(coalesce(var.vpc_private_subnets.cidrs, [])) == 0 ? length(var.vpc_private_subnets.offsets) >= 3 : length(var.vpc_private_subnets.cidrs) >= 3
+    error_message = "At least three private subnets are required (EFS mount targets and the subnet1-3 outputs expect three AZs)."
+  }
+}
+
+variable "vpc_public_subnets" {
+  description = "Public (load balancer / NAT) subnet layout inside var.vpc_cidr. Defaults to three /23 subnets on a /16 VPC. Set cidrs to pin exact ranges instead."
+  type = object({
+    newbits = optional(number, 7)
+    offsets = optional(list(number), [14, 15, 16])
+    cidrs   = optional(list(string), [])
+  })
+  default = {}
+
+  validation {
+    condition     = length(coalesce(var.vpc_public_subnets.cidrs, [])) == 0 ? length(var.vpc_public_subnets.offsets) >= 3 : length(var.vpc_public_subnets.cidrs) >= 3
+    error_message = "At least three public subnets are required, they are used as the EKS control plane subnets."
+  }
+}
+
+variable "vpc_database_subnets" {
+  description = "Database (RDS / ElastiCache) subnet layout inside var.vpc_cidr. The defaults intentionally match the ranges used since the first release of this template so databases are never moved."
+  type = object({
+    newbits = optional(number, 8)
+    offsets = optional(list(number), [24, 25, 26])
+    cidrs   = optional(list(string), [])
+  })
+  default = {}
+
+  validation {
+    condition     = length(coalesce(var.vpc_database_subnets.cidrs, [])) == 0 ? length(var.vpc_database_subnets.offsets) >= 2 : length(var.vpc_database_subnets.cidrs) >= 2
+    error_message = "At least two database subnets are required by the RDS and ElastiCache subnet groups."
+  }
+}
+
+variable "force_subnet_resize" {
+  description = <<-EOT
+    Apply the private/public subnet layout to a VPC that is already provisioned. By default the subnets of an existing VPC are read from AWS and kept as they are, so upgrading this template never re-addresses a running environment. Turning this on replaces the private and public subnets, which also replaces every resource pinned to them - most notably the EKS managed node groups and the EFS mount targets. The EKS cluster itself, the NAT gateways' Elastic IPs and the databases are kept. Expect downtime for workloads and delete Kubernetes-managed load balancers before applying, otherwise the old subnets cannot be deleted.
+  EOT
+  type        = bool
+  default     = false
+}
+
+variable "force_database_subnet_resize" {
+  description = "Apply the database subnet layout to a VPC that is already provisioned. Kept separate from force_subnet_resize because replacing the database subnets replaces the DB subnet group and therefore the RDS cluster and the ElastiCache/Valkey replication groups. Only enable this with a restore plan at hand."
+  type        = bool
+  default     = false
+}
+
+#########################################################################
 ##                   EKS Variables                              ##
 #########################################################################
 
@@ -91,7 +166,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.34"
+  default     = "1.35"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -118,10 +193,10 @@ variable "addons_versions" {
   })
 
   default = {
-    kube_proxy = "v1.34.0-eksbuild.2"
-    vpc_cni    = "v1.21.2-eksbuild.2"
-    coredns    = "v1.12.3-eksbuild.1"
-    ebs_csi    = "v1.51.1-eksbuild.1"
+    kube_proxy = "v1.35.3-eksbuild.21"
+    vpc_cni    = "v1.22.4-eksbuild.3"
+    coredns    = "v1.13.2-eksbuild.21"
+    ebs_csi    = "v1.65.0-eksbuild.1"
   }
 }
 
