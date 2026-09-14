@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.8"
+  source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.9"
 
   environment = var.environment
 
@@ -50,5 +50,10 @@ module "rds_maindb" {
 
   rds_backup_retention_period = var.rds_backup_retention_period
 
-  rds_cluster_parameters = var.rds_cluster_parameters
+  rds_cluster_parameters     = var.rds_cluster_parameters
+  rds_db_instance_parameters = var.rds_db_instance_parameters
+
+  failover_priority = var.rds_failover_priority
+
+  rds_performance_retention = var.rds_performance_retention
 }
