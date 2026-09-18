@@ -473,6 +473,18 @@ variable "rds_backup_retention_period" {
   description = "Number of days to retain backups for"
 }
 
+variable "rds_auto_minor_version_upgrade" {
+  type        = bool
+  default     = false
+  description = "Whether to enable automatic minor version upgrades for the DB instance"
+}
+
+variable "rds_maintenance_window" {
+  type        = string
+  default     = "wed:03:00-wed:04:00"
+  description = "The window of time during which maintenance can be performed on the DB instance"
+}
+
 variable "rds_cluster_parameters" {
   type = list(object({
     name         = string
@@ -498,12 +510,15 @@ variable "rds_failover_priority" {
   description = "Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoted to writer."
 }
 
+variable "rds_database_insights_mode" {
+  type    = string
+  default = "standard"
+}
 variable "rds_performance_retention" {
   type        = number
-  default     = 465
-  description = "Performance Insights retention period in days. Database Insights Advanced requires at least 465."
+  default     = 7
+  description = "Performance Insights retention period in days."
 }
-
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
