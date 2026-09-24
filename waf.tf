@@ -44,3 +44,5 @@ module "wafv2_cloudfront" {
   ip_prefix_sets                 = var.waf_ip_prefix_sets             # Define IP prefix sets
   ip_prefix_rules                = var.waf_ip_prefix_rules            # # Define IP prefix rules
 }
+
+
