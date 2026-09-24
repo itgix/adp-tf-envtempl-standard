@@ -7,6 +7,39 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 
 ---
 
+## VPC subnet layout
+
+The VPC subnets are configurable. Each tier is described either by an explicit list of CIDRs, or - the default - by a subnet size (`newbits`, added to the VPC prefix length) and the `offsets` of the subnets inside `vpc_cidr`, counted in blocks of the resulting size exactly like the `cidrsubnet()` function.
+
+With a `/16` `vpc_cidr` the defaults produce:
+
+| Tier | Variable | Subnets | Usable IPs per AZ |
+|------|----------|---------|-------------------|
+| private | `vpc_private_subnets` | `10.x.0.0/21`, `10.x.8.0/21`, `10.x.16.0/21` | 2043 |
+| database | `vpc_database_subnets` | `10.x.24.0/24`, `10.x.25.0/24`, `10.x.26.0/24` | 251 |
+| public | `vpc_public_subnets` | `10.x.28.0/23`, `10.x.30.0/23`, `10.x.32.0/23` | 507 |
+
+The three tiers occupy `[0, 3/32)`, `[3/32, 27/256)` and `[7/64, 17/128)` of the VPC range respectively, so the defaults cannot overlap at any `vpc_cidr` size - the private tier ends exactly where the database tier begins. A `check` assertion detects overlaps at plan time for custom layouts.
+
+Environments created before these variables existed use `/26` private and public subnets (~60 usable IPs), which is not enough for EKS with the VPC CNI, where every pod consumes an address. The database ranges are unchanged.
+
+### Keeping an existing environment as it is
+
+`terraform` reads the subnets of an already provisioned VPC back from AWS (`aws_vpcs`/`aws_subnets` on the VPC `Name` tag) and reuses those exact ranges, so upgrading this template produces **no subnet changes** for a running environment. A `check` warning on every plan reports when the deployed layout differs from the configured one.
+
+### Applying the new layout to an existing environment
+
+Set `force_subnet_resize = true` to re-address the private and public subnets. This replaces the subnets and therefore every resource pinned to them:
+
+* **replaced**: private/public subnets, route table associations, NAT gateways, EKS managed node groups (all nodes are rolled), EFS mount targets
+* **kept**: the VPC itself, the EKS cluster and its add-ons/IRSA roles, the EFS file system, the RDS cluster, ElastiCache/Valkey
+
+Before applying, delete the Kubernetes-managed load balancers (`Service type: LoadBalancer` and Ingress resources) - their ENIs are not managed by Terraform and will block the deletion of the old subnets. Expect workload downtime while the node groups are recreated.
+
+Once the resize is applied the flag becomes a no-op (the deployed layout then matches the configured one), so it can be left in place.
+
+The database tier has a separate flag, `force_database_subnet_resize`, because replacing the database subnets replaces the DB subnet group and with it the RDS cluster and the ElastiCache/Valkey replication groups. Leave it at `false` unless you have a restore plan.
+
 
 ## Requirements
 
@@ -27,11 +60,11 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_acm"></a> [acm](#module\_acm) | git::git@github.com:itgix/tf-module-acm.git | v1.0.2 |
-| <a name="module_common_vpc"></a> [common\_vpc](#module\_common\_vpc) | terraform-aws-modules/vpc/aws | ~> 5.5.1 |
+| <a name="module_common_vpc"></a> [common\_vpc](#module\_common\_vpc) | terraform-aws-modules/vpc/aws | 6.7.2 |
 | <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.0.0 |
 | <a name="module_dynamodb"></a> [dynamodb](#module\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git::git@github.com:itgix/tf-module-ecr.git | v1.0.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | git::git@github.com:itgix/tf-module-eks.git | v1.0.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | git::https://github.com/itgix/tf-module-eks.git | v1.3.4 |
 | <a name="module_elasticache"></a> [elasticache](#module\_elasticache) | git::git@github.com:itgix/tf-module-redis.git | v1.0.0 |
 | <a name="module_global_dynamodb"></a> [global\_dynamodb](#module\_global\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_irsa_fluentbit_cloudwatch"></a> [irsa\_fluentbit\_cloudwatch](#module\_irsa\_fluentbit\_cloudwatch) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
@@ -52,16 +85,21 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | [aws_iam_policy.irsa_karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.rds_iam_auth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_service_linked_role.spot](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | resource |
+| [aws_subnet.common_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
+| [aws_subnet.common_private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
+| [aws_subnet.common_public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
+| [aws_subnets.common](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc_endpoint.s3_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_vpcs.common](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpcs) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_acm_certificate_enable"></a> [acm\_certificate\_enable](#input\_acm\_certificate\_enable) | Generate a validated acm cert | `bool` | `false` | no |
-| <a name="input_addons_versions"></a> [addons\_versions](#input\_addons\_versions) | n/a | <pre>object({<br>    kube_proxy = string<br>    vpc_cni    = string<br>    coredns    = string<br>    ebs_csi    = string<br>  })</pre> | n/a | yes |
+| <a name="input_addons_versions"></a> [addons\_versions](#input\_addons\_versions) | Configuration of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module | <pre>object({<br>    kube_proxy                  = optional(string)<br>    vpc_cni                     = optional(string)<br>    coredns                     = optional(string)<br>    ebs_csi                     = optional(string)<br>    efs_csi                     = optional(string)<br>    resolve_conflicts_on_create = optional(string, "OVERWRITE")<br>  })</pre> | <pre>{<br>  "coredns": "v1.13.2-eksbuild.21",<br>  "ebs_csi": "v1.65.0-eksbuild.1",<br>  "kube_proxy": "v1.35.3-eksbuild.21",<br>  "vpc_cni": "v1.22.4-eksbuild.3"<br>}</pre> | no |
 | <a name="input_application_waf_enabled"></a> [application\_waf\_enabled](#input\_application\_waf\_enabled) | Specifies whether WAF should be provisioned | `bool` | `false` | no |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS account to deploy resources | `string` | n/a | yes |
 | <a name="input_aws_managed_waf_rule_groups"></a> [aws\_managed\_waf\_rule\_groups](#input\_aws\_managed\_waf\_rule\_groups) | n/a | `list(any)` | <pre>[<br>  {<br>    "action": "none",<br>    "name": "AWSManagedRulesAdminProtectionRuleSet",<br>    "priority": 1,<br>    "rules_override_to_count": []<br>  }<br>]</pre> | no |
@@ -95,7 +133,7 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | <a name="input_eks_aws_auth_roles"></a> [eks\_aws\_auth\_roles](#input\_eks\_aws\_auth\_roles) | n/a | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_eks_aws_auth_users"></a> [eks\_aws\_auth\_users](#input\_eks\_aws\_auth\_users) | n/a | <pre>list(object({<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_eks_aws_users_path"></a> [eks\_aws\_users\_path](#input\_eks\_aws\_users\_path) | The organizational path of the user used for building the arn , by default it's just / | `string` | `"/"` | no |
-| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Desired Kubernetes cluster version | `string` | `"1.29"` | no |
+| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Desired Kubernetes cluster version | `string` | `"1.35"` | no |
 | <a name="input_eks_disk_size"></a> [eks\_disk\_size](#input\_eks\_disk\_size) | Disk size of the root volume attached to the EKS worker nodes | `number` | `50` | no |
 | <a name="input_eks_instance_types"></a> [eks\_instance\_types](#input\_eks\_instance\_types) | EC2 instance types for the EKS worker nodes | `list(string)` | <pre>[<br>  "m5a.4xlarge"<br>]</pre> | no |
 | <a name="input_eks_kms_key_users"></a> [eks\_kms\_key\_users](#input\_eks\_kms\_key\_users) | A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users) | `list(string)` | `[]` | no |
@@ -107,6 +145,8 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | <a name="input_eks_volume_type"></a> [eks\_volume\_type](#input\_eks\_volume\_type) | Type of the root EBS volume attached to the EKS worker nodes | `string` | `"gp3"` | no |
 | <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | n/a | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment in which the infrastructure is going to be deployed | `string` | n/a | yes |
+| <a name="input_force_database_subnet_resize"></a> [force\_database\_subnet\_resize](#input\_force\_database\_subnet\_resize) | Apply the database subnet layout to a VPC that is already provisioned. Kept separate from force\_subnet\_resize because replacing the database subnets replaces the DB subnet group and therefore the RDS cluster and the ElastiCache/Valkey replication groups. Only enable this with a restore plan at hand. | `bool` | `false` | no |
+| <a name="input_force_subnet_resize"></a> [force\_subnet\_resize](#input\_force\_subnet\_resize) | Apply the private/public subnet layout to a VPC that is already provisioned. By default the subnets of an existing VPC are read from AWS and kept as they are, so upgrading this template never re-addresses a running environment. Turning this on replaces the private and public subnets, which also replaces every resource pinned to them - most notably the EKS managed node groups and the EFS mount targets. The EKS cluster itself, the NAT gateways' Elastic IPs and the databases are kept. Expect downtime for workloads and delete Kubernetes-managed load balancers before applying, otherwise the old subnets cannot be deleted. | `bool` | `false` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the project / client / product to be used in naming convention | `string` | n/a | yes |
 | <a name="input_provision_ecr"></a> [provision\_ecr](#input\_provision\_ecr) | n/a | `bool` | `false` | no |
 | <a name="input_provision_eks"></a> [provision\_eks](#input\_provision\_eks) | n/a | `bool` | `true` | no |
@@ -137,10 +177,13 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 | <a name="input_sqs_queues"></a> [sqs\_queues](#input\_sqs\_queues) | n/a | `map(any)` | n/a | yes |
 | <a name="input_sqs_username"></a> [sqs\_username](#input\_sqs\_username) | If not empty, created IAM User for usage with SQS for a more granular access | `string` | `""` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR of VPC to be used by Resale common resources | `string` | `""` | no |
+| <a name="input_vpc_database_subnets"></a> [vpc\_database\_subnets](#input\_vpc\_database\_subnets) | Database (RDS / ElastiCache) subnet layout inside var.vpc\_cidr. The defaults intentionally match the ranges used since the first release of this template so databases are never moved. | <pre>object({<br>    newbits = optional(number, 8)<br>    offsets = optional(list(number), [24, 25, 26])<br>    cidrs   = optional(list(string), [])<br>  })</pre> | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | External VPC ID | `string` | `""` | no |
 | <a name="input_vpc_private_route_table_ids"></a> [vpc\_private\_route\_table\_ids](#input\_vpc\_private\_route\_table\_ids) | External VPC private route table IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | External VPC private subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_vpc_private_subnets"></a> [vpc\_private\_subnets](#input\_vpc\_private\_subnets) | Private (EKS node / pod) subnet layout inside var.vpc\_cidr. Defaults to three /21 subnets on a /16 VPC. Set cidrs to pin exact ranges instead. | <pre>object({<br>    newbits = optional(number, 5)<br>    offsets = optional(list(number), [0, 1, 2])<br>    cidrs   = optional(list(string), [])<br>  })</pre> | `{}` | no |
 | <a name="input_vpc_public_subnet_ids"></a> [vpc\_public\_subnet\_ids](#input\_vpc\_public\_subnet\_ids) | External VPC public subnet IDs | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_vpc_public_subnets"></a> [vpc\_public\_subnets](#input\_vpc\_public\_subnets) | Public (load balancer / NAT) subnet layout inside var.vpc\_cidr. Defaults to three /23 subnets on a /16 VPC. Set cidrs to pin exact ranges instead. | <pre>object({<br>    newbits = optional(number, 7)<br>    offsets = optional(list(number), [14, 15, 16])<br>    cidrs   = optional(list(string), [])<br>  })</pre> | `{}` | no |
 | <a name="input_vpc_single_nat_gateway"></a> [vpc\_single\_nat\_gateway](#input\_vpc\_single\_nat\_gateway) | Wether to use just a single NAT gateway instead of a NAT GW per availability zone for HA and as recommended. This might be suitable for dev/test environments | `bool` | `false` | no |
 | <a name="input_waf_default_action"></a> [waf\_default\_action](#input\_waf\_default\_action) | allow or block - default action of WAF when a request hasn't matched any rules | `string` | `"allow"` | no |
 | <a name="input_waf_log_retention_days"></a> [waf\_log\_retention\_days](#input\_waf\_log\_retention\_days) | n/a | `any` | n/a | yes |
