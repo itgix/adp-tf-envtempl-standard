@@ -874,17 +874,23 @@ variable "valkey_engine_version" {
 
 variable "valkey_data_storage_max" {
   type    = number
-  default = 4
+  default = null
 }
 
 variable "valkey_ecpu_per_second_max" {
   type    = number
-  default = 2000
+  default = null
 }
 
 variable "valkey_create_valkey_user_and_secret" {
   type    = bool
   default = true
+}
+
+variable "valkey_snapshot_arns_to_restore" {
+  type        = list(string)
+  description = "ARN(s) of existing ElastiCache snapshot(s) to restore the serverless cache from. Redis snapshots only (AWS limitation)."
+  default     = null
 }
 
 #########################################################################
