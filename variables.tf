@@ -887,6 +887,12 @@ variable "valkey_create_valkey_user_and_secret" {
   default = true
 }
 
+variable "valkey_snapshot_arns_to_restore" {
+  type        = list(string)
+  description = "ARN(s) of existing ElastiCache snapshot(s) to restore the serverless cache from. Redis snapshots only (AWS limitation)."
+  default     = null
+}
+
 #########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################

@@ -1,6 +1,6 @@
 module "valey" {
 
-  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=v1.0.0"
+  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=snapshot"
 
   count = var.create_elasticache_valkey ? 1 : 0
 
@@ -18,5 +18,6 @@ module "valey" {
   data_storage_max              = var.valkey_data_storage_max
   ecpu_per_second_max           = var.valkey_ecpu_per_second_max
   create_valkey_user_and_secret = var.valkey_create_valkey_user_and_secret
+  snapshot_arns_to_restore      = var.valkey_snapshot_arns_to_restore
 
 }
