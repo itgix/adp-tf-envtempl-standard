@@ -874,11 +874,11 @@ variable "valkey_engine_version" {
 
 variable "valkey_data_storage_max" {
   type    = number
-  default = null
+  default = 4
 }
 
 variable "valkey_ecpu_per_second_max" {
-  type    = number
+  type    = 2000
   default = null
 }
 
