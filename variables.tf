@@ -878,8 +878,8 @@ variable "valkey_data_storage_max" {
 }
 
 variable "valkey_ecpu_per_second_max" {
-  type    = 2000
-  default = null
+  type    = number
+  default = 2000
 }
 
 variable "valkey_create_valkey_user_and_secret" {
