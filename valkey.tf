@@ -1,6 +1,6 @@
 module "valey" {
 
-  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=snapshot"
+  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=v1.0.1"
 
   count = var.create_elasticache_valkey ? 1 : 0
 
