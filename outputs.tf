@@ -134,13 +134,13 @@ output "irsa_rds_role_arn" {
 
 output "karpenter_queue_name" {
   description = "Interruption queue name for karpenter"
-  value       = var.enable_karpenter ? module.karpenter[0].queue_name : null
+  value       = local.classic_karpenter_enabled ? module.karpenter[0].queue_name : null
 }
 
 
 output "karpenter_sa_role" {
   description = "IRSA role for karpenter SA"
-  value       = var.enable_karpenter ? module.irsa_karpenter.iam_role_arn : null
+  value       = local.classic_karpenter_enabled ? module.irsa_karpenter[0].iam_role_arn : null
 }
 
 output "fluentbit_sa_role_arn" {

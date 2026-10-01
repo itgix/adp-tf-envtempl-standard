@@ -117,7 +117,13 @@ module "irsa_fluentbit_cloudwatch" {
 #############################################
 #IRSA for Karpenter                         #
 #############################################
+moved {
+  from = aws_iam_policy.irsa_karpenter
+  to   = aws_iam_policy.irsa_karpenter[0]
+}
+
 resource "aws_iam_policy" "irsa_karpenter" {
+  count = local.classic_karpenter_enabled ? 1 : 0
 
   name_prefix = "irsa_karpenter"
   description = "Policy for Karpenter ServiceAccounts for cluster ${local.eks_name}"
@@ -136,9 +142,13 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "ec2:DescribeInstanceTypeOfferings",
                 "ec2:DescribeImages",
                 "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeCapacityReservations",
                 "ec2:CreateTags",
                 "ec2:CreateLaunchTemplate",
-                "ec2:CreateFleet"
+                "ec2:CreateFleet",
+                "ec2:DescribeInstanceStatus",
+                "ec2:DescribePlacementGroups",
+                "arc-zonal-shift:GetManagedResource"
             ],
             "Effect": "Allow",
             "Resource": "*"
@@ -177,7 +187,9 @@ resource "aws_iam_policy" "irsa_karpenter" {
                 "arn:aws:ec2:*:*:spot-instances-request/*",
                 "arn:aws:ec2:*:*:security-group/*",
                 "arn:aws:ec2:*:*:network-interface/*",
-                "arn:aws:ec2:*:*:instance/*"
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:capacity-reservation/*",
+                "arn:aws:ec2:*:*:placement-group/*"
             ]
         },
         {
@@ -224,7 +236,13 @@ resource "aws_iam_policy" "irsa_karpenter" {
 EOT
 }
 
+moved {
+  from = module.irsa_karpenter
+  to   = module.irsa_karpenter[0]
+}
+
 module "irsa_karpenter" {
+  count = local.classic_karpenter_enabled ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
@@ -233,7 +251,7 @@ module "irsa_karpenter" {
   create_role                = true
   role_name                  = "KarpenterIRSA-${local.eks_name}"
   role_policy_arns = {
-    itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter.arn
+    itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter[0].arn
   }
   oidc_providers = {
     main = {
@@ -247,7 +265,6 @@ module "irsa_karpenter" {
 #IRSA for AI Bedrock   #
 ##########################
 module "irsa_ai_bedrock" {
-
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.34.0"
 
@@ -268,7 +285,6 @@ module "irsa_ai_bedrock" {
   }
 }
 resource "aws_iam_policy" "irsa_ai_bedrock_custom" {
-
   name_prefix = "irsa_ai_bedrock_custom"
   description = "Policy for ServiceAccounts allowing invoking bedrock model"
   policy      = <<EOT
@@ -288,7 +304,6 @@ resource "aws_iam_policy" "irsa_ai_bedrock_custom" {
  EOT
 }
 resource "aws_iam_policy" "irsa_ai_bedrock_s3" {
-
   name_prefix = "irsa_ai_bedrock_s3"
   description = "Policy for ServiceAccounts allowing S3 bucket access"
   policy      = <<EOT
