@@ -935,6 +935,12 @@ variable "enable_karpenter" {
   default = true
 }
 
+variable "enable_keda" {
+  type        = bool
+  default     = false
+  description = "Enable creation of KEDA IRSA role and IAM policy for CloudWatch/SQS metrics"
+}
+
 variable "ec2_spot_service_role" {
   type        = bool
   default     = false
