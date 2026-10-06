@@ -143,6 +143,11 @@ output "karpenter_sa_role" {
   value       = local.classic_karpenter_enabled ? module.irsa_karpenter[0].iam_role_arn : null
 }
 
+output "keda_sa_role" {
+  description = "IRSA role ARN for KEDA operator SA"
+  value       = var.enable_keda ? module.irsa_keda[0].iam_role_arn : null
+}
+
 output "fluentbit_sa_role_arn" {
   description = "IAM Role ARN for Fluent Bit Service Account"
   value       = module.irsa_fluentbit_cloudwatch.iam_role_arn
