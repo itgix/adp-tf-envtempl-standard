@@ -953,24 +953,25 @@ variable "ec2_spot_service_role" {
 
 
 variable "custom_secrets" {
-  description = "List of custom secrets to create"
+  description = <<-EOT
+    List of custom secrets to create. A random secret is generated once and stays static;
+    set or raise `version` to rotate it (random secrets only, never lower it, and do not set
+    it during an upgrade unless rotation is wanted). A manual secret is written with `value`
+    (or "editme") and a changed value writes a new secret version.
+  EOT
   type = list(object({
     secret_name      = string
     length           = optional(number)
     special          = optional(bool)
     override_special = optional(string)
-    keepers          = optional(map(string))
+    version          = optional(number)
     manual           = optional(bool, false)
     value            = optional(string)
+    tags             = optional(map(string), {})
   }))
   default = []
 }
 
-variable "custom_secret_keepers" {
-  description = "Map of keepers for the secrets"
-  type        = map(map(string))
-  default     = {}
-}
 #########################################################################
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################
