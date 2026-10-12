@@ -954,10 +954,11 @@ variable "ec2_spot_service_role" {
 
 variable "custom_secrets" {
   description = <<-EOT
-    List of custom secrets to create. A random secret is generated once and stays static;
-    set or raise `version` to rotate it (random secrets only, never lower it, and do not set
-    it during an upgrade unless rotation is wanted). A manual secret is written with `value`
-    (or "editme") and a changed value writes a new secret version.
+    List of custom secrets to create. A random secret is generated once and stays static while
+    `version` is omitted; set `version = 1` on a secret that had none to rotate it once, and
+    raise it to rotate again (never lower it). `value` is for manual secrets only (a manual
+    secret is written with `value`, or "editme" when unset, and a changed value writes a new
+    secret version); a random secret with a non-empty `value` is rejected.
   EOT
   type = list(object({
     secret_name      = string

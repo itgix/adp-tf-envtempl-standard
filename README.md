@@ -9,12 +9,14 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 
 ## Upgrade notes
 
-### Write-only secret values (awssm module v1.1.0)
+### Write-only secret values (awssm module v1.1.1)
 
 Custom secret values are written with the AWS provider's write-only argument and are never stored in state, plan files or outputs.
 
 * Required versions: Terraform >= 1.11, `aws` provider >= 6.50, `random` provider >= 3.7.
-* `keepers` (per secret) and `custom_secret_keepers` are removed; rotation is gated on the per-secret integer `version` instead. Set or raise `version` to rotate a random secret, never lower it, and do not set it during the upgrade unless rotation is wanted.
+* `keepers` (per secret) and `custom_secret_keepers` are removed; rotation is gated on the per-secret integer `version` instead. Omitted `version` keeps a random secret static; set `version = 1` on a secret that had none to rotate it once, raise it to rotate again, never lower it, and do not set it during the upgrade unless rotation is wanted.
+* Planning now calls `secretsmanager:ListSecrets` and `secretsmanager:GetSecretValue` on the environment's custom secrets so existing values are written back unchanged; the planning identity needs these permissions.
+* A random secret that had `value` set is rejected by validation since module v1.1.1; set `manual: true` to keep the value or remove `value` to have it generated (which rotates it).
 * The `custom_secret_values` output is removed. Read secret values from AWS Secrets Manager.
 * The first plan after the upgrade shows an in-place update of each `aws_secretsmanager_secret_version` and the destruction of the old `random_password` resources (state only); no secret value changes and no new secret version is created. A replace in that plan means a `version` was set or a manual `value` changed.
 
@@ -74,7 +76,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 |------|--------|---------|
 | <a name="module_acm"></a> [acm](#module\_acm) | git::git@github.com:itgix/tf-module-acm.git | v1.0.2 |
 | <a name="module_common_vpc"></a> [common\_vpc](#module\_common\_vpc) | terraform-aws-modules/vpc/aws | 6.7.2 |
-| <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.1.0 |
+| <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.1.1 |
 | <a name="module_dynamodb"></a> [dynamodb](#module\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git::git@github.com:itgix/tf-module-ecr.git | v1.0.0 |
 | <a name="module_eks"></a> [eks](#module\_eks) | git::https://github.com/itgix/tf-module-eks.git | v1.3.4 |
