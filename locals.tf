@@ -54,18 +54,18 @@ locals {
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
-  msk_name = "msk-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
+  msk_name = "msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
 
-  msk_security_group_name = "security-group-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}-msk-cluster"
+  msk_security_group_name = "security-group-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-msk-cluster"
 
   msk_vpc_id     = var.msk_create_vpc ? module.msk_vpc.vpc_id : var.msk_vpc_id
   msk_subnet_ids = var.msk_create_vpc ? module.msk_vpc.intra_subnets : var.msk_subnet_ids
 
   s3_logs_prefix                = var.s3_logs_enabled ? coalesce(var.s3_logs_prefix, "amazon_msk/") : ""
-  firehose_role_name            = "role-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
-  firehose_delivery_stream_name = "firehose-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
+  firehose_role_name            = "role-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
+  firehose_delivery_stream_name = "firehose-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
   firehose_delivery_stream      = var.firehose_logs_enabled ? aws_kinesis_firehose_delivery_stream.msk[0].name : ""
-  cloudwatch_log_group_name     = "/aws/msk/broker_logs/msk-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
+  cloudwatch_log_group_name     = "/aws/msk/broker_logs/msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
   cloudwatch_logs_log_group     = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.msk[0].name : null
 
   # client broker types
