@@ -1,12 +1,13 @@
 module "valey" {
 
-  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=main"
+  source = "git::https://github.com/itgix/tf-module-valkey.git?ref=v1.0.2"
 
   count = var.create_elasticache_valkey ? 1 : 0
 
   aws_region   = var.region
   environment  = var.environment
   product_name = var.project_name
+  tags         = local.aws_default_tags
 
   vpc_id     = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
   subnet_ids = var.provision_vpc ? slice(module.common_vpc[0].database_subnets, 0, 2) : var.vpc_private_subnet_ids
@@ -18,5 +19,6 @@ module "valey" {
   data_storage_max              = var.valkey_data_storage_max
   ecpu_per_second_max           = var.valkey_ecpu_per_second_max
   create_valkey_user_and_secret = var.valkey_create_valkey_user_and_secret
+  snapshot_arns_to_restore      = var.valkey_snapshot_arns_to_restore
 
 }

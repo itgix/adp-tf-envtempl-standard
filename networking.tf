@@ -2,9 +2,161 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+################################################################################
+## Subnet layout
+##
+## The private and public subnets used to be hardcoded as /26 blocks, which
+## leaves ~60 usable addresses per AZ - far too little for EKS with the VPC CNI,
+## where every pod consumes an address. They are variables now (see
+## vpc_private_subnets / vpc_public_subnets / vpc_database_subnets) with
+## defaults that are at least a /23.
+##
+## To stay backwards compatible the subnets of an already provisioned VPC are
+## read back from AWS and reused as they are, so upgrading this template does
+## not silently re-address a running environment. Set force_subnet_resize to
+## roll out the configured layout to such a VPC.
+################################################################################
+
+locals {
+  # Subnets requested through the variables: either the explicit CIDR list, or
+  # <count> blocks of <newbits> size carved out of the VPC CIDR at <offsets>.
+  requested_private_subnets = length(var.vpc_private_subnets.cidrs) > 0 ? var.vpc_private_subnets.cidrs : (
+    var.vpc_cidr == "" ? [] : [for i in var.vpc_private_subnets.offsets : cidrsubnet(var.vpc_cidr, var.vpc_private_subnets.newbits, i)]
+  )
+  requested_public_subnets = length(var.vpc_public_subnets.cidrs) > 0 ? var.vpc_public_subnets.cidrs : (
+    var.vpc_cidr == "" ? [] : [for i in var.vpc_public_subnets.offsets : cidrsubnet(var.vpc_cidr, var.vpc_public_subnets.newbits, i)]
+  )
+  requested_database_subnets = length(var.vpc_database_subnets.cidrs) > 0 ? var.vpc_database_subnets.cidrs : (
+    var.vpc_cidr == "" ? [] : [for i in var.vpc_database_subnets.offsets : cidrsubnet(var.vpc_cidr, var.vpc_database_subnets.newbits, i)]
+  )
+
+  # Subnets of an already provisioned VPC, ordered by AZ the same way the VPC
+  # module maps them, so reusing them produces no diff at all.
+  deployed_private_subnets  = local.deployed_subnets_by_tier["private"]
+  deployed_public_subnets   = local.deployed_subnets_by_tier["public"]
+  deployed_database_subnets = local.deployed_subnets_by_tier["database"]
+
+  deployed_subnets_by_tier = {
+    for tier, subnets in {
+      private  = data.aws_subnet.common_private
+      public   = data.aws_subnet.common_public
+      database = data.aws_subnet.common_database
+      } : tier => flatten([
+        for az in data.aws_availability_zones.available.names :
+        [for subnet in subnets : subnet.cidr_block if subnet.availability_zone == az]
+    ])
+  }
+
+  # Keep what is deployed unless explicitly told to resize. The database
+  # subnets have their own flag - moving them re-creates the DB subnet group
+  # and with it the RDS cluster and the ElastiCache/Valkey replication groups.
+  private_subnets = !var.force_subnet_resize && length(local.deployed_private_subnets) > 0 ? local.deployed_private_subnets : local.requested_private_subnets
+  public_subnets  = !var.force_subnet_resize && length(local.deployed_public_subnets) > 0 ? local.deployed_public_subnets : local.requested_public_subnets
+
+  database_subnets = !var.force_database_subnet_resize && length(local.deployed_database_subnets) > 0 ? local.deployed_database_subnets : local.requested_database_subnets
+
+  # Overlap detection for the configured layout. The defaults never overlap for
+  # any vpc_cidr size - the tiers occupy [0, 3/32), [3/32, 27/256) and
+  # [7/64, 17/128) of the VPC - but a custom layout can, and overlapping
+  # subnets only fail halfway through an apply.
+  configured_subnets = concat(local.requested_private_subnets, local.requested_public_subnets, local.requested_database_subnets)
+
+  configured_subnet_ranges = [
+    for cidr in local.configured_subnets : {
+      start = sum([for i, octet in split(".", cidrhost(cidr, 0)) : tonumber(octet) * pow(256, 3 - i)])
+      size  = pow(2, 32 - tonumber(split("/", cidr)[1]))
+    }
+  ]
+
+  overlapping_subnets = [
+    for pair in setproduct(range(length(local.configured_subnet_ranges)), range(length(local.configured_subnet_ranges))) :
+    "${local.configured_subnets[pair[0]]} <-> ${local.configured_subnets[pair[1]]}"
+    if pair[0] < pair[1] &&
+    local.configured_subnet_ranges[pair[0]].start < local.configured_subnet_ranges[pair[1]].start + local.configured_subnet_ranges[pair[1]].size &&
+    local.configured_subnet_ranges[pair[1]].start < local.configured_subnet_ranges[pair[0]].start + local.configured_subnet_ranges[pair[0]].size
+  ]
+}
+
+# The VPC this configuration manages, if it exists already. aws_vpcs is used
+# instead of aws_vpc so that a missing VPC is an empty result, not an error.
+data "aws_vpcs" "common" {
+  count = var.provision_vpc ? 1 : 0
+
+  tags = {
+    Name = local.vpc_name
+  }
+}
+
+data "aws_subnets" "common" {
+  for_each = try(length(data.aws_vpcs.common[0].ids), 0) > 0 ? toset(["private", "public", "db"]) : toset([])
+
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpcs.common[0].ids[0]]
+  }
+
+  # Subnet names as generated by the VPC module: "<vpc name>-<suffix>-<az>"
+  filter {
+    name   = "tag:Name"
+    values = ["${local.vpc_name}-${each.key}-*"]
+  }
+}
+
+data "aws_subnet" "common_private" {
+  for_each = toset(try(data.aws_subnets.common["private"].ids, []))
+  id       = each.key
+}
+
+data "aws_subnet" "common_public" {
+  for_each = toset(try(data.aws_subnets.common["public"].ids, []))
+  id       = each.key
+}
+
+data "aws_subnet" "common_database" {
+  for_each = toset(try(data.aws_subnets.common["db"].ids, []))
+  id       = each.key
+}
+
+check "vpc_subnet_layout" {
+  assert {
+    condition     = !var.provision_vpc || var.vpc_cidr != ""
+    error_message = "provision_vpc is enabled but vpc_cidr is empty, so no subnets can be carved out of it."
+  }
+
+  # Warn instead of failing: an existing environment keeping its current
+  # subnets is the intended default, but silently ignoring the variables would
+  # be surprising.
+  assert {
+    condition = !var.provision_vpc || (
+      local.private_subnets == local.requested_private_subnets &&
+      local.public_subnets == local.requested_public_subnets &&
+      local.database_subnets == local.requested_database_subnets
+    )
+    error_message = "The VPC is already provisioned with different subnets than configured, its current layout is kept: private ${jsonencode(local.private_subnets)}, public ${jsonencode(local.public_subnets)}, database ${jsonencode(local.database_subnets)}. Set force_subnet_resize (and force_database_subnet_resize for the database tier) to apply the configured layout - this re-creates subnets and everything attached to them."
+  }
+
+  assert {
+    condition     = !var.provision_vpc || length(local.overlapping_subnets) == 0
+    error_message = "The configured subnets overlap: ${jsonencode(local.overlapping_subnets)}. Fix the newbits/offsets of vpc_private_subnets, vpc_public_subnets and vpc_database_subnets before applying."
+  }
+
+  # The VPC module creates no public subnets at all when one_nat_gateway_per_az
+  # is set and there are fewer public subnets than AZs (main.tf, count of
+  # aws_subnet.public), which would leave EKS without control plane subnets.
+  assert {
+    condition     = !var.provision_vpc || var.vpc_single_nat_gateway || length(local.public_subnets) >= length(data.aws_availability_zones.available.names)
+    error_message = "With vpc_single_nat_gateway = false the VPC module needs at least one public subnet per availability zone, but ${length(local.public_subnets)} are configured for ${length(data.aws_availability_zones.available.names)} AZs (${join(", ", data.aws_availability_zones.available.names)}). Add offsets to vpc_public_subnets or enable vpc_single_nat_gateway."
+  }
+
+  assert {
+    condition     = !var.provision_vpc || alltrue([for cidr in local.requested_private_subnets : tonumber(split("/", cidr)[1]) <= 23])
+    error_message = "The configured private subnets are smaller than a /23 (${jsonencode(local.requested_private_subnets)}). EKS assigns an address per pod, use a /23 or larger - either widen vpc_cidr or lower vpc_private_subnets.newbits."
+  }
+}
+
 module "common_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.5.1"
+  version = "6.7.2"
   count   = var.provision_vpc ? 1 : 0
 
   name                   = local.vpc_name
@@ -18,21 +170,9 @@ module "common_vpc" {
   one_nat_gateway_per_az = !var.vpc_single_nat_gateway
 
   ## Subnets
-  private_subnets = [
-    cidrsubnet(var.vpc_cidr, 10, 0),
-    cidrsubnet(var.vpc_cidr, 10, 4),
-    cidrsubnet(var.vpc_cidr, 10, 8)
-  ]
-  public_subnets = [
-    cidrsubnet(var.vpc_cidr, 10, 12),
-    cidrsubnet(var.vpc_cidr, 10, 16),
-    cidrsubnet(var.vpc_cidr, 10, 20)
-  ]
-  database_subnets = [
-    cidrsubnet(var.vpc_cidr, 8, 24),
-    cidrsubnet(var.vpc_cidr, 8, 25),
-    cidrsubnet(var.vpc_cidr, 8, 26)
-  ]
+  private_subnets                                 = local.private_subnets
+  public_subnets                                  = local.public_subnets
+  database_subnets                                = local.database_subnets
   database_subnet_assign_ipv6_address_on_creation = false
   map_public_ip_on_launch                         = false
 

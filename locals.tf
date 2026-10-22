@@ -31,6 +31,7 @@ locals {
     "CostCenter"           = "n/a"
     "Application"          = "adp"
     "ManagedBy"            = "Terraform"
+    "aws-apn-id"           = "pc:5uhf95x0bz6d518p795cfi07s"
   }
 
 
@@ -49,8 +50,8 @@ locals {
   karpenter_queue_name           = "queue-${var.region}-${var.environment}-karpenter"
   karpenter_namespace            = "karpenter"
   karpenter_service_account_name = "karpenter"
+  classic_karpenter_enabled      = var.enable_karpenter && !var.enable_eks_auto_mode
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
 }
-
