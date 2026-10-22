@@ -893,6 +893,20 @@ variable "valkey_snapshot_arns_to_restore" {
   default     = null
 }
 
+variable "valkey_extra_user_ids" {
+  type        = list(string)
+  description = "IDs of existing ElastiCache users to add to the Valkey user group in addition to the users this module creates, e.g. [\"default-valkey\"] to keep the engine's built-in default user in the group. Only applied when create_valkey_user_and_secret is true."
+  default     = []
+}
+
+variable "valkey_extra_users" {
+  type = map(object({
+    access_string = optional(string, "on ~* +@all")
+  }))
+  description = "Extra ElastiCache users to create and add to the Valkey user group, keyed by a short name. Each user is named <resource_tag>-valkey-<key> (user_id and user_name), gets a generated password and a Secrets Manager secret of the same name containing {username, password}. Only applied when create_valkey_user_and_secret is true."
+  default     = {}
+}
+
 #########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################
