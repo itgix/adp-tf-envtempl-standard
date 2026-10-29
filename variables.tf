@@ -473,6 +473,18 @@ variable "rds_backup_retention_period" {
   description = "Number of days to retain backups for"
 }
 
+variable "rds_auto_minor_version_upgrade" {
+  type        = bool
+  default     = false
+  description = "Whether to enable automatic minor version upgrades for the DB instance"
+}
+
+variable "rds_maintenance_window" {
+  type        = string
+  default     = "wed:03:00-wed:04:00"
+  description = "The window of time during which maintenance can be performed on the DB instance"
+}
+
 variable "rds_cluster_parameters" {
   type = list(object({
     name         = string
@@ -498,12 +510,15 @@ variable "rds_failover_priority" {
   description = "Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoted to writer."
 }
 
+variable "rds_database_insights_mode" {
+  type    = string
+  default = "standard"
+}
 variable "rds_performance_retention" {
   type        = number
-  default     = 465
-  description = "Performance Insights retention period in days. Database Insights Advanced requires at least 465."
+  default     = 7
+  description = "Performance Insights retention period in days."
 }
-
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
@@ -872,6 +887,26 @@ variable "valkey_create_valkey_user_and_secret" {
   default = true
 }
 
+variable "valkey_snapshot_arns_to_restore" {
+  type        = list(string)
+  description = "ARN(s) of existing ElastiCache snapshot(s) to restore the serverless cache from. Redis snapshots only (AWS limitation)."
+  default     = null
+}
+
+variable "valkey_extra_user_ids" {
+  type        = list(string)
+  description = "IDs of existing ElastiCache users to add to the Valkey user group in addition to the users this module creates, e.g. [\"default-valkey\"] to keep the engine's built-in default user in the group. Only applied when create_valkey_user_and_secret is true."
+  default     = []
+}
+
+variable "valkey_extra_users" {
+  type = map(object({
+    access_string = optional(string, "on ~* +@all")
+  }))
+  description = "Extra ElastiCache users to create and add to the Valkey user group, keyed by a short name. Each user is named <resource_tag>-valkey-<key> (user_id and user_name), gets a generated password and a Secrets Manager secret of the same name containing {username, password}. Only applied when create_valkey_user_and_secret is true."
+  default     = {}
+}
+
 #########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################
@@ -914,6 +949,12 @@ variable "enable_karpenter" {
   default = true
 }
 
+variable "enable_keda" {
+  type        = bool
+  default     = false
+  description = "Enable creation of KEDA IRSA role and IAM policy for CloudWatch/SQS metrics"
+}
+
 variable "ec2_spot_service_role" {
   type        = bool
   default     = false
@@ -926,24 +967,26 @@ variable "ec2_spot_service_role" {
 
 
 variable "custom_secrets" {
-  description = "List of custom secrets to create"
+  description = <<-EOT
+    List of custom secrets to create. A random secret is generated once and stays static while
+    `version` is omitted; set `version = 1` on a secret that had none to rotate it once, and
+    raise it to rotate again (never lower it). `value` is for manual secrets only (a manual
+    secret is written with `value`, or "editme" when unset, and a changed value writes a new
+    secret version); a random secret with a non-empty `value` is rejected.
+  EOT
   type = list(object({
     secret_name      = string
     length           = optional(number)
     special          = optional(bool)
     override_special = optional(string)
-    keepers          = optional(map(string))
+    version          = optional(number)
     manual           = optional(bool, false)
     value            = optional(string)
+    tags             = optional(map(string), {})
   }))
   default = []
 }
 
-variable "custom_secret_keepers" {
-  description = "Map of keepers for the secrets"
-  type        = map(map(string))
-  default     = {}
-}
 #########################################################################
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################

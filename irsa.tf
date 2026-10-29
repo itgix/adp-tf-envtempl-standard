@@ -351,3 +351,63 @@ module "s3_bucket_irsa_role" {
     }
   }
 }
+
+
+##########################
+#IRSA for KEDA           #
+##########################
+module "irsa_keda" {
+  count = var.enable_keda ? 1 : 0
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.34.0"
+
+  assume_role_condition_test = "StringEquals"
+  create_role                = true
+  role_name                  = "irsa-keda-${local.eks_name}"
+  role_policy_arns = {
+    keda_policy = aws_iam_policy.irsa_keda[0].arn
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["keda:keda-operator"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "irsa_keda" {
+  count = var.enable_keda ? 1 : 0
+
+  name_prefix = "irsa_keda"
+  description = "Policy for KEDA to read CloudWatch metrics and SQS queue attributes for cluster ${local.eks_name}"
+  policy      = <<EOT
+{
+    "Statement": [
+        {
+            "Action": [
+                "cloudwatch:GetMetricData",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:ListMetrics",
+                "cloudwatch:DescribeAlarms"
+            ],
+            "Effect": "Allow",
+            "Resource": "*",
+            "Sid": "AllowCloudWatchMetrics"
+        },
+        {
+            "Action": [
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:ListQueues",
+                "sqs:ListQueueTags"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:sqs:${var.region}:${var.aws_account_id}:*",
+            "Sid": "AllowSQSRead"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+EOT
+}

@@ -3,7 +3,11 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
+<<<<<<< HEAD
   source = "git::https://github.com/itgix/tf-module-rds.git?ref=rds-major-version"
+=======
+  source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.12"
+>>>>>>> develop
 
   environment = var.environment
 
@@ -55,5 +59,9 @@ module "rds_maindb" {
 
   failover_priority = var.rds_failover_priority
 
+  database_insights_mode    = var.rds_database_insights_mode
   rds_performance_retention = var.rds_performance_retention
+
+  rds_auto_minor_version_upgrade = var.rds_auto_minor_version_upgrade
+  rds_maintenance_window         = var.rds_maintenance_window
 }
