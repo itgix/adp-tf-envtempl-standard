@@ -3,7 +3,7 @@ module "rds_maindb" {
 
   depends_on = [module.common_vpc]
 
-  source = "git::https://github.com/itgix/tf-module-rds.git?ref=rds-major-version"
+  source = "git::https://github.com/itgix/tf-module-rds.git?ref=v1.0.13"
 
   environment = var.environment
 
@@ -60,4 +60,7 @@ module "rds_maindb" {
 
   rds_auto_minor_version_upgrade = var.rds_auto_minor_version_upgrade
   rds_maintenance_window         = var.rds_maintenance_window
+
+  rds_allow_major_version_upgrade = var.rds_allow_major_version_upgrade
+  rds_apply_immediately           = var.rds_apply_immediately
 }
