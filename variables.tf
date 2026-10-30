@@ -514,11 +514,25 @@ variable "rds_database_insights_mode" {
   type    = string
   default = "standard"
 }
+
 variable "rds_performance_retention" {
   type        = number
   default     = 7
   description = "Performance Insights retention period in days."
 }
+
+variable "rds_allow_major_version_upgrade" {
+  type        = bool
+  default     = true
+  description = "Enable to allow major engine version upgrades when changing engine versions. Defaults to false."
+}
+
+variable "rds_apply_immediately" {
+  type        = bool
+  description = "Specifies whether any cluster modifications are applied immediately, or during the next maintenance window"
+  default     = true
+}
+
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
