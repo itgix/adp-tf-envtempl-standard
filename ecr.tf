@@ -1,5 +1,5 @@
 module "ecr" {
-  source                = "git::https://github.com/itgix/tf-module-ecr.git?ref=add-lifecycle-policy"
+  source                = "git::https://github.com/itgix/tf-module-ecr.git?ref=v1.2.0"
   ecr_create_repository = var.provision_ecr
 
   aws_region   = var.region
@@ -18,9 +18,11 @@ module "ecr" {
   ecr_registry_scan_type                     = var.ecr_registry_scan_type
   ecr_registry_scan_rules                    = var.ecr_registry_scan_rules
 
-  ecr_create_lifecycle_policy       = var.ecr_create_lifecycle_policy
-  ecr_repository_lifecycle_policy   = var.ecr_repository_lifecycle_policy
-  ecr_repository_lifecycle_policies = var.ecr_repository_lifecycle_policies
+  ecr_create_lifecycle_policy     = var.ecr_create_lifecycle_policy
+  ecr_repository_lifecycle_policy = var.ecr_repository_lifecycle_policy == null ? null : jsonencode(var.ecr_repository_lifecycle_policy)
+  ecr_repository_lifecycle_policies = {
+    for k, v in var.ecr_repository_lifecycle_policies : k => jsonencode(v)
+  }
 
   ecr_names_map = var.ecr_names_map
   # ecr_prefix_with_projectname               = var.ecr_prefix_with_projectname
