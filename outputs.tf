@@ -19,7 +19,7 @@ output "eks_irsa_external_dns_arn" {
 }
 
 output "rds_iam_auth_irsa_arn" {
-  value = module.rds_iam_auth[0].iam_role_arn
+  value = module.rds_iam_auth[0].arn
 }
 
 output "node_iam_role_name" {
@@ -129,7 +129,7 @@ output "redis_primary_endpoint_address" {
 }
 output "irsa_rds_role_arn" {
   description = "ARN of the IAM Role for access to rds database"
-  value       = var.create_elasticache_redis ? module.rds_iam_auth[0].iam_role_arn : null
+  value       = var.create_elasticache_redis ? module.rds_iam_auth[0].arn : null
 }
 
 output "karpenter_queue_name" {
@@ -140,17 +140,17 @@ output "karpenter_queue_name" {
 
 output "karpenter_sa_role" {
   description = "IRSA role for karpenter SA"
-  value       = local.classic_karpenter_enabled ? module.irsa_karpenter[0].iam_role_arn : null
+  value       = local.classic_karpenter_enabled ? module.irsa_karpenter[0].arn : null
 }
 
 output "keda_sa_role" {
   description = "IRSA role ARN for KEDA operator SA"
-  value       = var.enable_keda ? module.irsa_keda[0].iam_role_arn : null
+  value       = var.enable_keda ? module.irsa_keda[0].arn : null
 }
 
 output "fluentbit_sa_role_arn" {
   description = "IAM Role ARN for Fluent Bit Service Account"
-  value       = module.irsa_fluentbit_cloudwatch.iam_role_arn
+  value       = module.irsa_fluentbit_cloudwatch.arn
 }
 
 # Custom Secrets

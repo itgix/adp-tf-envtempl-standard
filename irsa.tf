@@ -3,16 +3,15 @@
 ##########################
 module "rds_iam_auth" {
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   count   = var.rds_iam_irsa ? 1 : 0
-  version = "5.34.0"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringLike"
-  create_role                = true
-  role_name                  = "rds-iam-auth-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringLike"
+  create               = true
+  name                 = "rds-iam-auth-${local.eks_name}"
+  policies = {
     rds_iam_auth_policy = aws_iam_policy.rds_iam_auth.arn
-    policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
     policy_sqs          = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
     policy_kmspw        = "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser"
   }
@@ -54,13 +53,13 @@ EOT
 ##########################
 module "irsa_itgix_adp_agent" {
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringLike"
-  create_role                = true
-  role_name                  = "irsa-itgix-adp-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringLike"
+  create               = true
+  name                 = "irsa-itgix-adp-${local.eks_name}"
+  policies = {
     itgix_adp_agent_policy = aws_iam_policy.irsa_itgix_adp_agent.arn
   }
   oidc_providers = {
@@ -97,13 +96,13 @@ EOT
 #############################################
 module "irsa_fluentbit_cloudwatch" {
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringLike"
-  create_role                = true
-  role_name                  = "irsa-fluentbit-cloudwatch-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringLike"
+  create               = true
+  name                 = "irsa-fluentbit-cloudwatch-${local.eks_name}"
+  policies = {
     aws_managed_policy = "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
   }
   oidc_providers = {
@@ -244,13 +243,13 @@ moved {
 module "irsa_karpenter" {
   count = local.classic_karpenter_enabled ? 1 : 0
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringEquals"
-  create_role                = true
-  role_name                  = "KarpenterIRSA-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringEquals"
+  create               = true
+  name                 = "KarpenterIRSA-${local.eks_name}"
+  policies = {
     itgix_adp_agent_policy = aws_iam_policy.irsa_karpenter[0].arn
   }
   oidc_providers = {
@@ -265,13 +264,13 @@ module "irsa_karpenter" {
 #IRSA for AI Bedrock   #
 ##########################
 module "irsa_ai_bedrock" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringLike"
-  create_role                = true
-  role_name                  = "ai-bedrock-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringLike"
+  create               = true
+  name                 = "ai-bedrock-${local.eks_name}"
+  policies = {
     aws_managed_policy            = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
     irsa_ai_bedrock_custom_policy = aws_iam_policy.irsa_ai_bedrock_custom.arn
     irsa_ai_bedrock_s3_policy     = aws_iam_policy.irsa_ai_bedrock_s3.arn
@@ -335,13 +334,13 @@ resource "aws_iam_policy" "irsa_ai_bedrock_s3" {
 ##########################
 module "s3_bucket_irsa_role" {
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringLike"
-  create_role                = true
-  role_name                  = "s3-bucket-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringLike"
+  create               = true
+  name                 = "s3-bucket-${local.eks_name}"
+  policies = {
     aws_managed_policy = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   }
   oidc_providers = {
@@ -359,13 +358,13 @@ module "s3_bucket_irsa_role" {
 module "irsa_keda" {
   count = var.enable_keda ? 1 : 0
 
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.34.0"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "6.8.2"
 
-  assume_role_condition_test = "StringEquals"
-  create_role                = true
-  role_name                  = "irsa-keda-${local.eks_name}"
-  role_policy_arns = {
+  trust_condition_test = "StringEquals"
+  create               = true
+  name                 = "irsa-keda-${local.eks_name}"
+  policies = {
     keda_policy = aws_iam_policy.irsa_keda[0].arn
   }
   oidc_providers = {
