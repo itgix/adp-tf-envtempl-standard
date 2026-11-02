@@ -756,6 +756,18 @@ variable "ecr_create_lifecycle_policy" {
   default     = false
 }
 
+variable "ecr_repository_lifecycle_policy" {
+  description = "Default lifecycle policy document (JSON string) applied to all repositories. Build it with jsonencode(). Ignored when ecr_create_lifecycle_policy is false. Can be overridden per repository via ecr_repository_lifecycle_policies."
+  type        = string
+  default     = null
+}
+
+variable "ecr_repository_lifecycle_policies" {
+  description = "Per-repository lifecycle policy documents (JSON strings) keyed by the same logical keys used in ecr_names_map. Overrides ecr_repository_lifecycle_policy for the matching repository. Ignored when ecr_create_lifecycle_policy is false."
+  type        = map(string)
+  default     = {}
+}
+
 #########################################################################
 ##                   Elasticache Redis cluster                         ##
 #########################################################################
