@@ -34,3 +34,7 @@ terraform.rc
 # Ignore local infracost files
 **/.infracost/
 **/.infracost/*
+
+#Ignore github workflows
+/.github/
+**/.github/
