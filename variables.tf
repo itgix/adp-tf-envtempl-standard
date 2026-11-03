@@ -756,6 +756,18 @@ variable "ecr_create_lifecycle_policy" {
   default     = false
 }
 
+variable "ecr_repository_lifecycle_policy" {
+  description = "Default lifecycle policy applied to all repositories, as a structured object (e.g. from YAML vars). It is JSON-encoded before being passed to the module. Ignored when ecr_create_lifecycle_policy is false. Can be overridden per repository via ecr_repository_lifecycle_policies."
+  type        = any
+  default     = null
+}
+
+variable "ecr_repository_lifecycle_policies" {
+  description = "Per-repository lifecycle policies (structured objects) keyed by the same logical keys used in ecr_names_map. Each is JSON-encoded before being passed to the module. Overrides ecr_repository_lifecycle_policy for the matching repository. Ignored when ecr_create_lifecycle_policy is false."
+  type        = map(any)
+  default     = {}
+}
+
 #########################################################################
 ##                   Elasticache Redis cluster                         ##
 #########################################################################
