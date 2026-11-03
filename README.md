@@ -9,6 +9,13 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 
 ## Upgrade notes
 
+### Default RDS engine is Aurora PostgreSQL 17.11 (next tag v1.3.7)
+
+* The default RDS engine is now Aurora PostgreSQL 17.11 (`cluster_family` `aurora-postgresql17`); before it was 14.20 (`aurora-postgresql14`). The module is pinned to `tf-module-rds` v1.0.14.
+* `rds_allow_major_version_upgrade` now defaults to `false`. An existing environment whose config does not set `rds_config` will see the plan propose `engine_version` 14.20 -> 17.11 and a new parameter group family; with major upgrades disallowed the apply is rejected by AWS instead of upgrading the live cluster in place.
+* To stay on 14, set `rds_config` in the environment config with the current `engine_version` and `cluster_family`.
+* To upgrade, take a snapshot, check extension compatibility, set `rds_allow_major_version_upgrade: true` for that apply, then set it back to `false`.
+
 ### Write-only secret values (awssm module v1.1.1)
 
 Custom secret values are written with the AWS provider's write-only argument and are never stored in state, plan files or outputs.
@@ -87,7 +94,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="module_irsa_karpenter"></a> [irsa\_karpenter](#module\_irsa\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 19.21.0 |
 | <a name="module_rds_iam_auth"></a> [rds\_iam\_auth](#module\_rds\_iam\_auth) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
-| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.7 |
+| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.14 |
 | <a name="module_sqs_dev"></a> [sqs\_dev](#module\_sqs\_dev) | git::git@github.com:itgix/tf-module-sqs-sns.git | v1.0.0 |
 | <a name="module_wafv2_application"></a> [wafv2\_application](#module\_wafv2\_application) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
 | <a name="module_wafv2_cloudfront"></a> [wafv2\_cloudfront](#module\_wafv2\_cloudfront) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
@@ -166,8 +173,9 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="input_provision_eks"></a> [provision\_eks](#input\_provision\_eks) | n/a | `bool` | `true` | no |
 | <a name="input_provision_sqs"></a> [provision\_sqs](#input\_provision\_sqs) | Enables creation of SQS/SNS resources | `string` | `false` | no |
 | <a name="input_provision_vpc"></a> [provision\_vpc](#input\_provision\_vpc) | ######################################################################## #                   Networking Variables                              ## ######################################################################## | `bool` | `true` | no |
+| <a name="input_rds_allow_major_version_upgrade"></a> [rds\_allow\_major\_version\_upgrade](#input\_rds\_allow\_major\_version\_upgrade) | Allow a major engine version upgrade when engine_version changes. Off by default: an environment that inherits a newer default engine_version is not upgraded in place; set to true deliberately, after a snapshot, to perform the upgrade. | `bool` | `false` | no |
 | <a name="input_rds_allowed_cidr_blocks"></a> [rds\_allowed\_cidr\_blocks](#input\_rds\_allowed\_cidr\_blocks) | List of CIDRs to be allowed to connect to the DB instance | `list(string)` | `[]` | no |
-| <a name="input_rds_config"></a> [rds\_config](#input\_rds\_config) | Configuration for RDS resources | <pre>object({<br>    engine         = string<br>    engine_version = string<br>    engine_mode    = string<br>    cluster_family = string<br>    cluster_size   = number<br>    db_port        = number<br>    db_name        = string<br>  })</pre> | <pre>{<br>  "cluster_family": "aurora-postgresql14",<br>  "cluster_size": 1,<br>  "db_name": "",<br>  "db_port": 5432,<br>  "engine": "aurora-postgresql",<br>  "engine_mode": "provisioned",<br>  "engine_version": "14.5"<br>}</pre> | no |
+| <a name="input_rds_config"></a> [rds\_config](#input\_rds\_config) | Configuration for RDS resources | <pre>object({<br>    engine         = string<br>    engine_version = string<br>    engine_mode    = string<br>    cluster_family = string<br>    cluster_size   = number<br>    db_port        = number<br>    db_name        = string<br>  })</pre> | <pre>{<br>  "cluster_family": "aurora-postgresql17",<br>  "cluster_size": 1,<br>  "db_name": "",<br>  "db_port": 5432,<br>  "engine": "aurora-postgresql",<br>  "engine_mode": "provisioned",<br>  "engine_version": "17.11"<br>}</pre> | no |
 | <a name="input_rds_default_username"></a> [rds\_default\_username](#input\_rds\_default\_username) | DB username | `string` | `"postgres"` | no |
 | <a name="input_rds_extra_credentials"></a> [rds\_extra\_credentials](#input\_rds\_extra\_credentials) | Database extra credentials | <pre>object({<br>    username = string<br>    password = optional(string)<br>    database = string<br>  })</pre> | <pre>{<br>  "database": "demodb",<br>  "username": "demouser"<br>}</pre> | no |
 | <a name="input_rds_iam_auth_enabled"></a> [rds\_iam\_auth\_enabled](#input\_rds\_iam\_auth\_enabled) | Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled | `bool` | `false` | no |

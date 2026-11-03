@@ -373,9 +373,9 @@ variable "rds_config" {
   })
   default = ({
     engine         = "aurora-postgresql"
-    engine_version = "14.20"
+    engine_version = "17.11"
     engine_mode    = "provisioned"
-    cluster_family = "aurora-postgresql14"
+    cluster_family = "aurora-postgresql17"
     cluster_size   = 1
     db_port        = 5432
     db_name        = ""
@@ -523,8 +523,8 @@ variable "rds_performance_retention" {
 
 variable "rds_allow_major_version_upgrade" {
   type        = bool
-  default     = true
-  description = "Enable to allow major engine version upgrades when changing engine versions. Defaults to false."
+  default     = false
+  description = "Allow a major engine version upgrade when engine_version changes. Off by default: an environment that inherits a newer default engine_version is not upgraded in place; set to true deliberately, after a snapshot, to perform the upgrade."
 }
 
 variable "rds_apply_immediately" {
