@@ -1,5 +1,5 @@
 module "eks" {
-  source = "git::https://github.com/itgix/tf-module-eks.git?ref=v1.3.5"
+  source = "git::https://github.com/itgix/tf-module-eks.git?ref=update-ebs-csi-policy"
   count  = var.provision_eks ? 1 : 0
 
   providers = {
