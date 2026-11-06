@@ -54,4 +54,23 @@ locals {
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
+  msk_name                                = "msk-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
+  msk_topic_resource_arn_prefix           = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":topic")
+  msk_consumer_groups_resource_arn_prefix = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":group")
+
+  msk_scram_users_data_platform_secrets_obj = [
+    for index, username in var.msk_scram_users_data_platform : {
+      secretname = "AmazonMSK_${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}-${username}"
+      username   = username
+      password   = random_password.msk_scram_users_data_platform_password[index].result
+      addedTs    = timestamp()
+    }
+  ]
+
+  all_secrets_arns = var.client_sasl_scram_enabled ? concat(
+    values(module.msk_superuser_secret[0].secret_arns),
+    try(values(module.msk_data_platform_users_secrets[0].rotate_secret_arns), [])
+    # try(values(module.msk_other_users_secrets[0].rotate_secret_arns), []),
+    # try(values(module.msk_additional_data_platform_users_secrets[0].rotate_secret_arns), [])
+  ) : []
 }
