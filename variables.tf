@@ -166,7 +166,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.35"
+  default     = "1.36"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -193,10 +193,10 @@ variable "addons_versions" {
   })
 
   default = {
-    kube_proxy = "v1.35.3-eksbuild.21"
-    vpc_cni    = "v1.22.4-eksbuild.3"
-    coredns    = "v1.13.2-eksbuild.21"
-    ebs_csi    = "v1.65.0-eksbuild.1"
+    kube_proxy = "v1.36.0-eksbuild.58"
+    vpc_cni    = "v1.23.2-eksbuild.8"
+    coredns    = "v1.14.7-eksbuild.22"
+    ebs_csi    = "v1.67.2-eksbuild.1"
   }
 }
 
@@ -373,9 +373,9 @@ variable "rds_config" {
   })
   default = ({
     engine         = "aurora-postgresql"
-    engine_version = "14.20"
+    engine_version = "17.11"
     engine_mode    = "provisioned"
-    cluster_family = "aurora-postgresql14"
+    cluster_family = "aurora-postgresql17"
     cluster_size   = 1
     db_port        = 5432
     db_name        = ""
@@ -514,11 +514,25 @@ variable "rds_database_insights_mode" {
   type    = string
   default = "standard"
 }
+
 variable "rds_performance_retention" {
   type        = number
   default     = 7
   description = "Performance Insights retention period in days."
 }
+
+variable "rds_allow_major_version_upgrade" {
+  type        = bool
+  default     = false
+  description = "Allow a major engine version upgrade when engine_version changes. Off by default: an environment that inherits a newer default engine_version is not upgraded in place; set to true deliberately, after a snapshot, to perform the upgrade."
+}
+
+variable "rds_apply_immediately" {
+  type        = bool
+  description = "Specifies whether any cluster modifications are applied immediately, or during the next maintenance window"
+  default     = true
+}
+
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
@@ -742,6 +756,18 @@ variable "ecr_create_lifecycle_policy" {
   default     = false
 }
 
+variable "ecr_repository_lifecycle_policy" {
+  description = "Default lifecycle policy applied to all repositories, as a structured object (e.g. from YAML vars). It is JSON-encoded before being passed to the module. Ignored when ecr_create_lifecycle_policy is false. Can be overridden per repository via ecr_repository_lifecycle_policies."
+  type        = any
+  default     = null
+}
+
+variable "ecr_repository_lifecycle_policies" {
+  description = "Per-repository lifecycle policies (structured objects) keyed by the same logical keys used in ecr_names_map. Each is JSON-encoded before being passed to the module. Overrides ecr_repository_lifecycle_policy for the matching repository. Ignored when ecr_create_lifecycle_policy is false."
+  type        = map(any)
+  default     = {}
+}
+
 #########################################################################
 ##                   Elasticache Redis cluster                         ##
 #########################################################################
@@ -893,6 +919,20 @@ variable "valkey_snapshot_arns_to_restore" {
   default     = null
 }
 
+variable "valkey_extra_user_ids" {
+  type        = list(string)
+  description = "IDs of existing ElastiCache users to add to the Valkey user group in addition to the users this module creates, e.g. [\"default-valkey\"] to keep the engine's built-in default user in the group. Only applied when create_valkey_user_and_secret is true."
+  default     = []
+}
+
+variable "valkey_extra_users" {
+  type = map(object({
+    access_string = optional(string, "on ~* +@all")
+  }))
+  description = "Extra ElastiCache users to create and add to the Valkey user group, keyed by a short name. Each user is named <resource_tag>-valkey-<key> (user_id and user_name), gets a generated password and a Secrets Manager secret of the same name containing {username, password}. Only applied when create_valkey_user_and_secret is true."
+  default     = {}
+}
+
 #########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################
@@ -953,24 +993,26 @@ variable "ec2_spot_service_role" {
 
 
 variable "custom_secrets" {
-  description = "List of custom secrets to create"
+  description = <<-EOT
+    List of custom secrets to create. A random secret is generated once and stays static while
+    `version` is omitted; set `version = 1` on a secret that had none to rotate it once, and
+    raise it to rotate again (never lower it). `value` is for manual secrets only (a manual
+    secret is written with `value`, or "editme" when unset, and a changed value writes a new
+    secret version); a random secret with a non-empty `value` is rejected.
+  EOT
   type = list(object({
     secret_name      = string
     length           = optional(number)
     special          = optional(bool)
     override_special = optional(string)
-    keepers          = optional(map(string))
+    version          = optional(number)
     manual           = optional(bool, false)
     value            = optional(string)
+    tags             = optional(map(string), {})
   }))
   default = []
 }
 
-variable "custom_secret_keepers" {
-  description = "Map of keepers for the secrets"
-  type        = map(map(string))
-  default     = {}
-}
 #########################################################################
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################

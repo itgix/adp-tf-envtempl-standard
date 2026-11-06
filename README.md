@@ -7,6 +7,28 @@ Variables can be passed via the main YAML configuration file of **idp-installer*
 
 ---
 
+## Upgrade notes
+
+### Default RDS engine is Aurora PostgreSQL 17.11 (next tag v1.3.7)
+
+* The default RDS engine is now Aurora PostgreSQL 17.11 (`cluster_family` `aurora-postgresql17`); before it was 14.20 (`aurora-postgresql14`). The module is pinned to `tf-module-rds` v1.0.14.
+* `rds_allow_major_version_upgrade` now defaults to `false`. An existing environment whose config does not set `rds_config` will see the plan propose `engine_version` 14.20 -> 17.11 and a new parameter group family; with major upgrades disallowed the apply is rejected by AWS instead of upgrading the live cluster in place.
+* To stay on 14, set `rds_config` in the environment config with the current `engine_version` and `cluster_family`.
+* To upgrade, take a snapshot, check extension compatibility, set `rds_allow_major_version_upgrade: true` for that apply, then set it back to `false`.
+
+### Write-only secret values (awssm module v1.1.1)
+
+Custom secret values are written with the AWS provider's write-only argument and are never stored in state, plan files or outputs.
+
+* Required versions: Terraform >= 1.11, `aws` provider >= 6.50, `random` provider >= 3.7.
+* `keepers` (per secret) and `custom_secret_keepers` are removed; rotation is gated on the per-secret integer `version` instead. Omitted `version` keeps a random secret static; set `version = 1` on a secret that had none to rotate it once, raise it to rotate again, never lower it, and do not set it during the upgrade unless rotation is wanted.
+* Planning now calls `secretsmanager:ListSecrets` and `secretsmanager:GetSecretValue` on the environment's custom secrets so existing values are written back unchanged; the planning identity needs these permissions.
+* A random secret that had `value` set is rejected by validation since module v1.1.1; set `manual: true` to keep the value or remove `value` to have it generated (which rotates it).
+* The `custom_secret_values` output is removed. Read secret values from AWS Secrets Manager.
+* The first plan after the upgrade shows an in-place update of each `aws_secretsmanager_secret_version` and the destruction of the old `random_password` resources (state only); no secret value changes and no new secret version is created. A replace in that plan means a `version` was set or a manual `value` changed.
+
+---
+
 ## VPC subnet layout
 
 The VPC subnets are configurable. Each tier is described either by an explicit list of CIDRs, or - the default - by a subnet size (`newbits`, added to the VPC prefix length) and the `offsets` of the subnets inside `vpc_cidr`, counted in blocks of the resulting size exactly like the `cidrsubnet()` function.
@@ -45,9 +67,9 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.49 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.11, < 2.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.50, < 7.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.7, < 4.0 |
 
 ## Providers
 
@@ -61,10 +83,10 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 |------|--------|---------|
 | <a name="module_acm"></a> [acm](#module\_acm) | git::git@github.com:itgix/tf-module-acm.git | v1.0.2 |
 | <a name="module_common_vpc"></a> [common\_vpc](#module\_common\_vpc) | terraform-aws-modules/vpc/aws | 6.7.2 |
-| <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.0.0 |
+| <a name="module_custom_secrets_password_module"></a> [custom\_secrets\_password\_module](#module\_custom\_secrets\_password\_module) | git@github.com:itgix/tf-module-awssm-passgen.git | v1.1.1 |
 | <a name="module_dynamodb"></a> [dynamodb](#module\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git::git@github.com:itgix/tf-module-ecr.git | v1.0.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | git::https://github.com/itgix/tf-module-eks.git | v1.3.4 |
+| <a name="module_eks"></a> [eks](#module\_eks) | git::https://github.com/itgix/tf-module-eks.git | v1.3.5 |
 | <a name="module_elasticache"></a> [elasticache](#module\_elasticache) | git::git@github.com:itgix/tf-module-redis.git | v1.0.0 |
 | <a name="module_global_dynamodb"></a> [global\_dynamodb](#module\_global\_dynamodb) | git@github.com:itgix/tf-module-dynamodb.git | n/a |
 | <a name="module_irsa_fluentbit_cloudwatch"></a> [irsa\_fluentbit\_cloudwatch](#module\_irsa\_fluentbit\_cloudwatch) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
@@ -72,7 +94,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="module_irsa_karpenter"></a> [irsa\_karpenter](#module\_irsa\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 19.21.0 |
 | <a name="module_rds_iam_auth"></a> [rds\_iam\_auth](#module\_rds\_iam\_auth) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.34.0 |
-| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.7 |
+| <a name="module_rds_maindb"></a> [rds\_maindb](#module\_rds\_maindb) | git::git@github.com:itgix/tf-module-rds.git | v1.0.14 |
 | <a name="module_sqs_dev"></a> [sqs\_dev](#module\_sqs\_dev) | git::git@github.com:itgix/tf-module-sqs-sns.git | v1.0.0 |
 | <a name="module_wafv2_application"></a> [wafv2\_application](#module\_wafv2\_application) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
 | <a name="module_wafv2_cloudfront"></a> [wafv2\_cloudfront](#module\_wafv2\_cloudfront) | git::git@github.com:itgix/tf-module-wafv2.git | v1 |
@@ -99,7 +121,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_acm_certificate_enable"></a> [acm\_certificate\_enable](#input\_acm\_certificate\_enable) | Generate a validated acm cert | `bool` | `false` | no |
-| <a name="input_addons_versions"></a> [addons\_versions](#input\_addons\_versions) | Configuration of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module | <pre>object({<br>    kube_proxy                  = optional(string)<br>    vpc_cni                     = optional(string)<br>    coredns                     = optional(string)<br>    ebs_csi                     = optional(string)<br>    efs_csi                     = optional(string)<br>    resolve_conflicts_on_create = optional(string, "OVERWRITE")<br>  })</pre> | <pre>{<br>  "coredns": "v1.13.2-eksbuild.21",<br>  "ebs_csi": "v1.65.0-eksbuild.1",<br>  "kube_proxy": "v1.35.3-eksbuild.21",<br>  "vpc_cni": "v1.22.4-eksbuild.3"<br>}</pre> | no |
+| <a name="input_addons_versions"></a> [addons\_versions](#input\_addons\_versions) | Configuration of EKS add-ons; normal-mode and EFS requirements are validated by the EKS module | <pre>object({<br>    kube_proxy                  = optional(string)<br>    vpc_cni                     = optional(string)<br>    coredns                     = optional(string)<br>    ebs_csi                     = optional(string)<br>    efs_csi                     = optional(string)<br>    resolve_conflicts_on_create = optional(string, "OVERWRITE")<br>  })</pre> | <pre>{<br>  "coredns": "v1.14.7-eksbuild.22",<br>  "ebs_csi": "v1.67.2-eksbuild.1",<br>  "kube_proxy": "v1.36.0-eksbuild.58",<br>  "vpc_cni": "v1.23.2-eksbuild.8"<br>}</pre> | no |
 | <a name="input_application_waf_enabled"></a> [application\_waf\_enabled](#input\_application\_waf\_enabled) | Specifies whether WAF should be provisioned | `bool` | `false` | no |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS account to deploy resources | `string` | n/a | yes |
 | <a name="input_aws_managed_waf_rule_groups"></a> [aws\_managed\_waf\_rule\_groups](#input\_aws\_managed\_waf\_rule\_groups) | n/a | `list(any)` | <pre>[<br>  {<br>    "action": "none",<br>    "name": "AWSManagedRulesAdminProtectionRuleSet",<br>    "priority": 1,<br>    "rules_override_to_count": []<br>  }<br>]</pre> | no |
@@ -108,8 +130,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="input_cluster_log_retention_in_days"></a> [cluster\_log\_retention\_in\_days](#input\_cluster\_log\_retention\_in\_days) | Cluster log retention in days | `number` | `14` | no |
 | <a name="input_create_elasticache_redis"></a> [create\_elasticache\_redis](#input\_create\_elasticache\_redis) | If a new Elasticache Redis instance needs to be created | `bool` | n/a | yes |
 | <a name="input_create_rds"></a> [create\_rds](#input\_create\_rds) | If a new RDS and Proxy needs to be created | `bool` | `false` | no |
-| <a name="input_custom_secret_keepers"></a> [custom\_secret\_keepers](#input\_custom\_secret\_keepers) | Map of keepers for the secrets | `map(map(string))` | `{}` | no |
-| <a name="input_custom_secrets"></a> [custom\_secrets](#input\_custom\_secrets) | List of custom secrets to create | <pre>list(object({<br>    secret_name      = string<br>    length           = optional(number)<br>    special          = optional(bool)<br>    override_special = optional(string)<br>    keepers          = optional(map(string))<br>    manual           = optional(bool, false)<br>  }))</pre> | n/a | yes |
+| <a name="input_custom_secrets"></a> [custom\_secrets](#input\_custom\_secrets) | List of custom secrets to create. A random secret is generated once and stays static; set or raise `version` to rotate it (random secrets only, never lower it, and do not set it during an upgrade unless rotation is wanted). A manual secret is written with `value` (or "editme") and a changed value writes a new secret version. | <pre>list(object({<br>    secret_name      = string<br>    length           = optional(number)<br>    special          = optional(bool)<br>    override_special = optional(string)<br>    version          = optional(number)<br>    manual           = optional(bool, false)<br>    value            = optional(string)<br>    tags             = optional(map(string), {})<br>  }))</pre> | `[]` | no |
 | <a name="input_ddb_create"></a> [ddb\_create](#input\_ddb\_create) | If a DynomoDB table needs to be created | `bool` | `false` | no |
 | <a name="input_ddb_global_create"></a> [ddb\_global\_create](#input\_ddb\_global\_create) | If a DynomoDB global table needs to be created | `bool` | `false` | no |
 | <a name="input_ddb_global_table_configuration"></a> [ddb\_global\_table\_configuration](#input\_ddb\_global\_table\_configuration) | List of objects to pass to the module for the creation of the global table. | <pre>list(object({<br>    table_type        = optional(string, "regional")<br>    table_name_suffix = string<br>    hash_key          = string<br>    range_key         = string<br>    hash_key_type     = string<br>    range_key_type    = string<br>    enable_autoscaler = optional(bool, false)<br>    dynamodb_attributes = optional(list(object({<br>      name = string<br>      type = string<br>    })), [])<br>    global_secondary_index_map = optional(list(object({<br>      hash_key           = string<br>      name               = string<br>      projection_type    = string<br>      range_key          = string<br>      non_key_attributes = optional(list(string), [])<br>      read_capacity      = optional(number, 0)<br>      write_capacity     = optional(number, 0)<br>    })), [])<br>    local_secondary_index_map = optional(list(object({<br>      name               = string<br>      projection_type    = string<br>      range_key          = string<br>      non_key_attributes = optional(list(string), [])<br>    })), [])<br>    replicas                      = optional(list(string), [])<br>    tags_enabled                  = optional(bool, true)<br>    billing_mode                  = optional(string, "PAY_PER_REQUEST")<br>    enable_point_in_time_recovery = optional(bool, false)<br>    ttl_enabled                   = optional(bool, false)<br>    ttl_attribute                 = optional(string, "")<br>    deletion_protection_enabled   = optional(bool, true)<br>  }))</pre> | n/a | yes |
@@ -133,7 +154,7 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="input_eks_aws_auth_roles"></a> [eks\_aws\_auth\_roles](#input\_eks\_aws\_auth\_roles) | n/a | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_eks_aws_auth_users"></a> [eks\_aws\_auth\_users](#input\_eks\_aws\_auth\_users) | n/a | <pre>list(object({<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_eks_aws_users_path"></a> [eks\_aws\_users\_path](#input\_eks\_aws\_users\_path) | The organizational path of the user used for building the arn , by default it's just / | `string` | `"/"` | no |
-| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Desired Kubernetes cluster version | `string` | `"1.35"` | no |
+| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Desired Kubernetes cluster version | `string` | `"1.36"` | no |
 | <a name="input_eks_disk_size"></a> [eks\_disk\_size](#input\_eks\_disk\_size) | Disk size of the root volume attached to the EKS worker nodes | `number` | `50` | no |
 | <a name="input_eks_instance_types"></a> [eks\_instance\_types](#input\_eks\_instance\_types) | EC2 instance types for the EKS worker nodes | `list(string)` | <pre>[<br>  "m5a.4xlarge"<br>]</pre> | no |
 | <a name="input_eks_kms_key_users"></a> [eks\_kms\_key\_users](#input\_eks\_kms\_key\_users) | A list of IAM ARNs for [key users](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-users) | `list(string)` | `[]` | no |
@@ -152,8 +173,9 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="input_provision_eks"></a> [provision\_eks](#input\_provision\_eks) | n/a | `bool` | `true` | no |
 | <a name="input_provision_sqs"></a> [provision\_sqs](#input\_provision\_sqs) | Enables creation of SQS/SNS resources | `string` | `false` | no |
 | <a name="input_provision_vpc"></a> [provision\_vpc](#input\_provision\_vpc) | ######################################################################## #                   Networking Variables                              ## ######################################################################## | `bool` | `true` | no |
+| <a name="input_rds_allow_major_version_upgrade"></a> [rds\_allow\_major\_version\_upgrade](#input\_rds\_allow\_major\_version\_upgrade) | Allow a major engine version upgrade when engine_version changes. Off by default: an environment that inherits a newer default engine_version is not upgraded in place; set to true deliberately, after a snapshot, to perform the upgrade. | `bool` | `false` | no |
 | <a name="input_rds_allowed_cidr_blocks"></a> [rds\_allowed\_cidr\_blocks](#input\_rds\_allowed\_cidr\_blocks) | List of CIDRs to be allowed to connect to the DB instance | `list(string)` | `[]` | no |
-| <a name="input_rds_config"></a> [rds\_config](#input\_rds\_config) | Configuration for RDS resources | <pre>object({<br>    engine         = string<br>    engine_version = string<br>    engine_mode    = string<br>    cluster_family = string<br>    cluster_size   = number<br>    db_port        = number<br>    db_name        = string<br>  })</pre> | <pre>{<br>  "cluster_family": "aurora-postgresql14",<br>  "cluster_size": 1,<br>  "db_name": "",<br>  "db_port": 5432,<br>  "engine": "aurora-postgresql",<br>  "engine_mode": "provisioned",<br>  "engine_version": "14.5"<br>}</pre> | no |
+| <a name="input_rds_config"></a> [rds\_config](#input\_rds\_config) | Configuration for RDS resources | <pre>object({<br>    engine         = string<br>    engine_version = string<br>    engine_mode    = string<br>    cluster_family = string<br>    cluster_size   = number<br>    db_port        = number<br>    db_name        = string<br>  })</pre> | <pre>{<br>  "cluster_family": "aurora-postgresql17",<br>  "cluster_size": 1,<br>  "db_name": "",<br>  "db_port": 5432,<br>  "engine": "aurora-postgresql",<br>  "engine_mode": "provisioned",<br>  "engine_version": "17.11"<br>}</pre> | no |
 | <a name="input_rds_default_username"></a> [rds\_default\_username](#input\_rds\_default\_username) | DB username | `string` | `"postgres"` | no |
 | <a name="input_rds_extra_credentials"></a> [rds\_extra\_credentials](#input\_rds\_extra\_credentials) | Database extra credentials | <pre>object({<br>    username = string<br>    password = optional(string)<br>    database = string<br>  })</pre> | <pre>{<br>  "database": "demodb",<br>  "username": "demouser"<br>}</pre> | no |
 | <a name="input_rds_iam_auth_enabled"></a> [rds\_iam\_auth\_enabled](#input\_rds\_iam\_auth\_enabled) | Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled | `bool` | `false` | no |
@@ -200,7 +222,6 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="output_az3"></a> [az3](#output\_az3) | n/a |
 | <a name="output_custom_secret_arns"></a> [custom\_secret\_arns](#output\_custom\_secret\_arns) | n/a |
 | <a name="output_custom_secret_names"></a> [custom\_secret\_names](#output\_custom\_secret\_names) | n/a |
-| <a name="output_custom_secret_values"></a> [custom\_secret\_values](#output\_custom\_secret\_values) | n/a |
 | <a name="output_custom_secret_versions"></a> [custom\_secret\_versions](#output\_custom\_secret\_versions) | n/a |
 | <a name="output_ecr_repository_arn"></a> [ecr\_repository\_arn](#output\_ecr\_repository\_arn) | Full ARN of the repository |
 | <a name="output_ecr_repository_name"></a> [ecr\_repository\_name](#output\_ecr\_repository\_name) | Name of the repository |
