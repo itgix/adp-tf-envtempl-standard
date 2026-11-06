@@ -1,7 +1,6 @@
 #tfsec:ignore:aws-msk-enable-logging:2023-08-15
 module "msk_cluster" {
-  source  = "gitlab.com/bango/aws-msk-cluster/aws"
-  version = "2.0.0"
+  source = "git@github.com:itgix/tf-module-msk.git"
 
   aws_region   = var.aws_region
   environment  = var.environment
