@@ -54,73 +54,23 @@ locals {
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
-  msk_name = "msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
+  msk_name                                = "msk-${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}"
+  msk_topic_resource_arn_prefix           = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":topic")
+  msk_consumer_groups_resource_arn_prefix = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":group")
 
-  msk_security_group_name = "security-group-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-msk-cluster"
-
-  msk_vpc_id     = var.msk_create_vpc ? module.msk_vpc.vpc_id : var.msk_vpc_id
-  msk_subnet_ids = var.msk_create_vpc ? module.msk_vpc.intra_subnets : var.msk_subnet_ids
-
-  s3_logs_prefix                = var.s3_logs_enabled ? coalesce(var.s3_logs_prefix, "amazon_msk/") : ""
-  firehose_role_name            = "role-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
-  firehose_delivery_stream_name = "firehose-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
-  firehose_delivery_stream      = var.firehose_logs_enabled ? aws_kinesis_firehose_delivery_stream.msk[0].name : ""
-  cloudwatch_log_group_name     = "/aws/msk/broker_logs/msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
-  cloudwatch_logs_log_group     = var.cloudwatch_logs_enabled ? aws_cloudwatch_log_group.msk[0].name : null
-
-  # client broker types
-  plaintext     = "PLAINTEXT"
-  tls_plaintext = "TLS_PLAINTEXT"
-  tls           = "TLS"
-
-  msk_security_group_ingress_rules = [
-    {
-      description = "Allows communication with brokers by using IAM access control"
-      from_port   = 9098
-      to_port     = 9098
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = var.client_sasl_iam_enabled && contains([local.tls_plaintext, local.tls], var.client_broker)
-    },
-    {
-      description = "Allows communication with brokers by using SASL/SCRAM access"
-      from_port   = 9096
-      to_port     = 9096
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = var.client_sasl_scram_enabled && contains([local.tls_plaintext, local.tls], var.client_broker)
-    },
-    {
-      description = "Allows communication with MSK brokers by using TLS encryption"
-      from_port   = 9094
-      to_port     = 9094
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = contains([local.tls_plaintext, local.tls], var.client_broker)
-    },
-    {
-      description = "Allows communication with brokers in plaintext"
-      from_port   = 9092
-      to_port     = 9092
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = contains([local.plaintext, local.tls_plaintext], var.client_broker)
-    },
-    {
-      description = "Allows communication with ZooKeeper by using TLS encryption"
-      from_port   = 2182
-      to_port     = 2182
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = true
-    },
-    {
-      description = "Allows communication with Zookeeper by default"
-      from_port   = 2181
-      to_port     = 2181
-      protocol    = "tcp"
-      cidr_blocks = var.allowed_cidr_blocks
-      enabled     = true
+  msk_scram_users_data_platform_secrets_obj = [
+    for index, username in var.msk_scram_users_data_platform : {
+      secretname = "AmazonMSK_${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}-${username}"
+      username   = username
+      password   = random_password.msk_scram_users_data_platform_password[index].result
+      addedTs    = timestamp()
     }
   ]
+
+  all_secrets_arns = var.client_sasl_scram_enabled ? concat(
+    values(module.msk_superuser_secret[0].secret_arns),
+    try(values(module.msk_data_platform_users_secrets[0].rotate_secret_arns), [])
+    # try(values(module.msk_other_users_secrets[0].rotate_secret_arns), []),
+    # try(values(module.msk_additional_data_platform_users_secrets[0].rotate_secret_arns), [])
+  ) : []
 }
