@@ -4,7 +4,7 @@ module "msk_cluster" {
 
   aws_region   = var.region
   environment  = var.environment
-  product_name = var.product_name
+  product_name = var.project_name
 
   msk_vpc_cidr                              = var.msk_vpc_cidr
   allowed_cidr_blocks                       = var.allowed_cidr_blocks
@@ -68,7 +68,7 @@ module "msk_superuser_secret" {
   version   = "0.6.2"
   unmanaged = true
   secrets = {
-    "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.product_name}-superuser" = {
+    "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-superuser" = {
       description = "MSK Cluster ${local.msk_name} Super user Credentials"
       kms_key_id  = aws_kms_key.msk_scram_secrets_kms_key[0].arn
       secret_key_value = {
@@ -78,7 +78,7 @@ module "msk_superuser_secret" {
     }
   }
 }
-module "msk_data_platform_users_secrets" {
+module "msk_users_secrets" {
   depends_on = [
     module.lambda_msk_secrets_rotation
   ]
@@ -89,14 +89,14 @@ module "msk_data_platform_users_secrets" {
   automatically_after_days = 180
   recovery_window_in_days  = 30
   rotate_secrets = {
-    for index, user in local.msk_scram_users_data_platform_secrets_obj :
-    local.msk_scram_users_data_platform_secrets_obj[index].secretname => {
-      description         = "MSK Cluster ${local.msk_name} user ${local.msk_scram_users_data_platform_secrets_obj[index].username} Credentials"
+    for index, user in local.msk_scram_users_secrets_obj :
+    local.msk_scram_users_secrets_obj[index].secretname => {
+      description         = "MSK Cluster ${local.msk_name} user ${local.msk_scram_users_secrets_obj[index].username} Credentials"
       kms_key_id          = aws_kms_key.msk_scram_secrets_kms_key[0].arn
       rotation_lambda_arn = module.lambda_msk_secrets_rotation[0].lambda_function_arn
       secret_key_value = {
-        username = local.msk_scram_users_data_platform_secrets_obj[index].username
-        password = local.msk_scram_users_data_platform_secrets_obj[index].password
+        username = local.msk_scram_users_secrets_obj[index].username
+        password = local.msk_scram_users_secrets_obj[index].password
       }
     }
   }

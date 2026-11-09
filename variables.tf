@@ -1241,11 +1241,6 @@ variable "waf_ip_prefix_rules" {
 # Utility variables
 ################################################################################
 
-variable "product_name" {
-  type        = string
-  description = "ADP platform instance (same as provided tag in default_tags)"
-}
-
 ## MSK - Networking variables
 
 variable "msk_vpc_id" {
