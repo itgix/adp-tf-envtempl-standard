@@ -1357,6 +1357,19 @@ variable "msk_scram_users_data_platform" {
   default     = []
 }
 
+variable "msk_tenants" {
+  description = "A map of permissions to be granted to MSK cluster via IAM policies to roles in same account"
+  type = map(
+    object({
+      producer_topic_specs = optional(list(string), null)
+      consumer_topic_specs = optional(list(string), null)
+      consumer_group_specs = optional(list(string), null)
+      }
+    )
+  )
+  default = {}
+}
+
 ################################################################################
 # Logging info variables
 ################################################################################

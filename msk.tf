@@ -2,7 +2,7 @@
 module "msk_cluster" {
   source = "git@github.com:itgix/tf-module-msk.git"
 
-  aws_region   = var.aws_region
+  aws_region   = var.region
   environment  = var.environment
   product_name = var.product_name
 
@@ -68,7 +68,7 @@ module "msk_superuser_secret" {
   version   = "0.6.2"
   unmanaged = true
   secrets = {
-    "AmazonMSK_${local.aws_regions_short[var.aws_region]}-${var.environment}-${var.product_name}-superuser" = {
+    "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.product_name}-superuser" = {
       description = "MSK Cluster ${local.msk_name} Super user Credentials"
       kms_key_id  = aws_kms_key.msk_scram_secrets_kms_key[0].arn
       secret_key_value = {
@@ -200,9 +200,3 @@ resource "aws_iam_role_policy_attachment" "msk_attach_to_tenant_role" {
   role       = each.key
   policy_arn = aws_iam_policy.msk_authnz_policy[each.key].arn
 }
-
-
-
-
-
-
