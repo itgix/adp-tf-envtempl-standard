@@ -1346,7 +1346,7 @@ variable "client_sasl_scram_enabled" {
   default     = false
 }
 
-variable "msk_scram_users_data_platform" {
+variable "msk_scram_users" {
   type        = list(string)
   description = "List of Data Platform Scram users to be attached to cluster"
   default     = []

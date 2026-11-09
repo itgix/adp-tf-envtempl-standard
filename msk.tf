@@ -36,8 +36,8 @@ resource "random_password" "msk_scram_superuser_password" {
   special = true
 }
 
-resource "random_password" "msk_scram_users_data_platform_password" {
-  count   = length(var.msk_scram_users_data_platform) > 0 && var.client_sasl_scram_enabled ? length(var.msk_scram_users_data_platform) : 0
+resource "random_password" "msk_scram_users_password" {
+  count   = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? length(var.msk_scram_users) : 0
   length  = 32
   special = true
 }
@@ -82,7 +82,7 @@ module "msk_users_secrets" {
   depends_on = [
     module.lambda_msk_secrets_rotation
   ]
-  count                    = length(var.msk_scram_users_data_platform) > 0 && var.client_sasl_scram_enabled ? 1 : 0
+  count                    = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? 1 : 0
   source                   = "lgallard/secrets-manager/aws"
   version                  = "0.6.2"
   unmanaged                = true
@@ -104,7 +104,7 @@ module "msk_users_secrets" {
 
 moved {
   from = random_password.msk_scram_users_password
-  to   = random_password.msk_scram_users_data_platform_password
+  to   = random_password.msk_scram_users_password
 }
 
 

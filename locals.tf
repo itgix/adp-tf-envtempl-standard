@@ -59,10 +59,10 @@ locals {
   msk_consumer_groups_resource_arn_prefix = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":group")
 
   msk_scram_users_secrets_obj = [
-    for index, username in var.msk_scram_users_data_platform : {
+    for index, username in var.msk_scram_users : {
       secretname = "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${username}"
       username   = username
-      password   = random_password.msk_scram_users_data_platform_password[index].result
+      password   = random_password.msk_scram_users_password[index].result
       addedTs    = timestamp()
     }
   ]
