@@ -67,10 +67,4 @@ locals {
     }
   ]
 
-  all_secrets_arns = var.client_sasl_scram_enabled ? concat(
-    values(module.msk_superuser_secret[0].secret_arns),
-    try(values(module.msk_users_secrets[0].rotate_secret_arns), [])
-    # try(values(module.msk_other_users_secrets[0].rotate_secret_arns), []),
-    # try(values(module.msk_additional_data_platform_users_secrets[0].rotate_secret_arns), [])
-  ) : []
 }
