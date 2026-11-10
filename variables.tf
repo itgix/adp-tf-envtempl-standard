@@ -1249,13 +1249,6 @@ variable "enable_msk" {
   default     = false
 }
 
-
-variable "msk_vpc_id" {
-  type        = string
-  description = "The VPC to provision MSK into"
-  default     = ""
-}
-
 variable "msk_subnet_ids" {
   type        = list(any)
   description = "The list of subnets to provision MSK into"
