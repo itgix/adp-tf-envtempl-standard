@@ -1272,40 +1272,12 @@ variable "msk_vpc_subnet_newbits" {
 
 # ## MSK - Logging info variables
 
-variable "s3_logs_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable streaming broker logs to S3"
-}
-
-variable "s3_log_bucket_name" {
-  type        = string
-  description = "Name of the S3 bucket to deliver logs to. Needed if `s3_logs_enabled` or `firehose_logs_enabled` are set to `true`"
-}
-
 variable "cloudwatch_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
   default     = false
 }
 
-## MSK - Configuration variables
-
-variable "msk_cluster_kafka_version" {
-  type        = string
-  description = "The desired Kafka software version"
-}
-variable "msk_cluster_broker_per_zone" {
-  type        = number
-  description = "Number of Kafka brokers per zone."
-}
-variable "msk_cluster_broker_node_instance_type" {
-  type        = string
-  description = "The instance type to use for the Kafka brokers"
-}
-variable "msk_cluster_broker_node_ebs_volume_size" {
-  type        = number
-  description = "The size in GiB of the EBS volume for the data drive on each broker node"
-}
 variable "msk_storage_autoscaling_max_capacity" {
   type        = number
   description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
@@ -1337,12 +1309,6 @@ variable "client_sasl_iam_enabled" {
 variable "client_allow_unauthenticated" {
   type        = bool
   description = "Enables unauthenticated access."
-  default     = false
-}
-
-variable "client_sasl_scram_enabled" {
-  type        = bool
-  description = "Enables client authentication via SCRAM Secrets."
   default     = false
 }
 
@@ -1411,12 +1377,6 @@ variable "s3_logs_prefix" {
   default     = ""
 }
 
-variable "cloudwatch_logs_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
-  default     = false
-}
-
 variable "cloudwatch_log_group_retention_in_days" {
   type        = number
   description = "Specifies the number of days you want to retain log events in the log group"
@@ -1426,12 +1386,6 @@ variable "cloudwatch_log_group_retention_in_days" {
 ################################################################################
 # Authentication variables
 ################################################################################
-
-variable "client_broker" {
-  type        = string
-  description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT. Plaintext traffic isn't possible with SASL/SCRAM or IAM access control methods."
-  default     = "TLS"
-}
 
 variable "client_tls_auth_enabled" {
   type        = bool
@@ -1443,12 +1397,6 @@ variable "certificate_authority_arns" {
   type        = list(string)
   description = "List of ACM Certificate Authority Amazon Resource Names (ARNs) to be used for TLS client authentication"
   default     = []
-}
-
-variable "client_sasl_iam_enabled" {
-  type        = bool
-  description = "Enables client authentication via IAM policies (cannot be set to true at the same time as client_sasl_*_enabled)."
-  default     = true
 }
 
 variable "client_sasl_scram_enabled" {
@@ -1463,11 +1411,6 @@ variable "client_sasl_scram_secret_association_arns" {
   default     = []
 }
 
-variable "client_allow_unauthenticated" {
-  type        = bool
-  default     = false
-  description = "Enables unauthenticated access."
-}
 
 ################################################################################
 # MSK variables
