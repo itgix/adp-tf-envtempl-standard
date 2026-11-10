@@ -1243,7 +1243,7 @@ variable "waf_ip_prefix_rules" {
 
 ## MSK - Networking variables
 
-variable "create_msk" {
+variable "enable_msk" {
   type        = bool
   description = "Whether or not to provision an MSK cluster"
   default     = false

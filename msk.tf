@@ -1,6 +1,6 @@
 #tfsec:ignore:aws-msk-enable-logging:2023-08-15
 module "msk_cluster" {
-  count = var.create_msk ? 1 : 0
+  count = var.enable_msk ? 1 : 0
 
   source = "git@github.com:itgix/tf-module-msk.git?ref=v1.0.0"
 
