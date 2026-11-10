@@ -1,6 +1,8 @@
 #tfsec:ignore:aws-msk-enable-logging:2023-08-15
 module "msk_cluster" {
-  source = "git@github.com:itgix/tf-module-msk.git"
+  count = var.create_msk ? 1 : 0
+
+  source = "git@github.com:itgix/tf-module-msk.git?ref=v1.0.0"
 
   aws_region   = var.region
   environment  = var.environment
@@ -62,50 +64,50 @@ resource "aws_kms_key" "msk_scram_secrets_kms_key" {
   })
 }
 
-module "msk_superuser_secret" {
-  count     = var.client_sasl_scram_enabled ? 1 : 0
-  source    = "lgallard/secrets-manager/aws"
-  version   = "0.6.2"
-  unmanaged = true
-  secrets = {
-    "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-superuser" = {
-      description = "MSK Cluster ${local.msk_name} Super user Credentials"
-      kms_key_id  = aws_kms_key.msk_scram_secrets_kms_key[0].arn
-      secret_key_value = {
-        username = "kafka_superuser"
-        password = random_password.msk_scram_superuser_password[0].result
-      }
-    }
-  }
-}
-module "msk_users_secrets" {
-  depends_on = [
-    module.lambda_msk_secrets_rotation
-  ]
-  count                    = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? 1 : 0
-  source                   = "lgallard/secrets-manager/aws"
-  version                  = "0.6.2"
-  unmanaged                = true
-  automatically_after_days = 180
-  recovery_window_in_days  = 30
-  rotate_secrets = {
-    for index, user in local.msk_scram_users_secrets_obj :
-    local.msk_scram_users_secrets_obj[index].secretname => {
-      description         = "MSK Cluster ${local.msk_name} user ${local.msk_scram_users_secrets_obj[index].username} Credentials"
-      kms_key_id          = aws_kms_key.msk_scram_secrets_kms_key[0].arn
-      rotation_lambda_arn = module.lambda_msk_secrets_rotation[0].lambda_function_arn
-      secret_key_value = {
-        username = local.msk_scram_users_secrets_obj[index].username
-        password = local.msk_scram_users_secrets_obj[index].password
-      }
-    }
-  }
-}
+# module "msk_superuser_secret" {
+#   count     = var.client_sasl_scram_enabled ? 1 : 0
+#   source    = "lgallard/secrets-manager/aws"
+#   version   = "0.6.2"
+#   unmanaged = true
+#   secrets = {
+#     "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-superuser" = {
+#       description = "MSK Cluster ${local.msk_name} Super user Credentials"
+#       kms_key_id  = aws_kms_key.msk_scram_secrets_kms_key[0].arn
+#       secret_key_value = {
+#         username = "kafka_superuser"
+#         password = random_password.msk_scram_superuser_password[0].result
+#       }
+#     }
+#   }
+# }
+# module "msk_users_secrets" {
+#   depends_on = [
+#     module.lambda_msk_secrets_rotation
+#   ]
+#   count                    = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? 1 : 0
+#   source                   = "lgallard/secrets-manager/aws"
+#   version                  = "0.6.2"
+#   unmanaged                = true
+#   automatically_after_days = 180
+#   recovery_window_in_days  = 30
+#   rotate_secrets = {
+#     for index, user in local.msk_scram_users_secrets_obj :
+#     local.msk_scram_users_secrets_obj[index].secretname => {
+#       description         = "MSK Cluster ${local.msk_name} user ${local.msk_scram_users_secrets_obj[index].username} Credentials"
+#       kms_key_id          = aws_kms_key.msk_scram_secrets_kms_key[0].arn
+#       rotation_lambda_arn = module.lambda_msk_secrets_rotation[0].lambda_function_arn
+#       secret_key_value = {
+#         username = local.msk_scram_users_secrets_obj[index].username
+#         password = local.msk_scram_users_secrets_obj[index].password
+#       }
+#     }
+#   }
+# }
 
-moved {
-  from = random_password.msk_scram_users_password
-  to   = random_password.msk_scram_users_password
-}
+# moved {
+#   from = random_password.msk_scram_users_password
+#   to   = random_password.msk_scram_users_password
+# }
 
 
 #######################################
