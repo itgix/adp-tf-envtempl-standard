@@ -33,19 +33,24 @@ module "msk_cluster" {
 }
 
 resource "random_password" "msk_scram_superuser_password" {
-  count   = var.client_sasl_scram_enabled ? 1 : 0
+  count   = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
   length  = 32
   special = true
 }
 
 resource "random_password" "msk_scram_users_password" {
-  count   = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? length(var.msk_scram_users) : 0
+  count = (
+    var.enable_msk &&
+    var.client_sasl_scram_enabled &&
+    length(var.msk_scram_users) > 0
+  ) ? length(var.msk_scram_users) : 0
+
   length  = 32
   special = true
 }
 
 resource "aws_kms_key" "msk_scram_secrets_kms_key" {
-  count               = var.client_sasl_scram_enabled ? 1 : 0
+  count               = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
   description         = "KMS key to be used to encrypt the ${local.msk_name} MSK cluster user secrets"
   enable_key_rotation = true
   policy = jsonencode({
@@ -65,7 +70,7 @@ resource "aws_kms_key" "msk_scram_secrets_kms_key" {
 }
 
 module "msk_superuser_secret" {
-  count     = var.client_sasl_scram_enabled ? 1 : 0
+  count     = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
   source    = "lgallard/secrets-manager/aws"
   version   = "0.6.2"
   unmanaged = true
@@ -81,7 +86,11 @@ module "msk_superuser_secret" {
   }
 }
 module "msk_users_secrets" {
-  count                    = length(var.msk_scram_users) > 0 && var.client_sasl_scram_enabled ? 1 : 0
+  count = (
+    var.enable_msk &&
+    var.client_sasl_scram_enabled &&
+    length(var.msk_scram_users) > 0
+  ) ? 1 : 0
   source                   = "lgallard/secrets-manager/aws"
   version                  = "0.6.2"
   unmanaged                = true
@@ -111,30 +120,30 @@ module "msk_users_secrets" {
 # MSK AUTHNZ
 #######################################
 data "aws_iam_policy_document" "msk_authnz_policy_documents" {
-  for_each = var.msk_tenants
+  for_each = local.msk_tenants
 
   statement {
 
     effect = "Allow"
     # This is to generate an uinque Policy Sid by hashing the composition of MSK engine arn and tenant name
-    sid = format("MSKClusterPolicySid%s", substr(sha256(format("%s-%s", module.msk_cluster.cluster_arn, each.key)), 0, 5))
+    sid = format("MSKClusterPolicySid%s", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
 
     actions = ["kafka-cluster:Connect",
       "kafka-cluster:DescribeCluster"
     ]
 
-    resources = [module.msk_cluster.cluster_arn]
+    resources = [local.msk_cluster_arn]
 
   }
 
   dynamic "statement" {
-    for_each = var.msk_tenants[each.key].producer_topic_specs == null ? [] : [element(var.msk_tenants[each.key].producer_topic_specs, 0)]
+    for_each = local.msk_tenants[each.key].producer_topic_specs == null ? [] : [element(local.msk_tenants[each.key].producer_topic_specs, 0)]
 
     # Producer topic policies
     content {
       effect = "Allow"
 
-      sid = format("MSKProducerTopicPolicySid%s", substr(sha256(format("%s-%s", module.msk_cluster.cluster_arn, each.key)), 0, 5))
+      sid = format("MSKProducerTopicPolicySid%s", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
 
       actions = [
         "kafka-cluster:WriteData",
@@ -142,59 +151,59 @@ data "aws_iam_policy_document" "msk_authnz_policy_documents" {
         "kafka-cluster:*Topic*"
       ]
 
-      resources = formatlist(format("%s/%%s", local.msk_topic_resource_arn_prefix), var.msk_tenants[each.key].producer_topic_specs)
+      resources = formatlist(format("%s/%%s", local.msk_topic_resource_arn_prefix), local.msk_tenants[each.key].producer_topic_specs)
     }
   }
 
   dynamic "statement" {
-    for_each = var.msk_tenants[each.key].consumer_topic_specs == null ? [] : [element(var.msk_tenants[each.key].consumer_topic_specs, 0)]
+    for_each = local.msk_tenants[each.key].consumer_topic_specs == null ? [] : [element(local.msk_tenants[each.key].consumer_topic_specs, 0)]
 
     # Consumer topic policies
     content {
       effect = "Allow"
 
-      sid = format("MSKConsumerTopicPolicySid%s", substr(sha256(format("%s-%s", module.msk_cluster.cluster_arn, each.key)), 0, 5))
+      sid = format("MSKConsumerTopicPolicySid%s", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
 
       actions = [
         "kafka-cluster:ReadData",
         "kafka-cluster:DescribeTopic"
       ]
 
-      resources = formatlist(format("%s/%%s", local.msk_topic_resource_arn_prefix), var.msk_tenants[each.key].consumer_topic_specs)
+      resources = formatlist(format("%s/%%s", local.msk_topic_resource_arn_prefix), local.msk_tenants[each.key].consumer_topic_specs)
     }
   }
 
   dynamic "statement" {
-    for_each = var.msk_tenants[each.key].consumer_group_specs == null ? [] : [element(var.msk_tenants[each.key].consumer_group_specs, 0)]
+    for_each = local.msk_tenants[each.key].consumer_group_specs == null ? [] : [element(local.msk_tenants[each.key].consumer_group_specs, 0)]
 
     # Consumer group policies
     content {
       effect = "Allow"
 
-      sid = format("MSKConsumerGroupPolicySid%s", substr(sha256(format("%s-%s", module.msk_cluster.cluster_arn, each.key)), 0, 5))
+      sid = format("MSKConsumerGroupPolicySid%s", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
 
       actions = [
         "kafka-cluster:AlterGroup",
         "kafka-cluster:DescribeGroup"
       ]
 
-      resources = formatlist(format("%s/%%s", local.msk_consumer_groups_resource_arn_prefix), var.msk_tenants[each.key].consumer_group_specs)
+      resources = formatlist(format("%s/%%s", local.msk_consumer_groups_resource_arn_prefix), local.msk_tenants[each.key].consumer_group_specs)
     }
   }
 }
 
 # Register MSK IAM access policies
 resource "aws_iam_policy" "msk_authnz_policy" {
-  for_each = var.msk_tenants
+  for_each = local.msk_tenants
 
-  name        = format("msk-tenant-%s-policy", substr(sha256(format("%s-%s", module.msk_cluster.cluster_arn, each.key)), 0, 5))
-  description = format("Policy for tenant role %s in MSK cluster %s", each.key, module.msk_cluster.cluster_arn)
+  name        = format("msk-tenant-%s-policy", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
+  description = format("Policy for tenant role %s in MSK cluster %s", each.key, local.msk_cluster_arn)
   policy      = data.aws_iam_policy_document.msk_authnz_policy_documents[each.key].json
 }
 
 # Associate tenant IAM policy to relevant role
 resource "aws_iam_role_policy_attachment" "msk_attach_to_tenant_role" {
-  for_each = var.msk_tenants
+  for_each = local.msk_tenants
 
   role       = each.key
   policy_arn = aws_iam_policy.msk_authnz_policy[each.key].arn
