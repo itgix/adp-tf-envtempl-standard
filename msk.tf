@@ -8,7 +8,7 @@ module "msk_cluster" {
   environment  = var.environment
   product_name = var.project_name
 
-  msk_vpc_cidr                              = var.provision_vpc ? module.common_vpc[0].vpc_cdir : var.vpc_cidr
+  msk_vpc_cidr                              = var.provision_vpc ? module.common_vpc[0].vpc_cidr : var.vpc_cidr
   allowed_cidr_blocks                       = var.allowed_cidr_blocks
   msk_vpc_subnet_newbits                    = var.msk_vpc_subnet_newbits
   msk_create_vpc                            = false
