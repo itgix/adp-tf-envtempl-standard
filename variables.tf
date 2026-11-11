@@ -1254,10 +1254,10 @@ variable "msk_subnet_ids" {
   description = "The list of subnets to provision MSK into"
 }
 
-variable "msk_vpc_cidr" {
-  type        = string
-  description = "CIDR of VPC to be used by MSK cluster"
-}
+# variable "msk_vpc_cidr" {
+#   type        = string
+#   description = "CIDR of VPC to be used by MSK cluster"
+# }
 
 variable "allowed_cidr_blocks" {
   type        = list(any)
