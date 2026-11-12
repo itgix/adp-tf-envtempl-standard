@@ -1233,103 +1233,6 @@ variable "waf_ip_prefix_rules" {
   EOT
 }
 
-#########################################################################
-##              MSK - Cluster Configuration Variables                  ##
-#########################################################################
-
-################################################################################
-# Utility variables
-################################################################################
-
-## MSK - Networking variables
-
-variable "enable_msk" {
-  type        = bool
-  description = "Whether or not to provision an MSK cluster"
-  default     = false
-}
-
-variable "msk_subnet_ids" {
-  type        = list(any)
-  description = "The list of subnets to provision MSK into"
-}
-
-# variable "msk_vpc_cidr" {
-#   type        = string
-#   description = "CIDR of VPC to be used by MSK cluster"
-# }
-
-variable "allowed_cidr_blocks" {
-  type        = list(any)
-  description = "List of CIDRs allowed by the security group"
-}
-
-variable "msk_vpc_subnet_newbits" {
-  type        = number
-  default     = 8
-  description = "Number of additional bits with which to extend the prefix"
-}
-
-# ## MSK - Logging info variables
-
-variable "cloudwatch_logs_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
-  default     = false
-}
-
-variable "msk_storage_autoscaling_max_capacity" {
-  type        = number
-  description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
-  default     = null
-}
-variable "msk_storage_autoscaling_target_value" {
-  type        = number
-  default     = 60
-  description = "Percentage of storage used to trigger autoscaled storage increase"
-}
-variable "msk_server_properties" {
-  type        = map(string)
-  description = "Contents of the server.properties file. Supported properties are documented in the [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/msk-configuration-properties.html)"
-  default     = {}
-}
-
-## MSK - Authentication variables
-
-variable "client_broker" {
-  type        = string
-  description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT"
-}
-
-variable "client_sasl_iam_enabled" {
-  type        = bool
-  description = "Enables client authentication via IAM policies (cannot be set to true at the same time as client_sasl_*_enabled)."
-}
-
-variable "client_allow_unauthenticated" {
-  type        = bool
-  description = "Enables unauthenticated access."
-  default     = false
-}
-
-variable "msk_scram_users" {
-  type        = list(string)
-  description = "List of Data Platform Scram users to be attached to cluster"
-  default     = []
-}
-
-variable "msk_tenants" {
-  description = "A map of permissions to be granted to MSK cluster via IAM policies to roles in same account"
-  type = map(
-    object({
-      producer_topic_specs = optional(list(string), null)
-      consumer_topic_specs = optional(list(string), null)
-      consumer_group_specs = optional(list(string), null)
-      }
-    )
-  )
-  default = {}
-}
 
 ################################################################################
 # Logging info variables
@@ -1412,31 +1315,122 @@ variable "client_sasl_scram_secret_association_arns" {
 }
 
 
-################################################################################
-# MSK variables
-################################################################################
+#########################################################################
+##              MSK - Cluster Configuration Variables                  ##
+#########################################################################
+
+variable "enable_msk" {
+  type        = bool
+  description = "Whether or not to provision an MSK cluster"
+  default     = false
+}
+
+variable "msk_subnet_ids" {
+  type        = list(any)
+  description = "The list of subnets to provision MSK into"
+  default     = []
+}
+
+variable "allowed_cidr_blocks" {
+  type        = list(any)
+  description = "List of CIDRs allowed by the security group"
+  default     = []
+}
+
+variable "msk_vpc_subnet_newbits" {
+  type        = number
+  default     = 8
+  description = "Number of additional bits with which to extend the prefix"
+}
+
+# ## MSK - Logging info variables
+
+variable "cloudwatch_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
+  default     = false
+}
+
+variable "msk_storage_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
+  default     = null
+}
+variable "msk_storage_autoscaling_target_value" {
+  type        = number
+  default     = 60
+  description = "Percentage of storage used to trigger autoscaled storage increase"
+}
+variable "msk_server_properties" {
+  type        = map(string)
+  description = "Contents of the server.properties file. Supported properties are documented in the [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/msk-configuration-properties.html)"
+  default     = {}
+}
+
+## MSK - Authentication variables
+
+variable "client_broker" {
+  type        = string
+  description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT"
+  default     = "TLS"
+}
+
+variable "client_sasl_iam_enabled" {
+  type        = bool
+  description = "Enables client authentication via IAM policies (cannot be set to true at the same time as client_sasl_*_enabled)."
+  default     = false
+}
+
+variable "client_allow_unauthenticated" {
+  type        = bool
+  description = "Enables unauthenticated access."
+  default     = false
+}
+
+variable "msk_scram_users" {
+  type        = list(string)
+  description = "List of Data Platform Scram users to be attached to cluster"
+  default     = []
+}
+
+variable "msk_tenants" {
+  description = "A map of permissions to be granted to MSK cluster via IAM policies to roles in same account"
+  type = map(
+    object({
+      producer_topic_specs = optional(list(string), null)
+      consumer_topic_specs = optional(list(string), null)
+      consumer_group_specs = optional(list(string), null)
+      }
+    )
+  )
+  default = {}
+}
 
 variable "msk_cluster_kafka_version" {
   type        = string
   description = "The desired Kafka software version"
+  default     = "3.8.x"
 }
 variable "msk_cluster_broker_per_zone" {
   type        = number
   description = "Number of Kafka brokers per zone."
+  default     = 1
 }
 variable "msk_cluster_broker_node_instance_type" {
   type        = string
   description = "The instance type to use for the Kafka brokers"
+  default     = "kafka.t3.small"
 }
 variable "msk_cluster_broker_node_ebs_volume_size" {
   type        = number
   description = "The size in GiB of the EBS volume for the data drive on each broker node"
+  default     = 20
 }
 
 variable "storage_autoscaling_max_capacity" {
   type        = number
   description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
-  default     = null
+  default     = 70
 }
 
 variable "storage_autoscaling_target_value" {
