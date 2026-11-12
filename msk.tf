@@ -2,7 +2,7 @@
 module "msk_cluster" {
   count = var.enable_msk ? 1 : 0
 
-  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.0"
+  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.1"
 
   aws_region   = var.region
   environment  = var.environment
