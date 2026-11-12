@@ -95,7 +95,7 @@ locals {
     var.enable_msk && var.client_sasl_scram_enabled
     ) ? concat(
     values(module.msk_superuser_secret[0].secret_arns),
-    try(values(module.msk_users_secrets[0].rotate_secret_arns), [])
+    try(values(module.msk_users_secrets[0].secret_arns), [])
   ) : []
 
   msk_scram_users_secrets_obj = (
