@@ -1265,7 +1265,7 @@ variable "firehose_logs_enabled" {
 variable "s3_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to S3"
-  default     = true
+  default     = false
 }
 
 variable "s3_log_bucket_name" {
