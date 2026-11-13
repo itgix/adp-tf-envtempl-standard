@@ -114,10 +114,8 @@ module "msk_users_secrets" {
   }
 }
 
-# Resource policy that lets MSK read the SCRAM secrets. MSK attaches the same policy itself during
-# BatchAssociateScramSecret and reads the secret in the same second; that read can be denied, and
-# the association then fails intermittently with InvalidSecretArn. The template therefore attaches
-# the policy before the association.
+# Let MSK read the SCRAM secrets before the association; MSK's own policy write can race its
+# read (InvalidSecretArn).
 data "aws_iam_policy_document" "msk_scram_secret_policy" {
   for_each = toset(local.msk_scram_secret_names)
 
@@ -141,9 +139,7 @@ resource "aws_secretsmanager_secret_policy" "msk_scram_secret" {
   secret_arn = local.msk_scram_secret_arns_by_name[each.key]
   policy     = data.aws_iam_policy_document.msk_scram_secret_policy[each.key].json
 
-  # The secret modules' secret_arns output depends only on the secret, not on its version. Waiting
-  # for the whole modules makes local.all_secrets_arns, and with it the association in
-  # module.msk_cluster, wait for the secret versions as well.
+  # Also wait for the secret versions.
   depends_on = [
     module.msk_superuser_secret,
     module.msk_users_secrets,
