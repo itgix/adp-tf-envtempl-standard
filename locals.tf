@@ -91,12 +91,33 @@ locals {
   ) : null
 
   # MSK secrets
-  all_secrets_arns = (
+  # Names of every SCRAM secret associated with the MSK cluster. They must match the keys of the
+  # `secrets` maps of module.msk_superuser_secret and module.msk_users_secrets in msk.tf; a mismatch
+  # fails the lookup in aws_secretsmanager_secret_policy.msk_scram_secret. Names, not ARNs, so the
+  # for_each keys are known at plan time.
+  msk_scram_secret_names = (
     var.enable_msk && var.msk_client_sasl_scram_enabled
     ) ? concat(
-    values(module.msk_superuser_secret[0].secret_arns),
-    try(values(module.msk_users_secrets[0].secret_arns), [])
+    ["AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-superuser"],
+    sort([
+      for user in var.msk_scram_users :
+      "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${user}"
+    ])
   ) : []
+
+  msk_scram_secret_arns_by_name = (
+    var.enable_msk && var.msk_client_sasl_scram_enabled
+    ) ? merge(
+    module.msk_superuser_secret[0].secret_arns,
+    try(module.msk_users_secrets[0].secret_arns, {})
+  ) : {}
+
+  # Derived from the secret policies, so the SCRAM secret association inside module.msk_cluster
+  # only runs once kafka.amazonaws.com may read each secret and the secret versions exist.
+  all_secrets_arns = [
+    for name in local.msk_scram_secret_names :
+    aws_secretsmanager_secret_policy.msk_scram_secret[name].secret_arn
+  ]
 
   msk_scram_users_secrets_obj = (
     var.enable_msk && var.msk_client_sasl_scram_enabled
