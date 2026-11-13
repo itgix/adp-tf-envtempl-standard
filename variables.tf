@@ -1367,6 +1367,19 @@ variable "msk_server_properties" {
   default     = {}
 }
 
+variable "msk_s3_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to S3"
+  default     = true
+}
+
+variable "msk_s3_log_bucket_name" {
+  type        = string
+  description = "Name of the S3 bucket to deliver logs to for MSK."
+  default     = ""
+}
+
+
 ## MSK - Authentication variables
 
 variable "msk_client_broker" {

@@ -19,8 +19,8 @@ module "msk_cluster" {
   client_sasl_scram_secret_association_arns = length(local.all_secrets_arns) > 0 ? local.all_secrets_arns : []
   msk_vpc_id                                = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
   msk_subnet_ids                            = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
-  s3_logs_enabled                           = var.s3_logs_enabled
-  s3_log_bucket_name                        = var.s3_log_bucket_name
+  s3_logs_enabled                           = var.msk_s3_logs_enabled
+  s3_log_bucket_name                        = var.msk_s3_log_bucket_name
   cloudwatch_logs_enabled                   = var.msk_cloudwatch_logs_enabled
 
   msk_cluster_kafka_version               = var.msk_cluster_kafka_version
