@@ -1383,8 +1383,8 @@ variable "client_sasl_iam_enabled" {
 
 variable "client_allow_unauthenticated" {
   type        = bool
-  description = "Enables unauthenticated access."
-  default     = false
+  description = "Enables unauthenticated access. MSK rejects false unless client_sasl_scram_enabled or client_sasl_iam_enabled is true."
+  default     = true
 }
 
 variable "msk_scram_users" {
