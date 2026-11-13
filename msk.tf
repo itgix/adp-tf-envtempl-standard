@@ -115,8 +115,9 @@ module "msk_users_secrets" {
 }
 
 # Resource policy that lets MSK read the SCRAM secrets. MSK attaches the same policy itself during
-# BatchAssociateScramSecret, but reads the secret in the same second and the association fails
-# with InvalidSecretArn on the first apply, so the template attaches it before the association.
+# BatchAssociateScramSecret and reads the secret in the same second; that read can be denied, and
+# the association then fails intermittently with InvalidSecretArn. The template therefore attaches
+# the policy before the association.
 data "aws_iam_policy_document" "msk_scram_secret_policy" {
   for_each = toset(local.msk_scram_secret_names)
 
