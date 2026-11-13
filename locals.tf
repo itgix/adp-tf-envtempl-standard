@@ -91,12 +91,29 @@ locals {
   ) : null
 
   # MSK secrets
-  all_secrets_arns = (
+  # Must match the secrets keys in msk.tf; names so for_each keys are known at plan time.
+  msk_scram_secret_names = (
     var.enable_msk && var.msk_client_sasl_scram_enabled
     ) ? concat(
-    values(module.msk_superuser_secret[0].secret_arns),
-    try(values(module.msk_users_secrets[0].secret_arns), [])
+    ["AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-superuser"],
+    sort([
+      for user in var.msk_scram_users :
+      "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${user}"
+    ])
   ) : []
+
+  msk_scram_secret_arns_by_name = (
+    var.enable_msk && var.msk_client_sasl_scram_enabled
+    ) ? merge(
+    module.msk_superuser_secret[0].secret_arns,
+    try(module.msk_users_secrets[0].secret_arns, {})
+  ) : {}
+
+  # From the policies, so the association waits for them.
+  all_secrets_arns = [
+    for name in local.msk_scram_secret_names :
+    aws_secretsmanager_secret_policy.msk_scram_secret[name].secret_arn
+  ]
 
   msk_scram_users_secrets_obj = (
     var.enable_msk && var.msk_client_sasl_scram_enabled

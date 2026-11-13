@@ -114,6 +114,38 @@ module "msk_users_secrets" {
   }
 }
 
+# Let MSK read the SCRAM secrets before the association; MSK's own policy write can race its
+# read (InvalidSecretArn).
+data "aws_iam_policy_document" "msk_scram_secret_policy" {
+  for_each = toset(local.msk_scram_secret_names)
+
+  statement {
+    sid    = "AWSKafkaResourcePolicy"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["kafka.amazonaws.com"]
+    }
+
+    actions   = ["secretsmanager:getSecretValue"]
+    resources = [local.msk_scram_secret_arns_by_name[each.key]]
+  }
+}
+
+resource "aws_secretsmanager_secret_policy" "msk_scram_secret" {
+  for_each = toset(local.msk_scram_secret_names)
+
+  secret_arn = local.msk_scram_secret_arns_by_name[each.key]
+  policy     = data.aws_iam_policy_document.msk_scram_secret_policy[each.key].json
+
+  # Also wait for the secret versions.
+  depends_on = [
+    module.msk_superuser_secret,
+    module.msk_users_secrets,
+  ]
+}
+
 
 # moved {
 #   from = random_password.msk_scram_users_password
