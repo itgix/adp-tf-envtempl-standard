@@ -1331,7 +1331,7 @@ variable "msk_subnet_ids" {
   default     = []
 }
 
-variable "allowed_cidr_blocks" {
+variable "msk_allowed_cidr_blocks" {
   type        = list(any)
   description = "List of CIDRs allowed by the security group"
   default     = []
@@ -1345,7 +1345,7 @@ variable "msk_vpc_subnet_newbits" {
 
 # ## MSK - Logging info variables
 
-variable "cloudwatch_logs_enabled" {
+variable "msk_cloudwatch_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
   default     = false
@@ -1367,21 +1367,40 @@ variable "msk_server_properties" {
   default     = {}
 }
 
+variable "msk_s3_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to S3"
+  default     = true
+}
+
+variable "msk_s3_log_bucket_name" {
+  type        = string
+  description = "Name of the S3 bucket to deliver logs to for MSK."
+  default     = ""
+}
+
+
 ## MSK - Authentication variables
 
-variable "client_broker" {
+variable "msk_client_broker" {
   type        = string
   description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT"
   default     = "TLS"
 }
 
-variable "client_sasl_iam_enabled" {
+variable "msk_client_sasl_scram_enabled" {
+  type        = bool
+  description = "Enables SCRAM client authentication via AWS Secrets Manager (cannot be set to true at the same time as client_tls_auth_enabled)."
+  default     = true
+}
+
+variable "msk_client_sasl_iam_enabled" {
   type        = bool
   description = "Enables client authentication via IAM policies (cannot be set to true at the same time as client_sasl_*_enabled)."
   default     = false
 }
 
-variable "client_allow_unauthenticated" {
+variable "msk_client_allow_unauthenticated" {
   type        = bool
   description = "Enables unauthenticated access. MSK rejects false unless client_sasl_scram_enabled or client_sasl_iam_enabled is true."
   default     = true
@@ -1427,19 +1446,19 @@ variable "msk_cluster_broker_node_ebs_volume_size" {
   default     = 20
 }
 
-variable "storage_autoscaling_max_capacity" {
+variable "msk_storage_autoscaling_max_capacity" {
   type        = number
   description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
   default     = 70
 }
 
-variable "storage_autoscaling_target_value" {
+variable "msk_storage_autoscaling_target_value" {
   type        = number
   default     = 80
   description = "Percentage of storage used to trigger autoscaled storage increase"
 }
 
-variable "server_properties" {
+variable "msk_server_properties" {
   type        = map(string)
   description = "Contents of the server.properties file. Supported properties are documented in the [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/msk-configuration-properties.html)"
   default     = {}

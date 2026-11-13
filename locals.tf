@@ -92,14 +92,14 @@ locals {
 
   # MSK secrets
   all_secrets_arns = (
-    var.enable_msk && var.client_sasl_scram_enabled
+    var.enable_msk && var.msk_client_sasl_scram_enabled
     ) ? concat(
     values(module.msk_superuser_secret[0].secret_arns),
     try(values(module.msk_users_secrets[0].secret_arns), [])
   ) : []
 
   msk_scram_users_secrets_obj = (
-    var.enable_msk && var.client_sasl_scram_enabled
+    var.enable_msk && var.msk_client_sasl_scram_enabled
     ) ? [
     for index, username in var.msk_scram_users : {
       secretname = "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${username}"
