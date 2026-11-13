@@ -9,19 +9,19 @@ module "msk_cluster" {
   product_name = var.project_name
 
   msk_vpc_cidr                              = var.provision_vpc ? module.common_vpc[0].vpc_cidr_block : var.vpc_cidr
-  allowed_cidr_blocks                       = var.allowed_cidr_blocks
+  allowed_cidr_blocks                       = var.msk_allowed_cidr_blocks
   msk_vpc_subnet_newbits                    = var.msk_vpc_subnet_newbits
   msk_create_vpc                            = false
-  client_broker                             = var.client_broker
-  client_sasl_scram_enabled                 = var.client_sasl_scram_enabled
-  client_sasl_iam_enabled                   = var.client_sasl_iam_enabled
-  client_allow_unauthenticated              = var.client_allow_unauthenticated
+  client_broker                             = var.msk_client_broker
+  client_sasl_scram_enabled                 = var.msk_client_sasl_scram_enabled
+  client_sasl_iam_enabled                   = var.msk_client_sasl_iam_enabled
+  client_allow_unauthenticated              = var.msk_client_allow_unauthenticated
   client_sasl_scram_secret_association_arns = length(local.all_secrets_arns) > 0 ? local.all_secrets_arns : []
   msk_vpc_id                                = var.provision_vpc ? module.common_vpc[0].vpc_id : var.vpc_id
   msk_subnet_ids                            = var.provision_vpc ? module.common_vpc[0].database_subnets : var.vpc_private_subnet_ids
   s3_logs_enabled                           = var.s3_logs_enabled
   s3_log_bucket_name                        = var.s3_log_bucket_name
-  cloudwatch_logs_enabled                   = var.cloudwatch_logs_enabled
+  cloudwatch_logs_enabled                   = var.msk_cloudwatch_logs_enabled
 
   msk_cluster_kafka_version               = var.msk_cluster_kafka_version
   server_properties                       = var.msk_server_properties
