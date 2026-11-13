@@ -33,7 +33,7 @@ module "msk_cluster" {
 }
 
 resource "random_password" "msk_scram_superuser_password" {
-  count   = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
+  count   = var.enable_msk && var.msk_client_sasl_scram_enabled ? 1 : 0
   length  = 32
   special = true
 }
@@ -41,7 +41,7 @@ resource "random_password" "msk_scram_superuser_password" {
 resource "random_password" "msk_scram_users_password" {
   count = (
     var.enable_msk &&
-    var.client_sasl_scram_enabled &&
+    var.msk_client_sasl_scram_enabled &&
     length(var.msk_scram_users) > 0
   ) ? length(var.msk_scram_users) : 0
 
@@ -50,7 +50,7 @@ resource "random_password" "msk_scram_users_password" {
 }
 
 resource "aws_kms_key" "msk_scram_secrets_kms_key" {
-  count               = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
+  count               = var.enable_msk && var.msk_client_sasl_scram_enabled ? 1 : 0
   description         = "KMS key to be used to encrypt the ${local.msk_name} MSK cluster user secrets"
   enable_key_rotation = true
   policy = jsonencode({
@@ -70,7 +70,7 @@ resource "aws_kms_key" "msk_scram_secrets_kms_key" {
 }
 
 module "msk_superuser_secret" {
-  count     = var.enable_msk && var.client_sasl_scram_enabled ? 1 : 0
+  count     = var.enable_msk && var.msk_client_sasl_scram_enabled ? 1 : 0
   source    = "lgallard/secrets-manager/aws"
   version   = "0.6.2"
   unmanaged = true
@@ -89,7 +89,7 @@ module "msk_superuser_secret" {
 module "msk_users_secrets" {
   count = (
     var.enable_msk &&
-    var.client_sasl_scram_enabled &&
+    var.msk_client_sasl_scram_enabled &&
     length(var.msk_scram_users) > 0
   ) ? 1 : 0
 
