@@ -54,4 +54,63 @@ locals {
 
   redis_allowed_cidr_blocks = concat(var.redis_allowed_cidr_blocks, [var.vpc_cidr])
 
+  # msk_name                                = "msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
+  # msk_topic_resource_arn_prefix           = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":topic")
+  # msk_consumer_groups_resource_arn_prefix = replace(module.msk_cluster.cluster_arn, "/:cluster/", ":group")
+
+  # all_secrets_arns = var.client_sasl_scram_enabled ? concat(
+  #   values(module.msk_superuser_secret[0].secret_arns),
+  #   try(values(module.msk_users_secrets[0].rotate_secret_arns), [])
+  # ) : []
+
+  # msk_scram_users_secrets_obj = [
+  #   for index, username in var.msk_scram_users : {
+  #     secretname = "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${username}"
+  #     username   = username
+  #     password   = random_password.msk_scram_users_password[index].result
+  #     addedTs    = timestamp()
+  #   }
+  # ]
+
+
+  msk_name = "msk-${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}"
+
+  # Safely retrieve the cluster ARN when MSK is enabled.
+  msk_cluster_arn = try(module.msk_cluster[0].cluster_arn, null)
+
+  msk_topic_resource_arn_prefix = var.enable_msk ? replace(
+    local.msk_cluster_arn,
+    "/:cluster/",
+    ":topic"
+  ) : null
+
+  msk_consumer_groups_resource_arn_prefix = var.enable_msk ? replace(
+    local.msk_cluster_arn,
+    "/:cluster/",
+    ":group"
+  ) : null
+
+  # MSK secrets
+  all_secrets_arns = (
+    var.enable_msk && var.client_sasl_scram_enabled
+    ) ? concat(
+    values(module.msk_superuser_secret[0].secret_arns),
+    try(values(module.msk_users_secrets[0].secret_arns), [])
+  ) : []
+
+  msk_scram_users_secrets_obj = (
+    var.enable_msk && var.client_sasl_scram_enabled
+    ) ? [
+    for index, username in var.msk_scram_users : {
+      secretname = "AmazonMSK_${local.aws_regions_short[var.region]}-${var.environment}-${var.project_name}-${username}"
+      username   = username
+      password   = random_password.msk_scram_users_password[index].result
+      addedTs    = timestamp()
+    }
+  ] : []
+
+  # Only create tenant policies when MSK is enabled.
+  msk_tenants = var.enable_msk ? var.msk_tenants : {}
+
+
 }
