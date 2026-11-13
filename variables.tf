@@ -1234,81 +1234,6 @@ variable "waf_ip_prefix_rules" {
 }
 
 
-################################################################################
-# Logging info variables
-################################################################################
-
-variable "jmx_exporter_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable the JMX Exporter."
-  default     = false
-}
-
-variable "node_exporter_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable the Node Exporter."
-  default     = false
-}
-
-variable "enhanced_monitoring" {
-  type        = string
-  description = "Specify the desired enhanced MSK CloudWatch monitoring level. Valid values: DEFAULT, PER_BROKER, and PER_TOPIC_PER_BROKER"
-  default     = "DEFAULT"
-}
-
-variable "firehose_logs_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable streaming broker logs to Kinesis Data Firehose"
-  default     = false
-}
-
-variable "s3_logs_enabled" {
-  type        = bool
-  description = "Indicates whether you want to enable or disable streaming broker logs to S3"
-  default     = false
-}
-
-variable "s3_log_bucket_name" {
-  type        = string
-  description = "Name of the S3 bucket to deliver logs to. Needed if `s3_logs_enabled` or `firehose_logs_enabled` are set to `true`"
-  default     = ""
-}
-
-variable "s3_logs_prefix" {
-  type        = string
-  description = "Prefix to append to the S3 folder name logs are delivered to"
-  default     = ""
-}
-
-variable "cloudwatch_log_group_retention_in_days" {
-  type        = number
-  description = "Specifies the number of days you want to retain log events in the log group"
-  default     = 0
-}
-
-################################################################################
-# Authentication variables
-################################################################################
-
-variable "client_tls_auth_enabled" {
-  type        = bool
-  description = "Set true to enable the Client TLS Authentication"
-  default     = false
-}
-
-variable "certificate_authority_arns" {
-  type        = list(string)
-  description = "List of ACM Certificate Authority Amazon Resource Names (ARNs) to be used for TLS client authentication"
-  default     = []
-}
-
-variable "client_sasl_scram_secret_association_arns" {
-  type        = list(string)
-  description = "List of AWS Secrets Manager secret ARNs for scram authentication (cannot be set to true at the same time as client_tls_auth_enabled)."
-  default     = []
-}
-
-
 #########################################################################
 ##              MSK - Cluster Configuration Variables                  ##
 #########################################################################
@@ -1317,12 +1242,6 @@ variable "enable_msk" {
   type        = bool
   description = "Whether or not to provision an MSK cluster"
   default     = false
-}
-
-variable "msk_subnet_ids" {
-  type        = list(any)
-  description = "The list of subnets to provision MSK into"
-  default     = []
 }
 
 variable "msk_allowed_cidr_blocks" {
@@ -1380,7 +1299,7 @@ variable "msk_client_sasl_iam_enabled" {
 
 variable "msk_client_allow_unauthenticated" {
   type        = bool
-  description = "Enables unauthenticated access. MSK rejects false unless client_sasl_scram_enabled or client_sasl_iam_enabled is true."
+  description = "Enables unauthenticated access. MSK rejects false unless msk_client_sasl_scram_enabled or msk_client_sasl_iam_enabled is true."
   default     = true
 }
 
