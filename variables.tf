@@ -1351,22 +1351,6 @@ variable "msk_cloudwatch_logs_enabled" {
   default     = false
 }
 
-variable "msk_storage_autoscaling_max_capacity" {
-  type        = number
-  description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
-  default     = null
-}
-variable "msk_storage_autoscaling_target_value" {
-  type        = number
-  default     = 60
-  description = "Percentage of storage used to trigger autoscaled storage increase"
-}
-variable "msk_server_properties" {
-  type        = map(string)
-  description = "Contents of the server.properties file. Supported properties are documented in the [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/msk-configuration-properties.html)"
-  default     = {}
-}
-
 variable "msk_s3_logs_enabled" {
   type        = bool
   description = "Indicates whether you want to enable or disable streaming broker logs to S3"
