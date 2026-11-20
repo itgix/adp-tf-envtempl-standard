@@ -1343,6 +1343,12 @@ variable "msk_cluster_broker_node_ebs_volume_size" {
   default     = 20
 }
 
+variable "msk_storage_autoscaling_enabled" {
+  type        = bool
+  description = "Creates the MSK broker storage autoscaling target and policy. Amazon MSK does not support storage autoscaling in ap-northeast-3 (Osaka), af-south-1 (Cape Town) and ap-southeast-5 (Malaysia); it must be false there, otherwise the plan fails."
+  default     = true
+}
+
 variable "msk_storage_autoscaling_max_capacity" {
   type        = number
   description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
