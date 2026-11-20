@@ -2,7 +2,7 @@
 module "msk_cluster" {
   count = var.enable_msk ? 1 : 0
 
-  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.3"
+  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.4"
 
   aws_region   = var.region
   environment  = var.environment
@@ -28,6 +28,7 @@ module "msk_cluster" {
   msk_cluster_broker_per_zone             = var.msk_cluster_broker_per_zone
   msk_cluster_broker_node_instance_type   = var.msk_cluster_broker_node_instance_type
   msk_cluster_broker_node_ebs_volume_size = var.msk_cluster_broker_node_ebs_volume_size
+  storage_autoscaling_enabled             = var.msk_storage_autoscaling_enabled
   storage_autoscaling_max_capacity        = var.msk_storage_autoscaling_max_capacity
   storage_autoscaling_target_value        = var.msk_storage_autoscaling_target_value
 
