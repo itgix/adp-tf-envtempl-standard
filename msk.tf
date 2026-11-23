@@ -2,7 +2,7 @@
 module "msk_cluster" {
   count = var.enable_msk ? 1 : 0
 
-  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.1"
+  source = "git::https://github.com/itgix/tf-module-msk.git?ref=v1.0.4"
 
   aws_region   = var.region
   environment  = var.environment
@@ -28,8 +28,11 @@ module "msk_cluster" {
   msk_cluster_broker_per_zone             = var.msk_cluster_broker_per_zone
   msk_cluster_broker_node_instance_type   = var.msk_cluster_broker_node_instance_type
   msk_cluster_broker_node_ebs_volume_size = var.msk_cluster_broker_node_ebs_volume_size
+  storage_autoscaling_enabled             = var.msk_storage_autoscaling_enabled
   storage_autoscaling_max_capacity        = var.msk_storage_autoscaling_max_capacity
   storage_autoscaling_target_value        = var.msk_storage_autoscaling_target_value
+
+  tags = local.aws_default_tags
 }
 
 resource "random_password" "msk_scram_superuser_password" {
@@ -67,6 +70,8 @@ resource "aws_kms_key" "msk_scram_secrets_kms_key" {
       },
     ]
   })
+
+  tags = local.aws_default_tags
 }
 
 module "msk_superuser_secret" {
@@ -84,6 +89,8 @@ module "msk_superuser_secret" {
       }
     }
   }
+
+  tags = local.aws_default_tags
 }
 
 module "msk_users_secrets" {
@@ -112,6 +119,8 @@ module "msk_users_secrets" {
       }
     }
   }
+
+  tags = local.aws_default_tags
 }
 
 # Let MSK read the SCRAM secrets before the association; MSK's own policy write can race its
@@ -236,6 +245,8 @@ resource "aws_iam_policy" "msk_authnz_policy" {
   name        = format("msk-tenant-%s-policy", substr(sha256(format("%s-%s", local.msk_cluster_arn, each.key)), 0, 5))
   description = format("Policy for tenant role %s in MSK cluster %s", each.key, local.msk_cluster_arn)
   policy      = data.aws_iam_policy_document.msk_authnz_policy_documents[each.key].json
+
+  tags = local.aws_default_tags
 }
 
 # Associate tenant IAM policy to relevant role
