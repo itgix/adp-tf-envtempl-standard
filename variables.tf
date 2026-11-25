@@ -1238,6 +1238,12 @@ variable "waf_ip_prefix_rules" {
 ##              MSK - Cluster Configuration Variables                  ##
 #########################################################################
 
+variable "msk_superuser_irsa" {
+  type        = bool
+  description = "Enable creation of MSK superuser IAM Policy"
+  default     = false
+}
+
 variable "enable_msk" {
   type        = bool
   description = "Whether or not to provision an MSK cluster"

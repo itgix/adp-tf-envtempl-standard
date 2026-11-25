@@ -411,3 +411,62 @@ resource "aws_iam_policy" "irsa_keda" {
 }
 EOT
 }
+
+##########################
+#IRSA for MSK IAM Auth   #
+##########################
+data "aws_iam_policy_document" "msk_superuser_admin" {
+  statement {
+    sid    = "MSKACLAdministration"
+    effect = "Allow"
+
+    actions = [
+      "kafka-cluster:Connect",
+      "kafka-cluster:DescribeCluster",
+      "kafka-cluster:AlterCluster",
+      "kafka-cluster:DescribeTopic",
+      "kafka-cluster:CreateTopic",
+      "kafka-cluster:AlterTopic",
+      "kafka-cluster:DeleteTopic",
+      "kafka-cluster:DescribeGroup",
+      "kafka-cluster:AlterGroup",
+      "kafka-cluster:DescribeTransactionalId",
+      "kafka-cluster:AlterTransactionalId",
+      "kafka-cluster:WriteData",
+      "kafka-cluster:ReadData",
+      "kafka-cluster:DescribeClusterDynamicConfiguration",
+      "kafka-cluster:AlterClusterDynamicConfiguration"
+    ]
+
+    resources = [
+      local.msk_cluster_arn,
+      "${local.msk_cluster_arn}/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "msk_superuser_admin" {
+  count       = var.msk_superuser_irsa ? 1 : 0
+  name        = "${local.msk_name}-msk-superuser-admin"
+  description = "IAM permissions for MSK Kafka ACL administration"
+  policy      = data.aws_iam_policy_document.msk_superuser_admin.json
+}
+
+module "kafka_acl_irsa" {
+  count   = var.msk_superuser_irsa ? 1 : 0
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
+  version = "~> 6.0"
+
+  name = "${local.msk_name}-kafka-usuperuser"
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["*:*"]
+    }
+  }
+
+  policies = {
+    msk_superuser_admin = aws_iam_policy.msk_superuser_admin[0].arn
+  }
+}
