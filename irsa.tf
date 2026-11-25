@@ -448,16 +448,16 @@ data "aws_iam_policy_document" "msk_superuser_admin" {
 resource "aws_iam_policy" "msk_superuser_admin" {
   count       = var.msk_superuser_irsa ? 1 : 0
   name        = "${local.msk_name}-msk-superuser-admin"
-  description = "IAM permissions for MSK Kafka ACL administration"
+  description = "IAM permissions for MSK Kafka Superuser administration"
   policy      = data.aws_iam_policy_document.msk_superuser_admin.json
 }
 
-module "kafka_acl_irsa" {
+module "kafka_superuser_irsa" {
   count   = var.msk_superuser_irsa ? 1 : 0
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
   version = "~> 6.0"
 
-  name = "${local.msk_name}-kafka-usuperuser"
+  name = "${local.msk_name}-msk-su"
 
   oidc_providers = {
     main = {
