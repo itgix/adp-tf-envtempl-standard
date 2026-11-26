@@ -451,7 +451,7 @@ resource "aws_iam_policy" "msk_superuser_admin" {
   count       = var.msk_superuser_irsa ? 1 : 0
   name        = "${local.msk_name}-msk-superuser-admin"
   description = "IAM permissions for MSK Kafka Superuser administration"
-  policy      = data.aws_iam_policy_document.msk_superuser_admin.json
+  policy      = data.aws_iam_policy_document.msk_superuser_admin[0].json
 }
 
 module "kafka_superuser_irsa" {
