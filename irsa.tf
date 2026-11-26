@@ -416,6 +416,8 @@ EOT
 #IRSA for MSK IAM Auth   #
 ##########################
 data "aws_iam_policy_document" "msk_superuser_admin" {
+  count = var.msk_superuser_irsa ? 1 : 0
+
   statement {
     sid    = "MSKACLAdministration"
     effect = "Allow"
