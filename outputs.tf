@@ -59,6 +59,85 @@ output "subnet3" {
   value = var.provision_vpc ? module.common_vpc[0].private_subnets[2] : var.vpc_private_subnet_ids[2]
 }
 
+## Subnet CIDRs, one flat value per index. Only set when this template
+## provisions the VPC, null for an external VPC. A private or public tier with
+## fewer than three subnets fails the plan; the database tier may have two, so
+## its outputs are null past the last subnet.
+output "private_subnet_cidr1" {
+  description = "CIDR of the first private subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].private_subnets_cidr_blocks[0] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].private_subnets_cidr_blocks) >= 3 : true
+    error_message = "The private_subnet_cidr1-3 outputs need at least three private subnets in the VPC."
+  }
+}
+
+output "private_subnet_cidr2" {
+  description = "CIDR of the second private subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].private_subnets_cidr_blocks[1] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].private_subnets_cidr_blocks) >= 3 : true
+    error_message = "The private_subnet_cidr1-3 outputs need at least three private subnets in the VPC."
+  }
+}
+
+output "private_subnet_cidr3" {
+  description = "CIDR of the third private subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].private_subnets_cidr_blocks[2] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].private_subnets_cidr_blocks) >= 3 : true
+    error_message = "The private_subnet_cidr1-3 outputs need at least three private subnets in the VPC."
+  }
+}
+
+output "public_subnet_cidr1" {
+  description = "CIDR of the first public subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].public_subnets_cidr_blocks[0] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].public_subnets_cidr_blocks) >= 3 : true
+    error_message = "The public_subnet_cidr1-3 outputs need at least three public subnets in the VPC."
+  }
+}
+
+output "public_subnet_cidr2" {
+  description = "CIDR of the second public subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].public_subnets_cidr_blocks[1] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].public_subnets_cidr_blocks) >= 3 : true
+    error_message = "The public_subnet_cidr1-3 outputs need at least three public subnets in the VPC."
+  }
+}
+
+output "public_subnet_cidr3" {
+  description = "CIDR of the third public subnet, null when the VPC is not provisioned by this template"
+  value       = var.provision_vpc ? module.common_vpc[0].public_subnets_cidr_blocks[2] : null
+
+  precondition {
+    condition     = var.provision_vpc ? length(module.common_vpc[0].public_subnets_cidr_blocks) >= 3 : true
+    error_message = "The public_subnet_cidr1-3 outputs need at least three public subnets in the VPC."
+  }
+}
+
+output "database_subnet_cidr1" {
+  description = "CIDR of the first database subnet, null when the VPC is not provisioned by this template or the database tier has no first subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[0], null) : null
+}
+
+output "database_subnet_cidr2" {
+  description = "CIDR of the second database subnet, null when the VPC is not provisioned by this template or the database tier has no second subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[1], null) : null
+}
+
+output "database_subnet_cidr3" {
+  description = "CIDR of the third database subnet, null when the VPC is not provisioned by this template or the database tier has no third subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[2], null) : null
+}
+
 ## RDS
 output "rds_cluster_endpoint" {
   description = "RDS Cluster endpoint"
