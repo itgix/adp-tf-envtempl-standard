@@ -21,6 +21,8 @@ With a `/16` `vpc_cidr` the defaults produce:
 
 The three tiers occupy `[0, 3/32)`, `[3/32, 27/256)` and `[7/64, 17/128)` of the VPC range respectively, so the defaults cannot overlap at any `vpc_cidr` size - the private tier ends exactly where the database tier begins. A `check` assertion detects overlaps at plan time for custom layouts.
 
+The CIDRs in use are exported as flat outputs, one per subnet: `private_subnet_cidr1`-`3`, `public_subnet_cidr1`-`3` and `database_subnet_cidr1`-`3`. They are set only when this template provisions the VPC (`provision_vpc`) and are `null` for an external VPC. Each tier needs at least three subnets for these outputs; with fewer the plan fails. This is stricter than `vpc_database_subnets` alone, which accepts two.
+
 Environments created before these variables existed use `/26` private and public subnets (~60 usable IPs), which is not enough for EKS with the VPC CNI, where every pod consumes an address. The database ranges are unchanged.
 
 ### Keeping an existing environment as it is
@@ -202,6 +204,9 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="output_custom_secret_names"></a> [custom\_secret\_names](#output\_custom\_secret\_names) | n/a |
 | <a name="output_custom_secret_values"></a> [custom\_secret\_values](#output\_custom\_secret\_values) | n/a |
 | <a name="output_custom_secret_versions"></a> [custom\_secret\_versions](#output\_custom\_secret\_versions) | n/a |
+| <a name="output_database_subnet_cidr1"></a> [database\_subnet\_cidr1](#output\_database\_subnet\_cidr1) | CIDR of the first database subnet, null when the VPC is not provisioned by this template |
+| <a name="output_database_subnet_cidr2"></a> [database\_subnet\_cidr2](#output\_database\_subnet\_cidr2) | CIDR of the second database subnet, null when the VPC is not provisioned by this template |
+| <a name="output_database_subnet_cidr3"></a> [database\_subnet\_cidr3](#output\_database\_subnet\_cidr3) | CIDR of the third database subnet, null when the VPC is not provisioned by this template |
 | <a name="output_ecr_repository_arn"></a> [ecr\_repository\_arn](#output\_ecr\_repository\_arn) | Full ARN of the repository |
 | <a name="output_ecr_repository_name"></a> [ecr\_repository\_name](#output\_ecr\_repository\_name) | Name of the repository |
 | <a name="output_ecr_repository_registry_id"></a> [ecr\_repository\_registry\_id](#output\_ecr\_repository\_registry\_id) | The registry ID where the repository was created |
@@ -216,6 +221,12 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="output_karpenter_sa_role"></a> [karpenter\_sa\_role](#output\_karpenter\_sa\_role) | IRSA role for karpenter SA |
 | <a name="output_node_iam_role_name"></a> [node\_iam\_role\_name](#output\_node\_iam\_role\_name) | n/a |
 | <a name="output_node_security_group"></a> [node\_security\_group](#output\_node\_security\_group) | n/a |
+| <a name="output_private_subnet_cidr1"></a> [private\_subnet\_cidr1](#output\_private\_subnet\_cidr1) | CIDR of the first private subnet, null when the VPC is not provisioned by this template |
+| <a name="output_private_subnet_cidr2"></a> [private\_subnet\_cidr2](#output\_private\_subnet\_cidr2) | CIDR of the second private subnet, null when the VPC is not provisioned by this template |
+| <a name="output_private_subnet_cidr3"></a> [private\_subnet\_cidr3](#output\_private\_subnet\_cidr3) | CIDR of the third private subnet, null when the VPC is not provisioned by this template |
+| <a name="output_public_subnet_cidr1"></a> [public\_subnet\_cidr1](#output\_public\_subnet\_cidr1) | CIDR of the first public subnet, null when the VPC is not provisioned by this template |
+| <a name="output_public_subnet_cidr2"></a> [public\_subnet\_cidr2](#output\_public\_subnet\_cidr2) | CIDR of the second public subnet, null when the VPC is not provisioned by this template |
+| <a name="output_public_subnet_cidr3"></a> [public\_subnet\_cidr3](#output\_public\_subnet\_cidr3) | CIDR of the third public subnet, null when the VPC is not provisioned by this template |
 | <a name="output_rds_cluster_arn"></a> [rds\_cluster\_arn](#output\_rds\_cluster\_arn) | The RDS Cluster ARN |
 | <a name="output_rds_cluster_endpoint"></a> [rds\_cluster\_endpoint](#output\_rds\_cluster\_endpoint) | RDS Cluster endpoint |
 | <a name="output_rds_cluster_identifier"></a> [rds\_cluster\_identifier](#output\_rds\_cluster\_identifier) | The RDS Cluster Identifier |
