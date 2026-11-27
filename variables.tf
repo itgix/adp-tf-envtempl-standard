@@ -166,7 +166,7 @@ variable "provision_eks" {
 variable "eks_cluster_version" {
   type        = string
   description = "Desired Kubernetes cluster version"
-  default     = "1.35"
+  default     = "1.36"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -193,10 +193,10 @@ variable "addons_versions" {
   })
 
   default = {
-    kube_proxy = "v1.35.3-eksbuild.21"
-    vpc_cni    = "v1.22.4-eksbuild.3"
-    coredns    = "v1.13.2-eksbuild.21"
-    ebs_csi    = "v1.65.0-eksbuild.1"
+    kube_proxy = "v1.36.0-eksbuild.58"
+    vpc_cni    = "v1.23.2-eksbuild.8"
+    coredns    = "v1.14.7-eksbuild.22"
+    ebs_csi    = "v1.67.2-eksbuild.1"
   }
 }
 
@@ -373,9 +373,9 @@ variable "rds_config" {
   })
   default = ({
     engine         = "aurora-postgresql"
-    engine_version = "14.20"
+    engine_version = "17.11"
     engine_mode    = "provisioned"
-    cluster_family = "aurora-postgresql14"
+    cluster_family = "aurora-postgresql17"
     cluster_size   = 1
     db_port        = 5432
     db_name        = ""
@@ -514,11 +514,25 @@ variable "rds_database_insights_mode" {
   type    = string
   default = "standard"
 }
+
 variable "rds_performance_retention" {
   type        = number
   default     = 7
   description = "Performance Insights retention period in days."
 }
+
+variable "rds_allow_major_version_upgrade" {
+  type        = bool
+  default     = false
+  description = "Allow a major engine version upgrade when engine_version changes. Off by default: an environment that inherits a newer default engine_version is not upgraded in place; set to true deliberately, after a snapshot, to perform the upgrade."
+}
+
+variable "rds_apply_immediately" {
+  type        = bool
+  description = "Specifies whether any cluster modifications are applied immediately, or during the next maintenance window"
+  default     = true
+}
+
 #########################################################################
 ##                   SQS Variables                                     ##
 #########################################################################
@@ -742,6 +756,18 @@ variable "ecr_create_lifecycle_policy" {
   default     = false
 }
 
+variable "ecr_repository_lifecycle_policy" {
+  description = "Default lifecycle policy applied to all repositories, as a structured object (e.g. from YAML vars). It is JSON-encoded before being passed to the module. Ignored when ecr_create_lifecycle_policy is false. Can be overridden per repository via ecr_repository_lifecycle_policies."
+  type        = any
+  default     = null
+}
+
+variable "ecr_repository_lifecycle_policies" {
+  description = "Per-repository lifecycle policies (structured objects) keyed by the same logical keys used in ecr_names_map. Each is JSON-encoded before being passed to the module. Overrides ecr_repository_lifecycle_policy for the matching repository. Ignored when ecr_create_lifecycle_policy is false."
+  type        = map(any)
+  default     = {}
+}
+
 #########################################################################
 ##                   Elasticache Redis cluster                         ##
 #########################################################################
@@ -893,6 +919,20 @@ variable "valkey_snapshot_arns_to_restore" {
   default     = null
 }
 
+variable "valkey_extra_user_ids" {
+  type        = list(string)
+  description = "IDs of existing ElastiCache users to add to the Valkey user group in addition to the users this module creates, e.g. [\"default-valkey\"] to keep the engine's built-in default user in the group. Only applied when create_valkey_user_and_secret is true."
+  default     = []
+}
+
+variable "valkey_extra_users" {
+  type = map(object({
+    access_string = optional(string, "on ~* +@all")
+  }))
+  description = "Extra ElastiCache users to create and add to the Valkey user group, keyed by a short name. Each user is named <resource_tag>-valkey-<key> (user_id and user_name), gets a generated password and a Secrets Manager secret of the same name containing {username, password}. Only applied when create_valkey_user_and_secret is true."
+  default     = {}
+}
+
 #########################################################################
 ##             AWS Certificate manager valid certificate               ##
 #########################################################################
@@ -953,24 +993,26 @@ variable "ec2_spot_service_role" {
 
 
 variable "custom_secrets" {
-  description = "List of custom secrets to create"
+  description = <<-EOT
+    List of custom secrets to create. A random secret is generated once and stays static while
+    `version` is omitted; set `version = 1` on a secret that had none to rotate it once, and
+    raise it to rotate again (never lower it). `value` is for manual secrets only (a manual
+    secret is written with `value`, or "editme" when unset, and a changed value writes a new
+    secret version); a random secret with a non-empty `value` is rejected.
+  EOT
   type = list(object({
     secret_name      = string
     length           = optional(number)
     special          = optional(bool)
     override_special = optional(string)
-    keepers          = optional(map(string))
+    version          = optional(number)
     manual           = optional(bool, false)
     value            = optional(string)
+    tags             = optional(map(string), {})
   }))
   default = []
 }
 
-variable "custom_secret_keepers" {
-  description = "Map of keepers for the secrets"
-  type        = map(map(string))
-  default     = {}
-}
 #########################################################################
 ##           DynamoDB - Table Configuration Variables                  ##
 #########################################################################
@@ -1189,4 +1231,138 @@ variable "waf_ip_prefix_rules" {
     - forwarded_ip_config: omit or null to use the immediate source IP. Set to use a header (e.g. X-Forwarded-For) like Terraform ip_set_forwarded_ip_config on the IP set reference.
     Rule names must be unique across this list, custom_rules, and managed rules (WAF requires unique priorities and names per ACL).
   EOT
+}
+
+
+#########################################################################
+##              MSK - Cluster Configuration Variables                  ##
+#########################################################################
+
+variable "enable_msk" {
+  type        = bool
+  description = "Whether or not to provision an MSK cluster"
+  default     = false
+}
+
+variable "msk_allowed_cidr_blocks" {
+  type        = list(any)
+  description = "List of CIDRs allowed by the security group"
+  default     = []
+}
+
+variable "msk_vpc_subnet_newbits" {
+  type        = number
+  default     = 8
+  description = "Number of additional bits with which to extend the prefix"
+}
+
+# ## MSK - Logging info variables
+
+variable "msk_cloudwatch_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
+  default     = false
+}
+
+variable "msk_s3_logs_enabled" {
+  type        = bool
+  description = "Indicates whether you want to enable or disable streaming broker logs to S3"
+  default     = false
+}
+
+variable "msk_s3_log_bucket_name" {
+  type        = string
+  description = "Name of the S3 bucket to deliver logs to for MSK."
+  default     = ""
+}
+
+
+## MSK - Authentication variables
+
+variable "msk_client_broker" {
+  type        = string
+  description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT"
+  default     = "TLS"
+}
+
+variable "msk_client_sasl_scram_enabled" {
+  type        = bool
+  description = "Enables SCRAM client authentication via AWS Secrets Manager (cannot be set to true at the same time as client_tls_auth_enabled)."
+  default     = true
+}
+
+variable "msk_client_sasl_iam_enabled" {
+  type        = bool
+  description = "Enables client authentication via IAM policies (cannot be set to true at the same time as client_sasl_*_enabled)."
+  default     = false
+}
+
+variable "msk_client_allow_unauthenticated" {
+  type        = bool
+  description = "Enables unauthenticated access. MSK rejects false unless msk_client_sasl_scram_enabled or msk_client_sasl_iam_enabled is true."
+  default     = true
+}
+
+variable "msk_scram_users" {
+  type        = list(string)
+  description = "List of Data Platform Scram users to be attached to cluster"
+  default     = []
+}
+
+variable "msk_tenants" {
+  description = "A map of permissions to be granted to MSK cluster via IAM policies to roles in same account"
+  type = map(
+    object({
+      producer_topic_specs = optional(list(string), null)
+      consumer_topic_specs = optional(list(string), null)
+      consumer_group_specs = optional(list(string), null)
+      }
+    )
+  )
+  default = {}
+}
+
+variable "msk_cluster_kafka_version" {
+  type        = string
+  description = "The desired Kafka software version"
+  default     = "3.8.x"
+}
+variable "msk_cluster_broker_per_zone" {
+  type        = number
+  description = "Number of Kafka brokers per zone."
+  default     = 1
+}
+variable "msk_cluster_broker_node_instance_type" {
+  type        = string
+  description = "The instance type to use for the Kafka brokers"
+  default     = "kafka.t3.small"
+}
+variable "msk_cluster_broker_node_ebs_volume_size" {
+  type        = number
+  description = "The size in GiB of the EBS volume for the data drive on each broker node"
+  default     = 20
+}
+
+variable "msk_storage_autoscaling_enabled" {
+  type        = bool
+  description = "Creates the MSK broker storage autoscaling target and policy. Amazon MSK does not support storage autoscaling in ap-northeast-3 (Osaka), af-south-1 (Cape Town) and ap-southeast-5 (Malaysia); it must be false there, otherwise the plan fails."
+  default     = true
+}
+
+variable "msk_storage_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum size the autoscaling policy can scale storage. Defaults to msk_cluster_broker_node_ebs_volume_size"
+  default     = 70
+}
+
+variable "msk_storage_autoscaling_target_value" {
+  type        = number
+  default     = 80
+  description = "Percentage of storage used to trigger autoscaled storage increase"
+}
+
+variable "msk_server_properties" {
+  type        = map(string)
+  description = "Contents of the server.properties file. Supported properties are documented in the [MSK Developer Guide](https://docs.aws.amazon.com/msk/latest/developerguide/msk-configuration-properties.html)"
+  default     = {}
 }

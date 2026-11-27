@@ -1,17 +1,20 @@
 terraform {
-  required_version = ">= 1.5.7, < 2.0"
+  # >= 1.11: write-only arguments (secret_string_wo) are used by the awssm module
+  required_version = ">= 1.11, < 2.0"
   backend "s3" {}
 
 
 
   required_providers {
+    # >= 6.50: secret_string_wo moves in place from secret_string
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.42, < 7.0"
+      version = ">= 6.50, < 7.0"
     }
+    # >= 3.7: ephemeral random_password
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.0"
+      version = ">= 3.7, < 4.0"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"

@@ -179,6 +179,22 @@ output "rds_credentials_kms_key_arn" {
   value       = var.create_rds ? module.rds_maindb[0].rds_credentials_kms_key_arn : null
 }
 
+## MSK
+output "MSK_cluster_arn" {
+  description = "MSK Cluster ARN"
+  value       = var.enable_msk ? module.msk_cluster[0].cluster_arn : null
+}
+
+output "MSK_cluster_name" {
+  description = "MSK Cluster Name"
+  value       = var.enable_msk ? module.msk_cluster[0].cluster_name : null
+}
+
+output "MSK_brokers" {
+  description = "MSK brokers list"
+  value       = var.enable_msk ? module.msk_cluster[0].bootstrap_brokers : null
+}
+
 # WAF
 output "waf_webacl_arn" {
   description = "RDS Credentials kms key arn"
@@ -244,11 +260,6 @@ output "custom_secret_names" {
 
 output "custom_secret_versions" {
   value = module.custom_secrets_password_module.secret_versions
-}
-
-output "custom_secret_values" {
-  value     = module.custom_secrets_password_module.secret_values
-  sensitive = true
 }
 
 output "region_short" {
