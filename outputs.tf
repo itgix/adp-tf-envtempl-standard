@@ -60,8 +60,9 @@ output "subnet3" {
 }
 
 ## Subnet CIDRs, one flat value per index. Only set when this template
-## provisions the VPC, null for an external VPC. A tier with fewer than three
-## subnets fails the plan instead of leaving an output empty.
+## provisions the VPC, null for an external VPC. A private or public tier with
+## fewer than three subnets fails the plan; the database tier may have two, so
+## its outputs are null past the last subnet.
 output "private_subnet_cidr1" {
   description = "CIDR of the first private subnet, null when the VPC is not provisioned by this template"
   value       = var.provision_vpc ? module.common_vpc[0].private_subnets_cidr_blocks[0] : null
@@ -123,33 +124,18 @@ output "public_subnet_cidr3" {
 }
 
 output "database_subnet_cidr1" {
-  description = "CIDR of the first database subnet, null when the VPC is not provisioned by this template"
-  value       = var.provision_vpc ? module.common_vpc[0].database_subnets_cidr_blocks[0] : null
-
-  precondition {
-    condition     = var.provision_vpc ? length(module.common_vpc[0].database_subnets_cidr_blocks) >= 3 : true
-    error_message = "The database_subnet_cidr1-3 outputs need at least three database subnets in the VPC; configure three in vpc_database_subnets."
-  }
+  description = "CIDR of the first database subnet, null when the VPC is not provisioned by this template or the database tier has no first subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[0], null) : null
 }
 
 output "database_subnet_cidr2" {
-  description = "CIDR of the second database subnet, null when the VPC is not provisioned by this template"
-  value       = var.provision_vpc ? module.common_vpc[0].database_subnets_cidr_blocks[1] : null
-
-  precondition {
-    condition     = var.provision_vpc ? length(module.common_vpc[0].database_subnets_cidr_blocks) >= 3 : true
-    error_message = "The database_subnet_cidr1-3 outputs need at least three database subnets in the VPC; configure three in vpc_database_subnets."
-  }
+  description = "CIDR of the second database subnet, null when the VPC is not provisioned by this template or the database tier has no second subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[1], null) : null
 }
 
 output "database_subnet_cidr3" {
-  description = "CIDR of the third database subnet, null when the VPC is not provisioned by this template"
-  value       = var.provision_vpc ? module.common_vpc[0].database_subnets_cidr_blocks[2] : null
-
-  precondition {
-    condition     = var.provision_vpc ? length(module.common_vpc[0].database_subnets_cidr_blocks) >= 3 : true
-    error_message = "The database_subnet_cidr1-3 outputs need at least three database subnets in the VPC; configure three in vpc_database_subnets."
-  }
+  description = "CIDR of the third database subnet, null when the VPC is not provisioned by this template or the database tier has no third subnet"
+  value       = var.provision_vpc ? try(module.common_vpc[0].database_subnets_cidr_blocks[2], null) : null
 }
 
 ## RDS

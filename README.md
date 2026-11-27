@@ -21,7 +21,7 @@ With a `/16` `vpc_cidr` the defaults produce:
 
 The three tiers occupy `[0, 3/32)`, `[3/32, 27/256)` and `[7/64, 17/128)` of the VPC range respectively, so the defaults cannot overlap at any `vpc_cidr` size - the private tier ends exactly where the database tier begins. A `check` assertion detects overlaps at plan time for custom layouts.
 
-The CIDRs in use are exported as flat outputs, one per subnet: `private_subnet_cidr1`-`3`, `public_subnet_cidr1`-`3` and `database_subnet_cidr1`-`3`. They are set only when this template provisions the VPC (`provision_vpc`) and are `null` for an external VPC. Each tier needs at least three subnets for these outputs; with fewer the plan fails. This is stricter than `vpc_database_subnets` alone, which accepts two.
+The CIDRs in use are exported as flat outputs, one per subnet: `private_subnet_cidr1`-`3`, `public_subnet_cidr1`-`3` and `database_subnet_cidr1`-`3`. They are set only when this template provisions the VPC (`provision_vpc`) and are `null` for an external VPC. The private and public tiers need at least three subnets for these outputs; with fewer the plan fails. The database tier may have two (`vpc_database_subnets` accepts two), so a `database_subnet_cidr` output past its last subnet is `null` instead.
 
 Environments created before these variables existed use `/26` private and public subnets (~60 usable IPs), which is not enough for EKS with the VPC CNI, where every pod consumes an address. The database ranges are unchanged.
 
@@ -204,9 +204,9 @@ The database tier has a separate flag, `force_database_subnet_resize`, because r
 | <a name="output_custom_secret_names"></a> [custom\_secret\_names](#output\_custom\_secret\_names) | n/a |
 | <a name="output_custom_secret_values"></a> [custom\_secret\_values](#output\_custom\_secret\_values) | n/a |
 | <a name="output_custom_secret_versions"></a> [custom\_secret\_versions](#output\_custom\_secret\_versions) | n/a |
-| <a name="output_database_subnet_cidr1"></a> [database\_subnet\_cidr1](#output\_database\_subnet\_cidr1) | CIDR of the first database subnet, null when the VPC is not provisioned by this template |
-| <a name="output_database_subnet_cidr2"></a> [database\_subnet\_cidr2](#output\_database\_subnet\_cidr2) | CIDR of the second database subnet, null when the VPC is not provisioned by this template |
-| <a name="output_database_subnet_cidr3"></a> [database\_subnet\_cidr3](#output\_database\_subnet\_cidr3) | CIDR of the third database subnet, null when the VPC is not provisioned by this template |
+| <a name="output_database_subnet_cidr1"></a> [database\_subnet\_cidr1](#output\_database\_subnet\_cidr1) | CIDR of the first database subnet, null when the VPC is not provisioned by this template or the database tier has no first subnet |
+| <a name="output_database_subnet_cidr2"></a> [database\_subnet\_cidr2](#output\_database\_subnet\_cidr2) | CIDR of the second database subnet, null when the VPC is not provisioned by this template or the database tier has no second subnet |
+| <a name="output_database_subnet_cidr3"></a> [database\_subnet\_cidr3](#output\_database\_subnet\_cidr3) | CIDR of the third database subnet, null when the VPC is not provisioned by this template or the database tier has no third subnet |
 | <a name="output_ecr_repository_arn"></a> [ecr\_repository\_arn](#output\_ecr\_repository\_arn) | Full ARN of the repository |
 | <a name="output_ecr_repository_name"></a> [ecr\_repository\_name](#output\_ecr\_repository\_name) | Name of the repository |
 | <a name="output_ecr_repository_registry_id"></a> [ecr\_repository\_registry\_id](#output\_ecr\_repository\_registry\_id) | The registry ID where the repository was created |
