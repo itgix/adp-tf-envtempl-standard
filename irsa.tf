@@ -465,6 +465,7 @@ module "kafka_superuser_irsa" {
     main = {
       provider_arn               = module.eks[0].oidc_provider_arn
       namespace_service_accounts = ["*:*"]
+      trust_condition_test       = "StringLike"
     }
   }
 
